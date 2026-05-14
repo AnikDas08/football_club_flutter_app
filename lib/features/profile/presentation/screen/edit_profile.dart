@@ -21,7 +21,7 @@ class EditProfile extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetBuilder<ProfileController>(
       builder: (controller) {
-        final userImage = LocalStorage.user.image;
+        //final userImage = LocalStorage.user.image;
 
         return Scaffold(
           /// AppBar
@@ -45,7 +45,7 @@ class EditProfile extends StatelessWidget {
                   Stack(
                     alignment: .bottomRight,
                     children: [
-                      CircleAvatar(
+                      /*CircleAvatar(
                         radius: 70.r,
                         backgroundColor: Colors.transparent,
                         child: ClipOval(
@@ -64,7 +64,7 @@ class EditProfile extends StatelessWidget {
                                   height: 140,
                                 ),
                         ),
-                      ),
+                      ),*/
 
                       /// Edit icon
                       IconButton(

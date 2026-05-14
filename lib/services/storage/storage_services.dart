@@ -1,90 +1,82 @@
-import 'dart:convert';
-
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../config/route/app_routes.dart';
 import '../../features/profile/data/model/user_model.dart';
-import '../../services/socket/socket_service.dart';
 import '../../utils/log/app_log.dart';
 import 'storage_keys.dart';
 
 class LocalStorage {
-  LocalStorage._();
-
-  /// SharedPreferences instance
-  static SharedPreferences? _preferences;
-
   static String token = '';
   static String refreshToken = '';
-  static UserModel _user = UserModel.empty;
+  static bool isLogIn = false;
+  static String userId = '';
+  static String myImage = '';
+  static String myName = '';
+  static String myEmail = '';
+  static String myRole = '';
+  static String image = '';
+  static UserModel? user;
 
-  /// Get current user
-  static UserModel get user => _user;
+  static SharedPreferences? preferences;
 
-  static bool get isLogin => token.isNotEmpty;
+  static bool get isChef => myRole.toLowerCase() == 'chef';
 
-  /// Initialize SharedPreferences (call once in main)
-  static Future<void> init() async {
-    _preferences ??= await SharedPreferences.getInstance();
-    await _loadAllData();
+  static Future<SharedPreferences> _getStorage() async {
+    preferences ??= await SharedPreferences.getInstance();
+    return preferences!;
   }
 
-  /// Get storage instance
-  static SharedPreferences get _storage => _preferences!;
+  /// Get All Data From SharedPreferences
+  static Future<void> getAllPrefData() async {
+    final localStorage = await _getStorage();
 
-  /// Load all saved data from SharedPreferences
-  static Future<void> _loadAllData() async {
-    token = _storage.getString(LocalStorageKeys.token) ?? '';
-    refreshToken = _storage.getString(LocalStorageKeys.refreshToken) ?? '';
+    token = localStorage.getString(LocalStorageKeys.token) ?? '';
+    refreshToken = localStorage.getString(LocalStorageKeys.refreshToken) ?? '';
+    isLogIn = localStorage.getBool(LocalStorageKeys.isLogIn) ?? false;
+    userId = localStorage.getString(LocalStorageKeys.userId) ?? '';
+    myImage = localStorage.getString(LocalStorageKeys.myImage) ?? '';
+    myName = localStorage.getString(LocalStorageKeys.myName) ?? '';
+    myEmail = localStorage.getString(LocalStorageKeys.myEmail) ?? '';
+    myRole = localStorage.getString(LocalStorageKeys.myRole) ?? '';
 
-    final userString = _storage.getString(LocalStorageKeys.user);
-
-    if (userString != null) {
-      _user = UserModel.fromJson(jsonDecode(userString));
-    }
-
-    appLog(token, source: 'LocalStorage');
+    appLog(userId, source: 'Local Storage');
   }
 
-  /// Save token
-  static Future<void> saveToken(String? value) async {
-    if (value == null || value.isEmpty) {
-      appLog(' Token is  : $value');
-      return;
-    }
-    token = value;
-    await _storage.setString(LocalStorageKeys.token, value);
-  }
-
-  /// Save refresh token
-  static Future<void> saveRefreshToken(String? value) async {
-    if (value == null || value.isEmpty) {
-      appLog('Refresh Token is  : $value');
-      return;
-    }
-    refreshToken = value;
-    await _storage.setString(LocalStorageKeys.refreshToken, value);
-  }
-
-  /// Save full user model
-  static Future<void> saveUser(Map<String, dynamic>? json) async {
-    //_user = UserModel.fromJson(json);
-    //await _storage.setString(LocalStorageKeys.user, jsonEncode(_user.toMap()));
-  }
-
-  /// Remove all data from SharedPreferences
-  static Future<void> clear() async {
-    await _storage.clear();
-    token = '';
-    refreshToken = '';
-    //_user = UserModel.empty;
-  }
-
-  /// Logout user, clear storage and disconnect socket
-  static Future<void> logout() async {
-    SocketService.disconnect();
-    await clear();
+  /// Remove All Data From SharedPreferences
+  static Future<void> removeAllPrefData() async {
+    final localStorage = await _getStorage();
+    await localStorage.clear();
+    _resetLocalStorageData();
     Get.offAllNamed(AppRoutes.signIn);
+    await getAllPrefData();
+  }
+
+  // Reset LocalStorage Data
+  static void _resetLocalStorageData() {
+    final localStorage = preferences!;
+    localStorage.setString(LocalStorageKeys.token, '');
+    localStorage.setString(LocalStorageKeys.refreshToken, '');
+    localStorage.setString(LocalStorageKeys.userId, '');
+    localStorage.setString(LocalStorageKeys.myImage, '');
+    localStorage.setString(LocalStorageKeys.myName, '');
+    localStorage.setString(LocalStorageKeys.myEmail, '');
+    localStorage.setBool(LocalStorageKeys.isLogIn, false);
+  }
+
+  // Save Data To SharedPreferences
+  static Future<void> setString(String key, String value) async {
+    final localStorage = await _getStorage();
+    await localStorage.setString(key, value);
+  }
+
+  static Future<void> setBool(String key, bool value) async {
+    final localStorage = await _getStorage();
+    await localStorage.setBool(key, value);
+  }
+
+  static Future<void> setInt(String key, int value) async {
+    final localStorage = await _getStorage();
+    await localStorage.setInt(key, value);
   }
 }

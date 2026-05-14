@@ -45,7 +45,7 @@ class ProfileScreen extends StatelessWidget {
                 CircleAvatar(
                   backgroundColor: Colors.transparent,
                   child: ClipOval(
-                    child: CommonImage(imageSrc: user.image, size: 140),
+                    child: CommonImage(imageSrc: user!.image, size: 140),
                   ),
                 ),
 

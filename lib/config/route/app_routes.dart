@@ -1,5 +1,20 @@
 import 'package:get/get.dart';
 
+import '../../features/auth/change_password/presentation/screen/change_password_screen.dart';
+import '../../features/auth/forgot password/presentation/screen/create_password.dart';
+import '../../features/auth/forgot password/presentation/screen/forgot_password.dart';
+import '../../features/auth/forgot password/presentation/screen/verify_screen.dart';
+import '../../features/auth/sign in/presentation/screen/sign_in_screen.dart';
+import '../../features/auth/sign up/presentation/screen/sign_up_screen.dart';
+import '../../features/auth/sign up/presentation/screen/verify_user.dart';
+import '../../features/message/presentation/screen/chat_screen.dart';
+import '../../features/message/presentation/screen/message_screen.dart';
+import '../../features/notifications/presentation/screen/notifications_screen.dart';
+import '../../features/onboarding_screen/onboarding_screen.dart';
+import '../../features/profile/presentation/screen/edit_profile.dart';
+import '../../features/profile/presentation/screen/profile_screen.dart';
+import '../../features/splash/splash_screen.dart';
+
 class AppRoutes {
   static const String test = '/test_screen.dart';
   static const String splash = '/';
@@ -21,7 +36,7 @@ class AppRoutes {
   static const String setting = '/setting_screen.dart';
 
   static List<GetPage<String>> routes = [
-    /*GetPage(name: splash, page: () => const SplashScreen()),
+    GetPage(name: splash, page: () => const SplashScreen()),
     GetPage(name: onboarding, page: () => const OnboardingScreen()),
     GetPage(name: signUp, page: () => SignUpScreen()),
     GetPage(name: verifyUser, page: () => const VerifyUser()),
@@ -35,8 +50,5 @@ class AppRoutes {
     GetPage(name: message, page: () => const MessageScreen()),
     GetPage(name: profile, page: () => const ProfileScreen()),
     GetPage(name: editProfile, page: () => EditProfile()),
-    GetPage(name: privacyPolicy, page: () => const PrivacyPolicyScreen()),
-    GetPage(name: termsOfServices, page: () => const TermsOfServicesScreen()),
-    GetPage(name: setting, page: () => const SettingScreen()),*/
   ];
 }
