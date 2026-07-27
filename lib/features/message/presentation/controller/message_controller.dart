@@ -98,11 +98,9 @@ class MessageController extends GetxController {
   /// Load more messages (pagination)
   Future<void> loadMoreMessages() async {
     if (isMoreLoading || status == Status.loading) return;
-
     try {
       isMoreLoading = true;
       update();
-
       await getMessages();
     } catch (e) {
       errorLog(e.toString());
