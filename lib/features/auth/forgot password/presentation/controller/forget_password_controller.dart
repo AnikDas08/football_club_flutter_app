@@ -1,7 +1,11 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import '../../../../../component/button/common_button.dart';
+import '../../../../../component/text/common_text.dart';
+import '../widget/password_changed_dialog.dart';
 import '../../../../../config/api/api_end_point.dart';
 import '../../../../../config/route/app_routes.dart';
 import '../../../../../services/api/api_client.dart';
@@ -63,6 +67,9 @@ class ForgetPasswordController extends GetxController {
 
   /// ===================== Forget Password Repo =====================
   Future<void> sendForgetPasswordEmail() async {
+    currentStep = ForgetPasswordStep.otp;
+    startOtpTimer();
+    Get.toNamed(AppRoutes.verifyEmail);
     return;
     try {
       _setLoading(true);
@@ -125,6 +132,13 @@ class ForgetPasswordController extends GetxController {
 
   /// ===================== RESET PASSWORD Repo =====================
   Future<void> resetPassword() async {
+    _clearAll();
+    Get.dialog(
+      const PasswordChangedDialog(),
+      barrierColor: const Color(0xFF020914).withOpacity(0.85),
+      barrierDismissible: false,
+    );
+    return;
     try {
       _setLoading(true);
       final response = await apiClient.post(

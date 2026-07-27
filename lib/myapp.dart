@@ -28,6 +28,7 @@ class MyApp extends StatelessWidget {
             defaultTransition: Transition.fadeIn,
             transitionDuration: const Duration(milliseconds: 200),
             getPages: AppRoutes.routes,
+            initialRoute: AppRoutes.splash,
             home: child,
           );
         },

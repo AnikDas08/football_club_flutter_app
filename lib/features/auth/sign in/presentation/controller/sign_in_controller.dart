@@ -1,5 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_code_structure/services/storage/storage_keys.dart';
+import 'package:football_club/services/storage/storage_keys.dart';
 import 'package:get/get.dart';
 import '../../../../../config/api/api_end_point.dart';
 import '../../../../../config/route/app_routes.dart';
@@ -26,7 +26,7 @@ class SignInController extends GetxController {
       isLoading = true;
       update();
 
-      Get.toNamed(AppRoutes.profile);
+      Get.offAllNamed(AppRoutes.home);
       return;
 
 
@@ -47,7 +47,7 @@ class SignInController extends GetxController {
         passwordController.clear();
 
         /// navigate
-        Get.offAllNamed(AppRoutes.profile);
+        Get.offAllNamed(AppRoutes.home);
       } else {
         AppSnackbar.error(
           title: response.statusCode.toString(),

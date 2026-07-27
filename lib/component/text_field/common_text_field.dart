@@ -22,12 +22,12 @@ class CommonTextField extends StatelessWidget {
     this.prefixText,
     this.paddingHorizontal = 16,
     this.paddingVertical = 14,
-    this.borderRadius = 10,
+    this.borderRadius,
     this.inputFormatters,
-    this.fillColor = AppColors.white,
-    this.hintTextColor = AppColors.textFiledColor,
-    this.labelTextColor = AppColors.textFiledColor,
-    this.textColor = AppColors.black,
+    this.fillColor,
+    this.hintTextColor,
+    this.labelTextColor,
+    this.textColor,
     this.borderColor = AppColors.transparent,
     this.onSubmitted,
     this.onChanged,
@@ -35,6 +35,13 @@ class CommonTextField extends StatelessWidget {
     this.isDense,
     this.suffixIcon,
     this.maxLines,
+    this.border,
+    this.enabledBorder,
+    this.focusedBorder,
+    this.errorBorder,
+    this.focusedErrorBorder,
+    this.prefixIconConstraints,
+    this.isDark = false,
   });
 
   final String? hintText;
@@ -50,7 +57,7 @@ class CommonTextField extends StatelessWidget {
   final double paddingHorizontal;
   final double paddingVertical;
   final int? maxLines;
-  final double borderRadius;
+  final double? borderRadius;
   final int? mexLength;
   final bool isPassword;
   final bool? isDense;
@@ -63,12 +70,63 @@ class CommonTextField extends StatelessWidget {
   final FormFieldValidator<String>? validator;
   final TextInputType keyboardType;
   final List<TextInputFormatter>? inputFormatters;
+  final InputBorder? border;
+  final InputBorder? enabledBorder;
+  final InputBorder? focusedBorder;
+  final InputBorder? errorBorder;
+  final InputBorder? focusedErrorBorder;
+  final BoxConstraints? prefixIconConstraints;
+  final bool isDark;
 
   @override
   Widget build(BuildContext context) {
+    // Determine defaults based on isDark theme
+    final resolvedFillColor = fillColor ?? (isDark ? const Color(0xFF0C1322).withOpacity(0.6) : AppColors.white);
+    final resolvedTextColor = textColor ?? (isDark ? Colors.white : AppColors.black);
+    final resolvedHintTextColor = hintTextColor ?? (isDark ? AppColors.textColor : AppColors.textColor);
+    final resolvedLabelTextColor = labelTextColor ?? (isDark ? AppColors.textColor : AppColors.textColor);
+    final resolvedRadius = borderRadius ?? (isDark ? 12.0 : 10.0);
+    
+    final resolvedPrefixIconConstraints = prefixIconConstraints ?? 
+        (isDark 
+            ? BoxConstraints(minWidth: 48.w, minHeight: 24.h)
+            : const BoxConstraints(maxWidth: 30, maxHeight: 30));
+
+    final defaultBorder = OutlineInputBorder(
+      borderRadius: BorderRadius.circular(resolvedRadius.r),
+      borderSide: BorderSide(
+        color: isDark 
+            ? Colors.white.withOpacity(0.1) 
+            : (borderColor == AppColors.transparent ? Colors.grey.withValues(alpha: 0.3) : borderColor),
+      ),
+    );
+
+    final resolvedEnabledBorder = enabledBorder ?? defaultBorder;
+    
+    final resolvedFocusedBorder = focusedBorder ?? (isDark 
+        ? OutlineInputBorder(
+            borderRadius: BorderRadius.circular(resolvedRadius.r),
+            borderSide: const BorderSide(color: Color(0xFF1239D4), width: 1.5),
+          )
+        : defaultBorder);
+
+    final resolvedErrorBorder = errorBorder ?? (isDark 
+        ? OutlineInputBorder(
+            borderRadius: BorderRadius.circular(resolvedRadius.r),
+            borderSide: const BorderSide(color: Colors.red, width: 1),
+          )
+        : defaultBorder);
+
+    final resolvedFocusedErrorBorder = focusedErrorBorder ?? (isDark 
+        ? OutlineInputBorder(
+            borderRadius: BorderRadius.circular(resolvedRadius.r),
+            borderSide: const BorderSide(color: Colors.red, width: 1.5),
+          )
+        : defaultBorder);
+
     return Obx(
       () => TextFormField(
-        autovalidateMode: .onUnfocus,
+        autovalidateMode: AutovalidateMode.onUnfocus,
         keyboardType: keyboardType,
         controller: controller,
         obscureText: isPassword ? !obscureText.value : obscureText.value,
@@ -76,7 +134,7 @@ class CommonTextField extends StatelessWidget {
         maxLength: mexLength,
         onChanged: onChanged,
         inputFormatters: inputFormatters,
-        style: TextStyle(fontSize: 14, color: textColor),
+        style: TextStyle(fontSize: 14, color: resolvedTextColor),
         onFieldSubmitted: onSubmitted,
         onTap: onTap,
         validator: validator,
@@ -85,57 +143,49 @@ class CommonTextField extends StatelessWidget {
           errorMaxLines: 2,
           isDense: isDense,
           filled: true,
-          prefixIconConstraints: const BoxConstraints(
-            maxWidth: 30,
-            maxHeight: 30,
-          ),
-          prefixIcon: prefixIcon,
-          fillColor: fillColor,
+          prefixIconConstraints: resolvedPrefixIconConstraints,
+          prefixIcon: prefixIcon != null && isDark
+              ? IconTheme(
+                  data: IconThemeData(color: AppColors.textColor),
+                  child: prefixIcon!,
+                )
+              : prefixIcon,
+          fillColor: resolvedFillColor,
 
           counterText: '',
-          contentPadding: .symmetric(
+          contentPadding: EdgeInsets.symmetric(
             horizontal: paddingHorizontal.w,
             vertical: paddingVertical.h,
           ),
-          border: _buildBorder(),
-          enabledBorder: _buildBorder(),
-          focusedBorder: _buildBorder(),
-          disabledBorder: _buildBorder(),
-          errorBorder: _buildBorder(),
+          border: border ?? defaultBorder,
+          enabledBorder: resolvedEnabledBorder,
+          focusedBorder: resolvedFocusedBorder,
+          disabledBorder: border ?? defaultBorder,
+          errorBorder: resolvedErrorBorder,
+          focusedErrorBorder: resolvedFocusedErrorBorder,
           hintText: hintText,
           labelText: labelText,
-          hintStyle: GoogleFonts.roboto(fontSize: 14, color: hintTextColor),
-          labelStyle: GoogleFonts.roboto(fontSize: 14, color: labelTextColor),
-          prefix: CommonText(text: prefixText ?? '', fontWeight: .w400),
-          suffixIcon: isPassword ? _buildPasswordSuffixIcon() : suffixIcon,
+          hintStyle: GoogleFonts.roboto(fontSize: 14, color: resolvedHintTextColor),
+          labelStyle: GoogleFonts.roboto(fontSize: 14, color: resolvedLabelTextColor),
+          prefix: CommonText(text: prefixText ?? '', fontWeight: FontWeight.w400),
+          suffixIcon: isPassword ? _buildPasswordSuffixIcon(resolvedTextColor) : suffixIcon,
         ),
       ),
     );
   }
 
-  OutlineInputBorder _buildBorder() {
-    return OutlineInputBorder(
-      borderRadius: .circular(borderRadius.r),
-      borderSide: BorderSide(
-        color: borderColor == AppColors.transparent
-            ? Colors.grey.withValues(alpha: 0.3)
-            : borderColor,
-      ),
-    );
-  }
-
-  Widget _buildPasswordSuffixIcon() {
+  Widget _buildPasswordSuffixIcon(Color resolvedTextColor) {
     return GestureDetector(
       onTap: toggle,
       child: Padding(
-        padding: .only(right: 10.w),
+        padding: EdgeInsets.only(right: 10.w),
         child: Obx(
           () => Icon(
             obscureText.value
                 ? Icons.visibility_off_outlined
                 : Icons.visibility_outlined,
             size: 20.sp,
-            color: textColor,
+            color: resolvedTextColor.withOpacity(0.4),
           ),
         ),
       ),

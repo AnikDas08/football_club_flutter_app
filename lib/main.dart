@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_code_structure/services/socket/socket_service.dart';
+import 'package:football_club/services/socket/socket_service.dart';
 
 import 'config/core/global_error_handler.dart';
 import 'config/dependency/dependency_injection.dart';
@@ -24,14 +24,21 @@ Future<void> init() async {
   try {
     final dI = DependencyInjection();
     dI.dependencies();
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.light,
+        statusBarBrightness: Brightness.dark,
+      ),
+    );
     await Future.wait([
       SystemChrome.setPreferredOrientations([.portraitUp, .portraitDown]),
       LocalStorage.init(),
     ]);
 
-    Future.delayed(const Duration(milliseconds: 300), () {
+    /*Future.delayed(const Duration(milliseconds: 300), () {
       SocketService.connect();
-    });
+    });*/
   } catch (e, stack) {
     globalError(e, stack);
   }

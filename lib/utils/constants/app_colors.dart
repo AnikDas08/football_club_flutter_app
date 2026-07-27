@@ -13,5 +13,7 @@ class AppColors {
   static const Color red = Colors.red;
   static const Color filledColor = Color(0xFFe7e7e7);
   static const Color textFiledColor = Color(0xFF979797);
+  static const Color textColor = Color(0xFFffffff);
+  static const Color textSecondary = Color(0xFFC5C5C5);
   static const blueLight = Color(0xffe8e8f5);
 }
