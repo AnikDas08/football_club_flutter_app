@@ -1,12 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../../config/api/api_end_point.dart';
 import '../../../../config/route/app_routes.dart';
-import '../../../../services/api/api_client.dart';
-import '../../../../services/api/api_service.dart';
-import '../../../../services/api/multipart_helper.dart';
-import '../../../../services/storage/storage_services.dart';
 import '../../../../utils/app_snackbar.dart';
 import '../../../../utils/helpers/other_helper.dart';
 
@@ -14,19 +9,63 @@ class ProfileController extends GetxController {
   /// Language list
   final List<String> languages = ['English', 'French', 'Arabic'];
   String selectedLanguage = 'English';
-  String? image;
+  String? profileImagePath;
   bool isLoading = false;
 
-  /// Text controllers
-  final nameController = TextEditingController();
-  final numberController = TextEditingController();
+  /// Form Controllers
+  final playerNameController = TextEditingController(text: "Nt Knowles");
+  final dobController = TextEditingController(text: "02-02-2000");
+  final parentNameController = TextEditingController(text: "Nt Knowles");
+  final emailController = TextEditingController(text: "ntknowles@gmail.com");
+  final mobileController = TextEditingController(text: "+44 7XXX XXXXXX");
 
-  final ApiClient apiClient = DioApiClient();
+  TextEditingController get nameController => playerNameController;
+  TextEditingController get numberController => mobileController;
+
+  /// Options
+  String selectedPosition = "Goalkeeper";
+  String selectedFoot = "Left";
+
+  final List<String> positions = [
+    "Goalkeeper",
+    "Defender",
+    "Midfielder",
+    "Attacking Midfielder",
+    "Forward",
+    "Winger",
+  ];
+
+  final List<String> feet = ["Left", "Right", "Both"];
+
+  @override
+  void onInit() {
+    super.onInit();
+    // Initialize default values if needed
+  }
 
   /// Pick profile image
   Future<void> getProfileImage() async {
-    image = await OtherHelper.pickImage();
-    update();
+    final pickedImage = await OtherHelper.pickImage();
+    if (pickedImage != null) {
+      profileImagePath = pickedImage;
+      update();
+    }
+  }
+
+  /// Select position
+  void selectPosition(String? position) {
+    if (position != null) {
+      selectedPosition = position;
+      update();
+    }
+  }
+
+  /// Select foot
+  void selectFoot(String? foot) {
+    if (foot != null) {
+      selectedFoot = foot;
+      update();
+    }
   }
 
   /// Select language
@@ -36,62 +75,46 @@ class ProfileController extends GetxController {
     Get.back();
   }
 
-  /// Set loading safely
-  void _setLoading(bool value) {
-    isLoading = value;
-    update();
-  }
-
-  /// Update profile
-  Future<void> editProfileRepo() async {
-    if (LocalStorage.token.isEmpty) return;
-
-    try {
-      _setLoading(true);
-
-      final body = {
-        'fullName': nameController.text.trim(),
-        'phone': numberController.text.trim(),
-      };
-
-      final files = image != null
-          ? [MultipartFileItem(fileName: 'image', filePath: image!)]
-          : <MultipartFileItem>[];
-
-      final response = await apiClient.multipart(
-        url: ApiEndPoint.user,
-        body: body,
-        files: files,
-      );
-
-      if (response.statusCode != 200) {
-        throw Exception(response.message);
-      }
-
-      final Map<String, dynamic> data = response.data['data'] ?? {};
-
-      //LocalStorage.saveUser(data['user']);
-
-      AppSnackbar.success(
-        title: 'Success',
-        message: 'Profile updated successfully',
-      );
-
-      nameController.clear();
-      numberController.clear();
-      Get.offNamed(AppRoutes.profile);
-    } catch (e) {
-      AppSnackbar.error(title: 'Error', message: e.toString());
-    } finally {
-      _setLoading(false);
+  /// Date picker
+  Future<void> pickDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime(2000, 2, 2),
+      firstDate: DateTime(1990),
+      lastDate: DateTime.now(),
+    );
+    if (picked != null) {
+      dobController.text =
+          "${picked.day.toString().padLeft(2, '0')}-${picked.month.toString().padLeft(2, '0')}-${picked.year}";
+      update();
     }
   }
 
-  /// Dispose controllers
+  /// Save changes
+  Future<void> saveProfile() async {
+    isLoading = true;
+    update();
+
+    await Future.delayed(const Duration(milliseconds: 600));
+
+    isLoading = false;
+    update();
+
+    AppSnackbar.success(
+      title: 'Success',
+      message: 'Profile updated successfully',
+    );
+
+    Get.back();
+  }
+
   @override
   void onClose() {
-    nameController.dispose();
-    numberController.dispose();
+    playerNameController.dispose();
+    dobController.dispose();
+    parentNameController.dispose();
+    emailController.dispose();
+    mobileController.dispose();
     super.onClose();
   }
 }

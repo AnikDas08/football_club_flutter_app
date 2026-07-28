@@ -21,7 +21,9 @@ class CreatePassword extends StatelessWidget {
         final has8Characters = password.length >= 8;
         final hasUppercase = password.contains(RegExp(r'[A-Z]'));
         final hasNumber = password.contains(RegExp(r'[0-9]'));
-        final hasSpecialChar = password.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'));
+        final hasSpecialChar = password.contains(
+          RegExp(r'[!@#$%^&*(),.?":{}|<>]'),
+        );
 
         Widget buildRuleRow(String ruleText, bool isSatisfied) {
           return Padding(
@@ -57,7 +59,9 @@ class CreatePassword extends StatelessWidget {
                   text: ruleText,
                   fontSize: 14,
                   fontWeight: FontWeight.w400,
-                  color: isSatisfied ? Colors.white.withOpacity(0.8) : Colors.white.withOpacity(0.25),
+                  color: isSatisfied
+                      ? Colors.white.withOpacity(0.8)
+                      : Colors.white.withOpacity(0.25),
                 ),
               ],
             ),
@@ -71,7 +75,10 @@ class CreatePassword extends StatelessWidget {
               children: [
                 // Custom Header Back Button
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 16.h),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 16.w,
+                    vertical: 16.h,
+                  ),
                   child: Align(
                     alignment: Alignment.centerLeft,
                     child: GestureDetector(
@@ -82,7 +89,7 @@ class CreatePassword extends StatelessWidget {
                           Icon(
                             Icons.adaptive.arrow_back,
                             color: Colors.white,
-                            size: 18.sp,
+                            size: 20.sp,
                           ),
                           SizedBox(width: 6.w),
                           const CommonText(
@@ -99,7 +106,7 @@ class CreatePassword extends StatelessWidget {
 
                 Expanded(
                   child: SingleChildScrollView(
-                    padding: EdgeInsets.symmetric(horizontal: 24.w),
+                    padding: EdgeInsets.symmetric(horizontal: 16.w),
                     child: Form(
                       key: _formKey,
                       child: Column(
@@ -119,7 +126,8 @@ class CreatePassword extends StatelessWidget {
 
                           // Subtitle
                           CommonText(
-                            text: "Choose something strong and unique. We'll keep you logged in on this device.",
+                            text:
+                                "Choose something strong and unique. We'll keep you logged in on this device.",
                             fontSize: 14,
                             fontWeight: FontWeight.w400,
                             color: Colors.white.withOpacity(0.5),
@@ -148,7 +156,8 @@ class CreatePassword extends StatelessWidget {
                             prefixIcon: const Icon(Icons.lock_outline),
                             hintText: "••••••••••",
                             onChanged: (val) {
-                              controller.update(); // Rebuild rules checklist reactively
+                              controller
+                                  .update(); // Rebuild rules checklist reactively
                             },
                           ),
                           SizedBox(height: 20.h),

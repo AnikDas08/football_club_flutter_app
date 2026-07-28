@@ -153,7 +153,7 @@ class UpcomingTrainingCard extends StatelessWidget {
                         offset: const Offset(0, 2),
                       ),
                       BoxShadow(
-                        color: const Color(0xFF2563EB).withOpacity(0.3),
+                        color: const Color(0xFF2563EB).withOpacity(0.35),
                         blurRadius: 10,
                         spreadRadius: 1,
                       ),

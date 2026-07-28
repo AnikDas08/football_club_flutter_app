@@ -51,7 +51,7 @@ class HomeScreen extends StatelessWidget {
                 child: SafeArea(
                   bottom: false,
                   child: Padding(
-                    padding: EdgeInsets.only(right: 24,top: 16,left: 24,bottom: 16),
+                    padding: EdgeInsets.only(right: 16,top: 16,left: 16,bottom: 16),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -124,7 +124,7 @@ class HomeScreen extends StatelessWidget {
 
             // Content Area
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24.w),
+              padding: EdgeInsets.symmetric(horizontal: 16.w),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -170,7 +170,9 @@ class HomeScreen extends StatelessWidget {
                   SizedBox(height: 20.h),
 
                   // 5. Coach Feedback Card
-                  const CoachFeedbackCard(),
+                  CoachFeedbackCard(
+                    onViewAllTap: () => Get.toNamed(AppRoutes.allCoachFeedback),
+                  ),
                   SizedBox(height: 20.h),
 
                   // 6. Recent Achievement Card

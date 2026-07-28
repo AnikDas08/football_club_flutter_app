@@ -28,7 +28,10 @@ class VerifyScreen extends StatelessWidget {
               children: [
                 // Custom Header Back Button
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 16.h),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 16.w,
+                    vertical: 16.h,
+                  ),
                   child: Align(
                     alignment: Alignment.centerLeft,
                     child: GestureDetector(
@@ -39,7 +42,7 @@ class VerifyScreen extends StatelessWidget {
                           Icon(
                             Icons.adaptive.arrow_back,
                             color: Colors.white,
-                            size: 18.sp,
+                            size: 20.sp,
                           ),
                           SizedBox(width: 6.w),
                           const CommonText(
@@ -56,7 +59,7 @@ class VerifyScreen extends StatelessWidget {
 
                 Expanded(
                   child: SingleChildScrollView(
-                    padding: EdgeInsets.symmetric(horizontal: 24.w),
+                    padding: EdgeInsets.symmetric(horizontal: 16.w),
                     child: Form(
                       key: _formKey,
                       child: Column(
@@ -76,7 +79,8 @@ class VerifyScreen extends StatelessWidget {
 
                           // Subtitle
                           CommonText(
-                            text: "Check your email to see the verification code",
+                            text:
+                                "Check your email to see the verification code",
                             fontSize: 14,
                             fontWeight: FontWeight.w400,
                             color: Colors.white.withOpacity(0.5),
@@ -96,7 +100,8 @@ class VerifyScreen extends StatelessWidget {
                             autoDisposeControllers: false,
                             cursorColor: const Color(0xFF1239D4),
                             validator: (value) {
-                              if (value != null && value.length == 6) return null;
+                              if (value != null && value.length == 6)
+                                return null;
                               return "Otp is invalid";
                             },
                             textStyle: GoogleFonts.roboto(
@@ -139,12 +144,19 @@ class VerifyScreen extends StatelessWidget {
                             children: [
                               // Timer Capsule
                               Container(
-                                padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 20.w,
+                                  vertical: 10.h,
+                                ),
                                 decoration: BoxDecoration(
-                                  color: const Color(0xFF165DFF).withOpacity(0.20),
+                                  color: const Color(
+                                    0xFF165DFF,
+                                  ).withOpacity(0.20),
                                   borderRadius: BorderRadius.circular(16.r),
                                   border: Border.all(
-                                    color: const Color(0xFF165DFF).withOpacity(0.30),
+                                    color: const Color(
+                                      0xFF165DFF,
+                                    ).withOpacity(0.30),
                                     width: 1.2,
                                   ),
                                 ),
@@ -155,7 +167,10 @@ class VerifyScreen extends StatelessWidget {
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
                                         CommonText(
-                                          text: minutes.toString().padLeft(2, '0'),
+                                          text: minutes.toString().padLeft(
+                                            2,
+                                            '0',
+                                          ),
                                           fontSize: 16,
                                           fontWeight: FontWeight.w600,
                                           color: Colors.white,
@@ -170,18 +185,25 @@ class VerifyScreen extends StatelessWidget {
                                       ],
                                     ),
                                     Padding(
-                                      padding: EdgeInsets.symmetric(horizontal: 16.w),
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: 16.w,
+                                      ),
                                       child: Container(
                                         width: 1.2,
                                         height: 28.h,
-                                        color: const Color(0xFF1239D4).withOpacity(0.5),
+                                        color: const Color(
+                                          0xFF1239D4,
+                                        ).withOpacity(0.5),
                                       ),
                                     ),
                                     Column(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
                                         CommonText(
-                                          text: seconds.toString().padLeft(2, '0'),
+                                          text: seconds.toString().padLeft(
+                                            2,
+                                            '0',
+                                          ),
                                           fontSize: 16,
                                           fontWeight: FontWeight.w600,
                                           color: Colors.white,
@@ -206,7 +228,9 @@ class VerifyScreen extends StatelessWidget {
                                     ? () => controller.sendForgetPasswordEmail()
                                     : null,
                                 style: TextButton.styleFrom(
-                                  padding: EdgeInsets.symmetric(horizontal: 8.w),
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 8.w,
+                                  ),
                                 ),
                                 child: CommonText(
                                   text: "Resend",
@@ -214,7 +238,7 @@ class VerifyScreen extends StatelessWidget {
                                   fontWeight: FontWeight.w600,
                                   color: controller.canResendOtp
                                       ? const Color(0xFF165DFF)
-                                      : const Color(0xFF165DFF)
+                                      : const Color(0xFF165DFF),
                                 ),
                               ),
                             ],

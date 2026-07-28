@@ -12,6 +12,11 @@ import '../../features/message/presentation/screen/chat_screen.dart';
 import '../../features/message/presentation/screen/message_screen.dart';
 import '../../features/notifications/presentation/screen/notifications_screen.dart';
 import '../../features/onboarding/onboarding_screen.dart';
+import '../../features/home/presentation/screen/all_coach_feedback_screen.dart';
+import '../../features/profile/presentation/screen/about_tfp_screen.dart';
+import '../../features/profile/presentation/screen/help_support_screen.dart';
+import '../../features/profile/presentation/screen/privacy_policy_screen.dart';
+import '../../features/profile/presentation/screen/terms_and_conditions_screen.dart';
 import '../../features/profile/presentation/screen/edit_profile.dart';
 import '../../features/profile/presentation/screen/profile_screen.dart';
 import '../../features/splash/splash_screen.dart';
@@ -36,6 +41,9 @@ class AppRoutes {
   static const String termsOfServices = '/terms_of_services_screen.dart';
   static const String setting = '/setting_screen.dart';
   static const String home = '/home_nav_screen.dart';
+  static const String aboutTfp = '/about_tfp_screen.dart';
+  static const String helpSupport = '/help_support_screen.dart';
+  static const String allCoachFeedback = '/all_coach_feedback_screen.dart';
 
   static List<GetPage<String>> routes = [
     GetPage(name: splash, page: () => const SplashScreen()),
@@ -53,5 +61,10 @@ class AppRoutes {
     GetPage(name: profile, page: () => const ProfileScreen()),
     GetPage(name: editProfile, page: () => EditProfile()),
     GetPage(name: home, page: () => HomeNavScreen()),
+    GetPage(name: aboutTfp, page: () => const AboutTfpScreen()),
+    GetPage(name: helpSupport, page: () => const HelpSupportScreen()),
+    GetPage(name: privacyPolicy, page: () => const PrivacyPolicyScreen()),
+    GetPage(name: termsOfServices, page: () => const TermsAndConditionsScreen()),
+    GetPage(name: allCoachFeedback, page: () => const AllCoachFeedbackScreen()),
   ];
 }

@@ -24,7 +24,7 @@ class SignUpScreen extends StatelessWidget {
       body: GetBuilder<SignUpController>(
         builder: (controller) {
           return SingleChildScrollView(
-            padding: .symmetric(horizontal: 24.w),
+            padding: EdgeInsets.symmetric(horizontal: 16.w),
             child: Form(
               key: _formKey,
               child: Column(

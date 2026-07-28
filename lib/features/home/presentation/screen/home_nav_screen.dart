@@ -102,33 +102,6 @@ class HomeNavScreen extends StatelessWidget {
                                     size: 22.sp,
                                   ),
                                 ),
-
-                                /// Reactive message badge count on Statistics tab
-                                if (item["label"] == "Statistics")
-                                  Obx(() {
-                                    final count =
-                                        Get.find<HomeController>().message.value;
-                                    if (count > 0) {
-                                      return Positioned(
-                                        right: -2.w,
-                                        top: -2.h,
-                                        child: Container(
-                                          padding: EdgeInsets.all(4.r),
-                                          decoration: const BoxDecoration(
-                                            color: Color(0xFF165DFF),
-                                            shape: BoxShape.circle,
-                                          ),
-                                          child: CommonText(
-                                            text: count.toString(),
-                                            color: Colors.white,
-                                            fontSize: 9,
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                        ),
-                                      );
-                                    }
-                                    return const SizedBox.shrink();
-                                  }),
                               ],
                             ),
                             SizedBox(height: 3.h),

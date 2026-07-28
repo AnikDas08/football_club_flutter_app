@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import '../../../../../../../config/route/app_routes.dart';
-import '../../../../../../../utils/extensions/extension.dart';
-import '../../../../../component/button/common_button.dart';
+
 import '../../../../../component/text/common_text.dart';
 import '../../../../../component/text_field/common_text_field.dart';
 import '../../../../../utils/helpers/validation.dart';
 import '../controller/change_password_controller.dart';
-import '../../../../../../../utils/constants/app_colors.dart';
-import '../../../../../../../utils/constants/app_string.dart';
 
 class ChangePasswordScreen extends StatelessWidget {
   ChangePasswordScreen({super.key});
@@ -18,95 +14,160 @@ class ChangePasswordScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: const CommonText(
-          text: AppString.changePassword,
-          fontSize: 20,
-          fontWeight: .w600,
-        ),
-      ),
-      body: GetBuilder<ChangePasswordController>(
-        builder: (controller) {
-          return SingleChildScrollView(
-            padding: .symmetric(horizontal: 20.w),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: .start,
-                children: [
-                  70.height,
-
-                  /// current Password section
-                  const CommonText(text: AppString.currentPassword, bottom: 8),
-                  CommonTextField(
-                    controller: controller.currentPasswordController,
-                    hintText: AppString.currentPassword,
-                    validator: AppValidation.password,
-                    isPassword: true,
-                  ),
-
-                  /// New Password section
-                  const CommonText(
-                    text: AppString.newPassword,
-                    bottom: 8,
-                    top: 16,
-                  ),
-                  CommonTextField(
-                    controller: controller.newPasswordController,
-                    hintText: AppString.newPassword,
-                    validator: AppValidation.password,
-                    isPassword: true,
-                  ),
-
-                  /// confirm Password section
-                  const CommonText(
-                    text: AppString.confirmPassword,
-                    bottom: 8,
-                    top: 16,
-                  ),
-                  CommonTextField(
-                    controller: controller.confirmPasswordController,
-                    hintText: AppString.confirmPassword,
-                    validator: (value) => AppValidation.confirmPassword(
-                      value,
-                      controller.newPasswordController,
-                    ),
-                    isPassword: true,
-                  ),
-
-                  /// forget Password button
-                  Align(
-                    alignment: .centerLeft,
-                    child: InkWell(
-                      onTap: () => Get.toNamed(AppRoutes.forgotPassword),
-                      child: CommonText(
-                        text: AppString.forgotPassword,
-                        color: AppColors.primaryColor,
-                        fontWeight: .w600,
-                        fontSize: 18.sp,
-                        top: 16.h,
-                        bottom: 20.h,
+    return GetBuilder<ChangePasswordController>(
+      init: ChangePasswordController(),
+      builder: (controller) {
+        return Scaffold(
+          backgroundColor: const Color(0xFF0A0E1A),
+          body: SafeArea(
+            child: SingleChildScrollView(
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // 1. Back Button
+                    GestureDetector(
+                      onTap: () => Get.back(),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.adaptive.arrow_back,
+                            color: Colors.white,
+                            size: 20.sp,
+                          ),
+                          SizedBox(width: 6.w),
+                          const CommonText(
+                            text: "Back",
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.white,
+                          ),
+                        ],
                       ),
                     ),
-                  ),
+                    SizedBox(height: 16.h),
 
-                  /// submit Button
-                  CommonButton(
-                    titleText: AppString.confirm,
-                    isLoading: controller.isLoading,
-                    onTap: () {
-                      if (_formKey.currentState!.validate()) {
-                        controller.changePasswordRepo();
-                      }
-                    },
-                  ),
-                ],
+                    // 2. Page Title
+                    const CommonText(
+                      text: "Change Password",
+                      fontSize: 28,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.white,
+                    ),
+                    SizedBox(height: 24.h),
+
+                    // 3. OLD PASSWORD
+                    _buildFieldLabel("OLD PASSWORD"),
+                    CommonTextField(
+                      controller: controller.currentPasswordController,
+                      hintText: "At least 8 characters",
+                      validator: AppValidation.password,
+                      isPassword: true,
+                      isDark: true,
+                      prefixIcon: Icon(
+                        Icons.lock_outline_rounded,
+                        size: 18.sp,
+                        color: const Color(0xFF8E9BAE),
+                      ),
+                    ),
+                    SizedBox(height: 16.h),
+
+                    // 4. NEW PASSWORD
+                    _buildFieldLabel("NEW PASSWORD"),
+                    CommonTextField(
+                      controller: controller.newPasswordController,
+                      hintText: "At least 8 characters",
+                      validator: AppValidation.password,
+                      isPassword: true,
+                      isDark: true,
+                      prefixIcon: Icon(
+                        Icons.lock_outline_rounded,
+                        size: 18.sp,
+                        color: const Color(0xFF8E9BAE),
+                      ),
+                    ),
+                    SizedBox(height: 16.h),
+
+                    // 5. CONFIRM PASSWORD
+                    _buildFieldLabel("CONFIRM PASSWORD"),
+                    CommonTextField(
+                      controller: controller.confirmPasswordController,
+                      hintText: "Re-enter password",
+                      validator: (value) => AppValidation.confirmPassword(
+                        value,
+                        controller.newPasswordController,
+                      ),
+                      isPassword: true,
+                      isDark: true,
+                      prefixIcon: Icon(
+                        Icons.lock_outline_rounded,
+                        size: 18.sp,
+                        color: const Color(0xFF8E9BAE),
+                      ),
+                    ),
+                    SizedBox(height: 28.h),
+
+                    // 6. Save Changes Button
+                    GestureDetector(
+                      onTap: controller.isLoading
+                          ? null
+                          : () {
+                              if (_formKey.currentState!.validate()) {
+                                controller.changePasswordRepo();
+                              }
+                            },
+                      child: Container(
+                        width: double.infinity,
+                        padding: EdgeInsets.symmetric(vertical: 14.h),
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            colors: [Color(0xFF081A4A), Color(0xFF165DFF)],
+                            begin: Alignment.centerLeft,
+                            end: Alignment.centerRight,
+                          ),
+                          borderRadius: BorderRadius.circular(24.r),
+                        ),
+                        alignment: Alignment.center,
+                        child: controller.isLoading
+                            ? SizedBox(
+                                width: 20.w,
+                                height: 20.h,
+                                child: const CircularProgressIndicator(
+                                  color: Colors.white,
+                                  strokeWidth: 2,
+                                ),
+                              )
+                            : const CommonText(
+                                text: "Save Changes",
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white,
+                              ),
+                      ),
+                    ),
+                    SizedBox(height: 24.h),
+                  ],
+                ),
               ),
             ),
-          );
-        },
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildFieldLabel(String label) {
+    return Padding(
+      padding: EdgeInsets.only(bottom: 8.h),
+      child: CommonText(
+        text: label,
+        fontSize: 12,
+        fontWeight: FontWeight.w600,
+        color: const Color(0xFF8E9BAE),
+        letterSpacing: 0.5,
       ),
     );
   }

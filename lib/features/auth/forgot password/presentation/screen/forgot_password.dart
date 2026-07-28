@@ -24,7 +24,7 @@ class ForgotPasswordScreen extends StatelessWidget {
             children: [
               // Custom Header Back Button
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 16.h),
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
                 child: Align(
                   alignment: Alignment.centerLeft,
                   child: GestureDetector(
@@ -35,7 +35,7 @@ class ForgotPasswordScreen extends StatelessWidget {
                         Icon(
                           Icons.adaptive.arrow_back,
                           color: Colors.white,
-                          size: 18.sp,
+                          size: 20.sp,
                         ),
                         SizedBox(width: 6.w),
                         const CommonText(
@@ -49,10 +49,10 @@ class ForgotPasswordScreen extends StatelessWidget {
                   ),
                 ),
               ),
-              
+
               Expanded(
                 child: SingleChildScrollView(
-                  padding: EdgeInsets.symmetric(horizontal: 24.w),
+                  padding: EdgeInsets.symmetric(horizontal: 16.w),
                   child: Form(
                     key: _formKey,
                     child: Column(
@@ -73,7 +73,9 @@ class ForgotPasswordScreen extends StatelessWidget {
                             ),
                             boxShadow: [
                               BoxShadow(
-                                color: const Color(0xFF1239D4).withOpacity(0.35),
+                                color: const Color(
+                                  0xFF1239D4,
+                                ).withOpacity(0.35),
                                 blurRadius: 16.r,
                                 spreadRadius: 3.r,
                               ),
@@ -100,7 +102,8 @@ class ForgotPasswordScreen extends StatelessWidget {
 
                         // Subtitle instruction
                         CommonText(
-                          text: "Enter the email associated with your TFP account and we'll send you a code",
+                          text:
+                              "Enter the email associated with your TFP account and we'll send you a code",
                           fontSize: 14,
                           fontWeight: FontWeight.w400,
                           color: Colors.white.withOpacity(0.5),
@@ -133,7 +136,10 @@ class ForgotPasswordScreen extends StatelessWidget {
 
                         // Security disclaimer card
                         Container(
-                          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 16.w,
+                            vertical: 16.h,
+                          ),
                           decoration: BoxDecoration(
                             color: const Color(0xFF0C1322).withOpacity(0.06),
                             borderRadius: BorderRadius.circular(12.r),
@@ -153,7 +159,8 @@ class ForgotPasswordScreen extends StatelessWidget {
                               SizedBox(width: 12.w),
                               Expanded(
                                 child: CommonText(
-                                  text: "For your security, the code expires in 1 minutes and can only be used once.",
+                                  text:
+                                      "For your security, the code expires in 1 minutes and can only be used once.",
                                   fontSize: 12,
                                   fontWeight: FontWeight.w400,
                                   color: const Color(0xFF0084FF),

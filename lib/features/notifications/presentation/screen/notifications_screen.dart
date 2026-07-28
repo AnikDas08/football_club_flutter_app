@@ -90,7 +90,10 @@ class NotificationScreen extends StatelessWidget {
                 child: SafeArea(
                   bottom: false,
                   child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 20.w,
+                      vertical: 12.h,
+                    ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -101,7 +104,7 @@ class NotificationScreen extends StatelessWidget {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Icon(
-                                Icons.arrow_back,
+                                Icons.adaptive.arrow_back,
                                 color: Colors.white,
                                 size: 20.sp,
                               ),
@@ -119,7 +122,10 @@ class NotificationScreen extends StatelessWidget {
 
                         // "2 unread" badge pill
                         Container(
-                          padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 5.h),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 12.w,
+                            vertical: 5.h,
+                          ),
                           decoration: BoxDecoration(
                             color: Colors.white.withOpacity(0.12),
                             borderRadius: BorderRadius.circular(16.r),
@@ -150,7 +156,7 @@ class NotificationScreen extends StatelessWidget {
 
             // 2. Notification Items List Area
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20.w),
+              padding: EdgeInsets.symmetric(horizontal: 16.w),
               child: GetBuilder<NotificationsController>(
                 builder: (controller) {
                   if (controller.notifications.isNotEmpty) {
@@ -159,9 +165,12 @@ class NotificationScreen extends StatelessWidget {
                       physics: const NeverScrollableScrollPhysics(),
                       itemCount: controller.notifications.length,
                       itemBuilder: (context, index) {
-                        final NotificationModel item = controller.notifications[index];
+                        final NotificationModel item =
+                            controller.notifications[index];
                         return NotificationItemCard(
-                          title: item.type.isNotEmpty ? item.type : "Notification",
+                          title: item.type.isNotEmpty
+                              ? item.type
+                              : "Notification",
                           message: item.message,
                           time: item.createdAt.checkTime,
                           isUnread: index < 2,

@@ -19,4 +19,6 @@ class AppImages {
   static const String coach_image = 'assets/images/coach_image.png';
   static const String acheivement_image = 'assets/images/acheivement_image.png';
   static const String notification_image = 'assets/images/notification_image.png';
+  static const String statistics_image = 'assets/images/statistics_image.png';
+  static const String development_image = 'assets/images/development_image.png';
 }

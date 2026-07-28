@@ -39,7 +39,7 @@ class _SignInScreenState extends State<SignInScreen> {
             ),
             child: SafeArea(
               child: SingleChildScrollView(
-                padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 16.h),
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
                 child: Form(
                   key: _formKey,
                   child: Column(
@@ -155,7 +155,7 @@ class _SignInScreenState extends State<SignInScreen> {
                       SizedBox(height: 24.h),
 
                       // Divider Row (— or —)
-                      Row(
+                      /*Row(
                         children: [
                           Expanded(
                             child: Divider(
@@ -204,7 +204,7 @@ class _SignInScreenState extends State<SignInScreen> {
                           ),
                         ),
                       ),
-                      SizedBox(height: 48.h),
+                      SizedBox(height: 48.h),*/
 
                       // Terms & Privacy Policy Footer
                       Center(

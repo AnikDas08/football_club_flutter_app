@@ -154,7 +154,14 @@ class CoachFeedbackCard extends StatelessWidget {
 
               // "View Full Note >" Link
               GestureDetector(
-                onTap: onViewFullNoteTap,
+                onTap: onViewFullNoteTap ??
+                    () => showCoachFeedbackNoteDialog(
+                          context,
+                          coachName: coachName,
+                          date: date,
+                          avatarPath: avatarPath,
+                          feedback: feedback,
+                        ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   mainAxisSize: MainAxisSize.min,
@@ -178,6 +185,144 @@ class CoachFeedbackCard extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+
+  void showCoachFeedbackNoteDialog(
+    BuildContext context, {
+    required String coachName,
+    required String date,
+    required String avatarPath,
+    required String feedback,
+  }) {
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        backgroundColor: const Color(0xFF0C1427),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16.r),
+          side: BorderSide(
+            color: Colors.white.withOpacity(0.12),
+            width: 1,
+          ),
+        ),
+        child: Padding(
+          padding: EdgeInsets.all(20.w),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    width: 44.w,
+                    height: 44.h,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: const Color(0xFF2563EB),
+                        width: 2,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0xFF2563EB).withOpacity(0.35),
+                          blurRadius: 10,
+                          spreadRadius: 1,
+                        ),
+                      ],
+                    ),
+                    padding: EdgeInsets.all(2.r),
+                    child: ClipOval(
+                      child: Image.asset(
+                        avatarPath,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 12.w),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        CommonText(
+                          text: coachName,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                        ),
+                        SizedBox(height: 2.h),
+                        CommonText(
+                          text: date,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w400,
+                          color: const Color(0xFF8E9BAE),
+                        ),
+                      ],
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () => Navigator.pop(context),
+                    child: Icon(
+                      Icons.close_rounded,
+                      color: const Color(0xFF8E9BAE),
+                      size: 22.sp,
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 16.h),
+              Divider(
+                height: 1,
+                color: Colors.white.withOpacity(0.08),
+              ),
+              SizedBox(height: 16.h),
+              const CommonText(
+                text: "Full Coach Note",
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: Colors.white,
+              ),
+              SizedBox(height: 8.h),
+              Flexible(
+                child: SingleChildScrollView(
+                  child: CommonText(
+                    text: feedback,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w400,
+                    color: const Color(0xFFCBD5E1),
+                    textAlign: TextAlign.start,
+                    height: 1.5,
+                    maxLines: 50,
+                  ),
+                ),
+              ),
+              SizedBox(height: 20.h),
+              GestureDetector(
+                onTap: () => Navigator.pop(context),
+                child: Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.symmetric(vertical: 12.h),
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      colors: [Color(0xFF081A4A), Color(0xFF165DFF)],
+                      begin: Alignment.centerLeft,
+                      end: Alignment.centerRight,
+                    ),
+                    borderRadius: BorderRadius.circular(20.r),
+                  ),
+                  alignment: Alignment.center,
+                  child: const CommonText(
+                    text: "Close",
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
