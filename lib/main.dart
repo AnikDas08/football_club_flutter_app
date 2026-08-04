@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:football_club/services/socket/socket_service.dart';
 
 import 'config/core/global_error_handler.dart';
 import 'config/dependency/dependency_injection.dart';

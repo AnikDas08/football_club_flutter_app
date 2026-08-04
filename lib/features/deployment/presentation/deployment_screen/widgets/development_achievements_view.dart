@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../../../component/text/common_text.dart';
+
+import '../../../../../component/text/common_text.dart';
 
 class DevelopmentAchievementsView extends StatelessWidget {
   const DevelopmentAchievementsView({super.key});

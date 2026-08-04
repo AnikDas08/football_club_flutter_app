@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../../../component/text/common_text.dart';
+import 'package:football_club/component/text/common_text.dart';
 
 class DevelopmentGrowthCard extends StatelessWidget {
-  const DevelopmentGrowthCard({super.key});
+  final List<String> months;
+  final List<double> values;
+
+  const DevelopmentGrowthCard({
+    super.key,
+    required this.months,
+    required this.values,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final List<String> months = ["Aug", "Sep", "Oct", "Nov", "Dec", "Jan", "Feb"];
-    final List<double> values = [6.75, 7.1, 7.4, 7.35, 7.8, 8.0, 8.25];
     final List<String> yAxisLabels = ["9", "8.25", "7.5", "6.75", "6"];
 
     return Container(

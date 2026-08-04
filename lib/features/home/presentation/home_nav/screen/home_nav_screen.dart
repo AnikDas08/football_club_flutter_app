@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:football_club/component/text/common_text.dart';
-import 'package:football_club/features/deployment/presentation/screen/deployment_screen.dart';
+import 'package:football_club/features/deployment/presentation/deployment_screen/screen/deployment_screen.dart';
 import 'package:football_club/features/home/presentation/home_nav/container/home_nav_controller.dart';
 import 'package:football_club/features/home/presentation/home_screen/container/home_controller.dart';
 import 'package:football_club/features/home/presentation/home_screen/screen/home_screen.dart';

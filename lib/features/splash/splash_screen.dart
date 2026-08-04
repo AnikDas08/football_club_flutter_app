@@ -3,9 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../config/route/app_routes.dart';
 import 'package:get/get.dart';
-import '../../../component/image/common_image.dart';
 import '../../../component/text/common_text.dart';
-import '../../../services/storage/storage_services.dart';
 import '../../../utils/constants/app_colors.dart';
 import '../../../utils/constants/app_images.dart';
 

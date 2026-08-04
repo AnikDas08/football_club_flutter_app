@@ -1,7 +1,8 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../../../component/text/common_text.dart';
+
+import '../../../../../component/text/common_text.dart';
 
 class OverallScoreCard extends StatelessWidget {
   final double score;

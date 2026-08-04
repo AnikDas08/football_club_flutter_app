@@ -1,21 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../../../component/text/common_text.dart';
+import 'package:football_club/component/text/common_text.dart';
+import 'package:football_club/features/deployment/domain/entity/deployment_entity.dart';
 
 class FootballSkillsCard extends StatelessWidget {
-  const FootballSkillsCard({super.key});
+  final List<FootballSkillItem> skills;
+
+  const FootballSkillsCard({
+    super.key,
+    required this.skills,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final List<Map<String, dynamic>> skills = [
-      {"name": "Shooting", "stars": 4, "score": "4"},
-      {"name": "Passing", "stars": 5, "score": "4.5"},
-      {"name": "Dribbling", "stars": 4, "score": "4"},
-      {"name": "Football IQ", "stars": 5, "score": "4.5"},
-      {"name": "Speed", "stars": 4, "score": "3.5"},
-      {"name": "Communication", "stars": 4, "score": "4"},
-    ];
-
     return Container(
       width: double.infinity,
       padding: EdgeInsets.all(18.w),
@@ -39,8 +36,8 @@ class FootballSkillsCard extends StatelessWidget {
           SizedBox(height: 16.h),
           Column(
             children: skills.map((skill) {
-              final int starCount = skill["stars"] as int;
-              final String scoreText = skill["score"] as String;
+              final int starCount = skill.stars;
+              final String scoreText = skill.score;
 
               return Padding(
                 padding: EdgeInsets.only(bottom: 12.h),
@@ -49,7 +46,7 @@ class FootballSkillsCard extends StatelessWidget {
                   children: [
                     // Skill name
                     CommonText(
-                      text: skill["name"] as String,
+                      text: skill.name,
                       fontSize: 14,
                       fontWeight: FontWeight.w400,
                       color: const Color(0xFFCBD5E1),
