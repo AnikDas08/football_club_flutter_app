@@ -6,8 +6,9 @@ import '../../features/auth/presentation/sign_in/container/sign_in_controller.da
 import '../../features/auth/presentation/sign_up/container/sign_up_controller.dart';
 import '../../features/message/presentation/controller/chat_controller.dart';
 import '../../features/message/presentation/controller/message_controller.dart';
-import '../../features/notifications/presentation/controller/notifications_controller.dart';
-import '../../features/profile/presentation/controller/profile_controller.dart';
+import '../../features/notifications/presentation/notifications_screen/container/notifications_controller.dart';
+import '../../features/profile/presentation/profile_screen/container/profile_controller.dart';
+
 class DependencyInjection extends Bindings {
   @override
   void dependencies() {

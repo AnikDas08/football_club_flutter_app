@@ -117,7 +117,8 @@ class _DeploymentScreenState extends State<DeploymentScreen> {
                                 onTap: () =>
                                     Get.toNamed(AppRoutes.notifications),
                                 child: Container(
-                                  padding: EdgeInsets.all(10.r),
+                                  width: 40.w,
+                                  height: 40.h,
                                   decoration: BoxDecoration(
                                     color: const Color(0xFF0C1322)
                                         .withOpacity(0.6),
@@ -127,27 +128,30 @@ class _DeploymentScreenState extends State<DeploymentScreen> {
                                       width: 1,
                                     ),
                                   ),
-                                  child: Stack(
-                                    clipBehavior: Clip.none,
-                                    children: [
-                                      Icon(
-                                        Icons.notifications_none_outlined,
-                                        color: Colors.white,
-                                        size: 22.sp,
-                                      ),
-                                      Positioned(
-                                        right: 2.w,
-                                        top: 2.h,
-                                        child: Container(
-                                          width: 8.w,
-                                          height: 8.h,
-                                          decoration: const BoxDecoration(
-                                            color: Color(0xFF2563EB),
-                                            shape: BoxShape.circle,
+                                  child: Center(
+                                    child: Stack(
+                                      alignment: Alignment.center,
+                                      clipBehavior: Clip.none,
+                                      children: [
+                                        Icon(
+                                          Icons.notifications_none_outlined,
+                                          color: Colors.white,
+                                          size: 22.sp,
+                                        ),
+                                        Positioned(
+                                          right: 0,
+                                          top: 0,
+                                          child: Container(
+                                            width: 8.w,
+                                            height: 8.h,
+                                            decoration: const BoxDecoration(
+                                              color: Color(0xFF2563EB),
+                                              shape: BoxShape.circle,
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),

@@ -5,8 +5,8 @@ import 'package:football_club/features/deployment/presentation/deployment_screen
 import 'package:football_club/features/home/presentation/home_nav/container/home_nav_controller.dart';
 import 'package:football_club/features/home/presentation/home_screen/container/home_controller.dart';
 import 'package:football_club/features/home/presentation/home_screen/screen/home_screen.dart';
-import 'package:football_club/features/profile/presentation/screen/profile_screen.dart';
-import 'package:football_club/features/statistics/presentation/screen/statistics_screen.dart';
+import 'package:football_club/features/profile/presentation/profile_screen/screen/profile_screen.dart';
+import 'package:football_club/features/statistics/presentation/statistics_screen/screen/statistics_screen.dart';
 import 'package:get/get.dart';
 
 class HomeNavScreen extends StatelessWidget {

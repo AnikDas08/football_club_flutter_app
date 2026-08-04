@@ -1,41 +1,42 @@
+import 'package:flutter/material.dart';
+import '../../domain/entity/notification_entity.dart';
+
 class NotificationModel {
   final String id;
+  final String title;
   final String message;
-  final String linkId;
-  final String type;
-  final String role;
-  final String receiver;
-  final int v;
-  final DateTime createdAt;
-  final DateTime updatedAt;
+  final String time;
+  final bool isUnread;
 
   const NotificationModel({
     required this.id,
+    required this.title,
     required this.message,
-    required this.linkId,
-    required this.type,
-    required this.role,
-    required this.receiver,
-    required this.v,
-    required this.createdAt,
-    required this.updatedAt,
+    required this.time,
+    required this.isUnread,
   });
 
   factory NotificationModel.fromJson(Map<String, dynamic>? json) {
     return NotificationModel(
-      id: json?['_id'] ?? '',
+      id: json?['_id'] ?? json?['id'] ?? '',
+      title: json?['title'] ?? 'Notification',
       message: json?['message'] ?? '',
-      linkId: json?['linkId'] ?? '',
-      type: json?['type'] ?? '',
-      role: json?['role'] ?? '',
-      receiver: json?['receiver'] ?? '',
-      v: json?['__v'] ?? 0,
-      createdAt:
-          DateTime.tryParse(json?['createdAt'] ?? '') ??
-          DateTime.fromMillisecondsSinceEpoch(0),
-      updatedAt:
-          DateTime.tryParse(json?['updatedAt'] ?? '') ??
-          DateTime.fromMillisecondsSinceEpoch(0),
+      time: json?['time'] ?? 'Just now',
+      isUnread: json?['isUnread'] ?? false,
+    );
+  }
+
+  NotificationEntity toEntity() {
+    return NotificationEntity(
+      id: id,
+      title: title,
+      message: message,
+      time: time,
+      isUnread: isUnread,
+      icon: isUnread
+          ? Icons.chat_bubble_outline_rounded
+          : Icons.notifications_none_outlined,
+      iconColor: isUnread ? const Color(0xFF3B82F6) : const Color(0xFF8E9BAE),
     );
   }
 }

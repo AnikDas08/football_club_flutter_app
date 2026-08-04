@@ -10,7 +10,7 @@ import '../../../../utils/helpers/validation.dart';
 import '../../../../../utils/constants/app_colors.dart';
 import '../../../../../utils/constants/app_string.dart';
 
-import '../controller/profile_controller.dart';
+import '../profile_screen/container/profile_controller.dart';
 
 class EditProfileAllFiled extends StatelessWidget {
   final ProfileController controller;

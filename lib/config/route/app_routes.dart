@@ -9,14 +9,14 @@ import 'package:football_club/features/home/presentation/coach_feedback_screen/s
 import 'package:football_club/features/home/presentation/home_nav/screen/home_nav_screen.dart';
 import 'package:football_club/features/message/presentation/screen/chat_screen.dart';
 import 'package:football_club/features/message/presentation/screen/message_screen.dart';
-import 'package:football_club/features/notifications/presentation/screen/notifications_screen.dart';
+import 'package:football_club/features/notifications/presentation/notifications_screen/screen/notifications_screen.dart';
 import 'package:football_club/features/onboarding/onboarding_screen/onboarding_screen.dart';
-import 'package:football_club/features/profile/presentation/screen/about_tfp_screen.dart';
-import 'package:football_club/features/profile/presentation/screen/edit_profile.dart';
-import 'package:football_club/features/profile/presentation/screen/help_support_screen.dart';
-import 'package:football_club/features/profile/presentation/screen/privacy_policy_screen.dart';
-import 'package:football_club/features/profile/presentation/screen/profile_screen.dart';
-import 'package:football_club/features/profile/presentation/screen/terms_and_conditions_screen.dart';
+import 'package:football_club/features/profile/presentation/profile_screen/screen/about_tfp_screen.dart';
+import 'package:football_club/features/profile/presentation/profile_screen/screen/edit_profile.dart';
+import 'package:football_club/features/profile/presentation/profile_screen/screen/help_support_screen.dart';
+import 'package:football_club/features/profile/presentation/profile_screen/screen/privacy_policy_screen.dart';
+import 'package:football_club/features/profile/presentation/profile_screen/screen/profile_screen.dart';
+import 'package:football_club/features/profile/presentation/profile_screen/screen/terms_and_conditions_screen.dart';
 import 'package:football_club/features/splash/splash_screen.dart';
 import 'package:get/get.dart';
 
@@ -63,7 +63,10 @@ class AppRoutes {
     GetPage(name: aboutTfp, page: () => const AboutTfpScreen()),
     GetPage(name: helpSupport, page: () => const HelpSupportScreen()),
     GetPage(name: privacyPolicy, page: () => const PrivacyPolicyScreen()),
-    GetPage(name: termsOfServices, page: () => const TermsAndConditionsScreen()),
+    GetPage(
+      name: termsOfServices,
+      page: () => const TermsAndConditionsScreen(),
+    ),
     GetPage(name: allCoachFeedback, page: () => const AllCoachFeedbackScreen()),
   ];
 }
