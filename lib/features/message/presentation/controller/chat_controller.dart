@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../../services/api/api_client.dart';
 import '../../data/model/chat_list_model.dart';
 import '../../../../config/api/api_end_point.dart';
 import '../../../../services/api/api_service.dart';
@@ -15,8 +14,6 @@ class ChatController extends GetxController {
   bool isMoreLoading = false;
   int page = 1;
   final List<ChatModel> chats = [];
-
-  final ApiClient apiClient = DioApiClient();
 
   /// Scroll controller
   final ScrollController scrollController = ScrollController();
@@ -64,7 +61,7 @@ class ChatController extends GetxController {
         update();
       }
 
-      final response = await apiClient.get('${ApiEndPoint.chats}?page=$page');
+      final response = await ApiService.get('${ApiEndPoint.chats}?page=$page');
 
       if (response.statusCode != 200) {
         throw Exception(response.message);

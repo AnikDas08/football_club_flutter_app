@@ -7,8 +7,8 @@ import '../../../utils/constants/app_colors.dart';
 import '../text/common_text.dart';
 
 // ignore: must_be_immutable
-class CommonTextField extends StatelessWidget {
-  CommonTextField({
+class CommonTextField extends StatefulWidget {
+  const CommonTextField({
     super.key,
     this.hintText,
     this.labelText,
@@ -61,7 +61,6 @@ class CommonTextField extends StatelessWidget {
   final int? mexLength;
   final bool isPassword;
   final bool? isDense;
-  RxBool obscureText = false.obs;
   final Function(String)? onSubmitted;
   final Function(String)? onChanged;
   final VoidCallback? onTap;
@@ -79,45 +78,52 @@ class CommonTextField extends StatelessWidget {
   final bool isDark;
 
   @override
+  State<CommonTextField> createState() => _CommonTextFieldState();
+}
+
+class _CommonTextFieldState extends State<CommonTextField> {
+  final RxBool obscureText = false.obs;
+
+  @override
   Widget build(BuildContext context) {
     // Determine defaults based on isDark theme
-    final resolvedFillColor = fillColor ?? (isDark ? const Color(0xFF0C1322).withOpacity(0.6) : AppColors.white);
-    final resolvedTextColor = textColor ?? (isDark ? Colors.white : AppColors.black);
-    final resolvedHintTextColor = hintTextColor ?? (isDark ? AppColors.textColor : AppColors.textColor);
-    final resolvedLabelTextColor = labelTextColor ?? (isDark ? AppColors.textColor : AppColors.textColor);
-    final resolvedRadius = borderRadius ?? (isDark ? 12.0 : 10.0);
+    final resolvedFillColor = widget.fillColor ?? (widget.isDark ? const Color(0xFF0C1322).withOpacity(0.6) : AppColors.white);
+    final resolvedTextColor = widget.textColor ?? (widget.isDark ? Colors.white : AppColors.black);
+    final resolvedHintTextColor = widget.hintTextColor ?? (widget.isDark ? AppColors.textSecondary : AppColors.textSecondary);
+    final resolvedLabelTextColor = widget.labelTextColor ?? (widget.isDark ? AppColors.textColor : AppColors.textColor);
+    final resolvedRadius = widget.borderRadius ?? (widget.isDark ? 12.0 : 10.0);
     
-    final resolvedPrefixIconConstraints = prefixIconConstraints ?? 
-        (isDark 
+    final resolvedPrefixIconConstraints = widget.prefixIconConstraints ?? 
+        (widget.isDark 
             ? BoxConstraints(minWidth: 48.w, minHeight: 24.h)
             : const BoxConstraints(maxWidth: 30, maxHeight: 30));
 
     final defaultBorder = OutlineInputBorder(
       borderRadius: BorderRadius.circular(resolvedRadius.r),
       borderSide: BorderSide(
-        color: isDark 
+        color: widget.isDark 
             ? Colors.white.withOpacity(0.1) 
-            : (borderColor == AppColors.transparent ? Colors.grey.withValues(alpha: 0.3) : borderColor),
+            : (widget.borderColor == AppColors.transparent ? Colors.grey.withValues(alpha: 0.3) : widget.borderColor),
       ),
     );
 
-    final resolvedEnabledBorder = enabledBorder ?? defaultBorder;
+    final resolvedEnabledBorder = widget.enabledBorder ?? defaultBorder;
     
-    final resolvedFocusedBorder = focusedBorder ?? (isDark 
+    final resolvedFocusedBorder = widget.focusedBorder ?? (widget.isDark 
         ? OutlineInputBorder(
             borderRadius: BorderRadius.circular(resolvedRadius.r),
             borderSide: const BorderSide(color: Color(0xFF1239D4), width: 1.5),
           )
         : defaultBorder);
 
-    final resolvedErrorBorder = errorBorder ?? (isDark 
+    final resolvedErrorBorder = widget.errorBorder ?? (widget.isDark 
         ? OutlineInputBorder(
             borderRadius: BorderRadius.circular(resolvedRadius.r),
             borderSide: const BorderSide(color: Colors.red, width: 1),
           )
         : defaultBorder);
 
-    final resolvedFocusedErrorBorder = focusedErrorBorder ?? (isDark 
+    final resolvedFocusedErrorBorder = widget.focusedErrorBorder ?? (widget.isDark 
         ? OutlineInputBorder(
             borderRadius: BorderRadius.circular(resolvedRadius.r),
             borderSide: const BorderSide(color: Colors.red, width: 1.5),
@@ -127,48 +133,48 @@ class CommonTextField extends StatelessWidget {
     return Obx(
       () => TextFormField(
         autovalidateMode: AutovalidateMode.onUnfocus,
-        keyboardType: keyboardType,
-        controller: controller,
-        obscureText: isPassword ? !obscureText.value : obscureText.value,
-        textInputAction: textInputAction,
-        maxLength: mexLength,
-        onChanged: onChanged,
-        inputFormatters: inputFormatters,
+        keyboardType: widget.keyboardType,
+        controller: widget.controller,
+        obscureText: widget.isPassword ? !obscureText.value : obscureText.value,
+        textInputAction: widget.textInputAction,
+        maxLength: widget.mexLength,
+        onChanged: widget.onChanged,
+        inputFormatters: widget.inputFormatters,
         style: TextStyle(fontSize: 14, color: resolvedTextColor),
-        onFieldSubmitted: onSubmitted,
-        onTap: onTap,
-        validator: validator,
-        maxLines: isPassword ? 1 : maxLines,
+        onFieldSubmitted: widget.onSubmitted,
+        onTap: widget.onTap,
+        validator: widget.validator,
+        maxLines: widget.isPassword ? 1 : widget.maxLines,
         decoration: InputDecoration(
           errorMaxLines: 2,
-          isDense: isDense,
+          isDense: widget.isDense,
           filled: true,
           prefixIconConstraints: resolvedPrefixIconConstraints,
-          prefixIcon: prefixIcon != null && isDark
+          prefixIcon: widget.prefixIcon != null && widget.isDark
               ? IconTheme(
                   data: IconThemeData(color: AppColors.textColor),
-                  child: prefixIcon!,
+                  child: widget.prefixIcon!,
                 )
-              : prefixIcon,
+              : widget.prefixIcon,
           fillColor: resolvedFillColor,
 
           counterText: '',
           contentPadding: EdgeInsets.symmetric(
-            horizontal: paddingHorizontal.w,
-            vertical: paddingVertical.h,
+            horizontal: widget.paddingHorizontal.w,
+            vertical: widget.paddingVertical.h,
           ),
-          border: border ?? defaultBorder,
+          border: widget.border ?? defaultBorder,
           enabledBorder: resolvedEnabledBorder,
           focusedBorder: resolvedFocusedBorder,
-          disabledBorder: border ?? defaultBorder,
+          disabledBorder: widget.border ?? defaultBorder,
           errorBorder: resolvedErrorBorder,
           focusedErrorBorder: resolvedFocusedErrorBorder,
-          hintText: hintText,
-          labelText: labelText,
-          hintStyle: GoogleFonts.roboto(fontSize: 14, color: resolvedHintTextColor),
-          labelStyle: GoogleFonts.roboto(fontSize: 14, color: resolvedLabelTextColor),
-          prefix: CommonText(text: prefixText ?? '', fontWeight: FontWeight.w400),
-          suffixIcon: isPassword ? _buildPasswordSuffixIcon(resolvedTextColor) : suffixIcon,
+          hintText: widget.hintText,
+          labelText: widget.labelText,
+          hintStyle: GoogleFonts.inter(fontSize: 12, color: resolvedHintTextColor),
+          labelStyle: GoogleFonts.inter(fontSize: 12, color: resolvedLabelTextColor),
+          prefix: CommonText(text: widget.prefixText ?? '', fontWeight: FontWeight.w400),
+          suffixIcon: widget.isPassword ? _buildPasswordSuffixIcon(resolvedTextColor) : widget.suffixIcon,
         ),
       ),
     );

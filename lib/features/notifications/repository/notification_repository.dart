@@ -1,12 +1,10 @@
-import '../../../services/api/api_client.dart';
 import '../../../services/api/api_service.dart';
 import '../../../config/api/api_end_point.dart';
 import '../data/model/notification_model.dart';
 
 Future<List<NotificationModel>> notificationRepository(int page) async {
   try {
-    final ApiClient apiClient = DioApiClient();
-    final response = await apiClient.get(
+    final response = await ApiService.get(
       '${ApiEndPoint.notifications}?page=$page',
     );
 

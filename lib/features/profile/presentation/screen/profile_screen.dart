@@ -537,6 +537,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 fontWeight: FontWeight.w400,
                 color: Color(0xFF8E9BAE),
                 textAlign: TextAlign.center,
+                maxLines: 3,
               ),
               SizedBox(height: 24.h),
               Row(

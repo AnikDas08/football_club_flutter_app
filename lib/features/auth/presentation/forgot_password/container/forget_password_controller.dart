@@ -1,0 +1,187 @@
+import 'dart:async';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:football_club/config/api/api_end_point.dart';
+import 'package:football_club/config/route/app_routes.dart';
+import 'package:football_club/features/auth/presentation/forgot_password/widgets/password_changed_dialog.dart';
+import 'package:football_club/services/api/api_service.dart';
+import 'package:football_club/utils/app_snackbar.dart';
+import 'package:football_club/utils/enum/enum.dart';
+import 'package:get/get.dart';
+
+class ForgetPasswordController extends GetxController {
+  @override
+  void onInit() {
+    super.onInit();
+    setValue();
+  }
+
+  static ForgetPasswordController get instance =>
+      Get.find<ForgetPasswordController>();
+
+  void setValue() {
+    if (kDebugMode) return;
+    emailController.text = 'developernaimul00@gmail.com';
+    otpController.text = '123456';
+    passwordController.text = 'hello123';
+    confirmPasswordController.text = 'hello123';
+  }
+
+  bool isLoading = false;
+  ForgetPasswordStep currentStep = ForgetPasswordStep.email;
+  String forgetPasswordToken = '';
+  static const int _otpDurationSeconds = 180;
+  int remainingSeconds = 0;
+  Timer? _timer;
+  final emailController = TextEditingController();
+  final otpController = TextEditingController();
+  final passwordController = TextEditingController();
+  final confirmPasswordController = TextEditingController();
+
+  bool get canResendOtp => remainingSeconds == 0;
+
+  String get timerText {
+    final minutes = remainingSeconds ~/ 60;
+    final seconds = remainingSeconds % 60;
+    return '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
+  }
+
+  /// ===================== TIMER =====================
+  void startOtpTimer() {
+    _timer?.cancel();
+    remainingSeconds = _otpDurationSeconds;
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (remainingSeconds == 0) {
+        timer.cancel();
+      } else {
+        remainingSeconds--;
+        update();
+      }
+    });
+  }
+
+  /// ===================== Forget Password Repo =====================
+  Future<void> sendForgetPasswordEmail() async {
+    currentStep = ForgetPasswordStep.otp;
+    startOtpTimer();
+    Get.toNamed(AppRoutes.verifyEmail);
+    return;
+    try {
+      _setLoading(true);
+      final response = await ApiService.post(
+        ApiEndPoint.forgotPassword,
+        body: {'email': emailController.text.trim()},
+      );
+      if (response.statusCode == 200) {
+        AppSnackbar.success(title: 'Success', message: response.message);
+        currentStep = ForgetPasswordStep.otp;
+        startOtpTimer();
+        Get.toNamed(AppRoutes.verifyEmail);
+      } else {
+        AppSnackbar.error(
+          title: response.statusCode.toString(),
+          message: response.message,
+        );
+      }
+    } catch (e, s) {
+      debugPrint('❌ sendForgetPasswordEmail error: $e');
+      debugPrintStack(stackTrace: s);
+      AppSnackbar.error(
+        title: 'Error',
+        message: 'Failed to send verification email. Please try again.',
+      );
+    } finally {
+      _setLoading(false);
+    }
+  }
+
+  /// ===================== VERIFY OTP Repo =====================
+  Future<void> verifyOtp() async {
+    try {
+      _setLoading(true);
+      final response = await ApiService.post(
+        ApiEndPoint.verifyOtp,
+        body: {
+          'email': emailController.text.trim(),
+          'otp': otpController.text.trim(),
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = response.data['data'] ?? {};
+        forgetPasswordToken = data['forgetPasswordToken'] ?? '';
+
+        currentStep = ForgetPasswordStep.resetPassword;
+        Get.toNamed(AppRoutes.createPassword);
+      } else {
+        AppSnackbar.error(title: 'Error', message: response.message);
+      }
+    } catch (e, s) {
+      debugPrint('❌ verifyOtp error: $e');
+      debugPrintStack(stackTrace: s);
+      AppSnackbar.error(title: 'Error', message: 'OTP verification failed.');
+    } finally {
+      _setLoading(false);
+    }
+  }
+
+  /// ===================== RESET PASSWORD Repo =====================
+  Future<void> resetPassword() async {
+    _clearAll();
+    Get.dialog(
+      const PasswordChangedDialog(),
+      barrierColor: const Color(0xFF020914).withOpacity(0.85),
+      barrierDismissible: false,
+    );
+    return;
+    try {
+      _setLoading(true);
+      final response = await ApiService.post(
+        ApiEndPoint.resetPassword,
+        header: {'Forget-password': 'Forget-password $forgetPasswordToken'},
+        body: {
+          'email': emailController.text.trim(),
+          'password': passwordController.text.trim(),
+        },
+      );
+      if (response.statusCode == 200) {
+        AppSnackbar.success(title: 'Success', message: response.message);
+        _clearAll();
+        Get.offAllNamed(AppRoutes.signIn);
+      } else {
+        AppSnackbar.error(title: 'Error', message: response.message);
+      }
+    } catch (e, s) {
+      debugPrint('❌ resetPassword error: $e');
+      debugPrintStack(stackTrace: s);
+      AppSnackbar.error(title: 'Error', message: 'Password reset failed.');
+    } finally {
+      _setLoading(false);
+    }
+  }
+
+  /// ===================== HELPERS =====================
+  void _setLoading(bool value) {
+    isLoading = value;
+    update();
+  }
+
+  void _clearAll() {
+    emailController.clear();
+    otpController.clear();
+    passwordController.clear();
+    confirmPasswordController.clear();
+    _timer?.cancel();
+    remainingSeconds = 0;
+  }
+
+  @override
+  void onClose() {
+    _timer?.cancel();
+    emailController.dispose();
+    otpController.dispose();
+    passwordController.dispose();
+    confirmPasswordController.dispose();
+    super.onClose();
+  }
+}

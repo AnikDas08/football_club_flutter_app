@@ -1,12 +1,41 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../component/text/common_text.dart';
 import '../../../../utils/constants/app_images.dart';
 
 class AboutTfpScreen extends StatelessWidget {
   const AboutTfpScreen({super.key});
+
+  Future<void> _sendEmail(String email) async {
+    final Uri launchUri = Uri(
+      scheme: 'mailto',
+      path: email,
+    );
+    try {
+      if (!await launchUrl(launchUri, mode: LaunchMode.externalApplication)) {
+        await launchUrl(launchUri);
+      }
+    } catch (e) {
+      debugPrint('Could not launch email: $e');
+    }
+  }
+
+  Future<void> _makePhoneCall(String phoneNumber) async {
+    final Uri launchUri = Uri(
+      scheme: 'tel',
+      path: phoneNumber,
+    );
+    try {
+      if (!await launchUrl(launchUri, mode: LaunchMode.externalApplication)) {
+        await launchUrl(launchUri);
+      }
+    } catch (e) {
+      debugPrint('Could not launch phone call: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -58,8 +87,8 @@ class AboutTfpScreen extends StatelessWidget {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(16.r),
                   image: const DecorationImage(
-                    image: AssetImage(AppImages.home_bg),
-                    fit: BoxFit.cover,
+                    image: AssetImage("assets/images/ftf_image.png"),
+                    fit: BoxFit.fill,
                   ),
                 ),
                 child: Container(
@@ -129,6 +158,7 @@ class AboutTfpScreen extends StatelessWidget {
                       iconBgColor: const Color(0xFF091C4A),
                       title: "Email Us",
                       subtitle: "support@tfp.com",
+                      onTap: () => _sendEmail("support@tfp.com"),
                     ),
                   ),
                   SizedBox(width: 12.w),
@@ -139,6 +169,7 @@ class AboutTfpScreen extends StatelessWidget {
                       iconBgColor: const Color(0xFF052E16),
                       title: "Call Us",
                       subtitle: "+44 161 000 0000",
+                      onTap: () => _makePhoneCall("+441610000000"),
                     ),
                   ),
                 ],
@@ -237,7 +268,11 @@ class AboutTfpScreen extends StatelessWidget {
                       height: 20.h,
                       color: Colors.white.withOpacity(0.05),
                     ),
-                    _buildSpecRow("Contact", "info@tfp.academy"),
+                    _buildSpecRow(
+                      "Contact",
+                      "info@tfp.academy",
+                      onTap: () => _sendEmail("info@tfp.academy"),
+                    ),
                   ],
                 ),
               ),
@@ -255,41 +290,45 @@ class AboutTfpScreen extends StatelessWidget {
     required Color iconBgColor,
     required String title,
     required String subtitle,
+    VoidCallback? onTap,
   }) {
-    return Container(
-      padding: EdgeInsets.symmetric(vertical: 18.h, horizontal: 12.w),
-      decoration: BoxDecoration(
-        color: const Color(0xFF0C1427).withOpacity(0.85),
-        borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: Colors.white.withOpacity(0.12), width: 1),
-      ),
-      child: Column(
-        children: [
-          Container(
-            width: 38.w,
-            height: 38.h,
-            decoration: BoxDecoration(
-              color: iconBgColor,
-              shape: BoxShape.circle,
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: EdgeInsets.symmetric(vertical: 18.h, horizontal: 12.w),
+        decoration: BoxDecoration(
+          color: const Color(0xFF0C1427).withOpacity(0.85),
+          borderRadius: BorderRadius.circular(12.r),
+          border: Border.all(color: Colors.white.withOpacity(0.12), width: 1),
+        ),
+        child: Column(
+          children: [
+            Container(
+              width: 38.w,
+              height: 38.h,
+              decoration: BoxDecoration(
+                color: iconBgColor,
+                shape: BoxShape.circle,
+              ),
+              alignment: Alignment.center,
+              child: Icon(icon, color: iconColor, size: 20.sp),
             ),
-            alignment: Alignment.center,
-            child: Icon(icon, color: iconColor, size: 20.sp),
-          ),
-          SizedBox(height: 10.h),
-          CommonText(
-            text: title,
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
-            color: Colors.white,
-          ),
-          SizedBox(height: 4.h),
-          CommonText(
-            text: subtitle,
-            fontSize: 12,
-            fontWeight: FontWeight.w400,
-            color: const Color(0xFF8E9BAE),
-          ),
-        ],
+            SizedBox(height: 10.h),
+            CommonText(
+              text: title,
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: Colors.white,
+            ),
+            SizedBox(height: 4.h),
+            CommonText(
+              text: subtitle,
+              fontSize: 12,
+              fontWeight: FontWeight.w400,
+              color: const Color(0xFF8E9BAE),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -325,23 +364,26 @@ class AboutTfpScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSpecRow(String label, String value) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        CommonText(
-          text: label,
-          fontSize: 13,
-          fontWeight: FontWeight.w400,
-          color: const Color(0xFF8E9BAE),
-        ),
-        CommonText(
-          text: value,
-          fontSize: 13,
-          fontWeight: FontWeight.w600,
-          color: Colors.white,
-        ),
-      ],
+  Widget _buildSpecRow(String label, String value, {VoidCallback? onTap}) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          CommonText(
+            text: label,
+            fontSize: 13,
+            fontWeight: FontWeight.w400,
+            color: const Color(0xFF8E9BAE),
+          ),
+          CommonText(
+            text: value,
+            fontSize: 13,
+            fontWeight: FontWeight.w600,
+            color: onTap != null ? const Color(0xFF2563EB) : Colors.white,
+          ),
+        ],
+      ),
     );
   }
 }
