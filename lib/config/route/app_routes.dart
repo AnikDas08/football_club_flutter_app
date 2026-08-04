@@ -5,7 +5,7 @@ import 'package:football_club/features/auth/presentation/forgot_password/screen/
 import 'package:football_club/features/auth/presentation/sign_in/screen/sign_in_screen.dart';
 import 'package:football_club/features/auth/presentation/sign_up/screen/sign_up_screen.dart';
 import 'package:football_club/features/auth/presentation/sign_up/screen/verify_user.dart';
-import 'package:football_club/features/home/presentation/coach_feedback/screen/all_coach_feedback_screen.dart';
+import 'package:football_club/features/home/presentation/coach_feedback_screen/screen/all_coach_feedback_screen.dart';
 import 'package:football_club/features/home/presentation/home_nav/screen/home_nav_screen.dart';
 import 'package:football_club/features/message/presentation/screen/chat_screen.dart';
 import 'package:football_club/features/message/presentation/screen/message_screen.dart';

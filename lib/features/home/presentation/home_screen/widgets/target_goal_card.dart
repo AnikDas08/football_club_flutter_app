@@ -13,12 +13,12 @@ class TargetGoalCard extends StatelessWidget {
 
   const TargetGoalCard({
     super.key,
-    this.categoryTitle = 'Current Target',
-    this.statusText = 'In Progress',
-    this.goalTitle = 'Improve Left-Foot Finishing',
-    this.description = 'Achieve 70% accuracy on left-foot shots from inside the box.',
-    this.progress = 0.62,
-    this.dueDate = 'Due: 28 Feb 2025',
+    required this.categoryTitle,
+    required this.statusText,
+    required this.goalTitle,
+    required this.description,
+    required this.progress,
+    required this.dueDate,
     this.progressGradientColors = const [
       Color(0xFF081A4A),
       Color(0xFF1239D4),

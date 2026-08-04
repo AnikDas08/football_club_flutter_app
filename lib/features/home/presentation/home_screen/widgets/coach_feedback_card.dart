@@ -13,12 +13,11 @@ class CoachFeedbackCard extends StatelessWidget {
 
   const CoachFeedbackCard({
     super.key,
-    this.title = 'Latest Coach Feedback',
-    this.coachName = 'Coach Jay Railton',
-    this.date = '14 Feb',
-    this.feedback =
-        'Outstanding positioning in the second half.\nJames read the game brilliantly and created',
-    this.avatarPath = "assets/images/coach_image.png",
+    required this.title,
+    required this.coachName,
+    required this.date,
+    required this.feedback,
+    required this.avatarPath,
     this.onViewAllTap,
     this.onViewFullNoteTap,
   });

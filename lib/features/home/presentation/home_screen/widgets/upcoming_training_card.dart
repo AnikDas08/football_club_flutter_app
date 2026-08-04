@@ -13,12 +13,12 @@ class UpcomingTrainingCard extends StatelessWidget {
 
   const UpcomingTrainingCard({
     super.key,
-    this.title = 'Upcoming Training',
-    this.daysLeftText = '2 days',
-    this.dateText = 'Tuesday, 18 Feb · 6:00 PM',
-    this.locationText = 'TFP Academy, Manchester',
-    this.coachName = 'Coach Jay Railton',
-    this.coachAvatar = AppImages.coach_image,
+    required this.title,
+    required this.daysLeftText,
+    required this.dateText,
+    required this.locationText,
+    required this.coachName,
+    required this.coachAvatar,
   });
 
   @override

@@ -10,9 +10,9 @@ class RecentAchievementCard extends StatelessWidget {
 
   const RecentAchievementCard({
     super.key,
-    this.category = 'RECENT ACHIEVEMENT',
-    this.achievementTitle = 'Player of the Match',
-    this.matchInfo = 'U14 League vs Riverside FC · 5 Feb 2025',
+    required this.category,
+    required this.achievementTitle,
+    required this.matchInfo,
   });
 
   @override

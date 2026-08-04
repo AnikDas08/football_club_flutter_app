@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:football_club/component/image/common_image.dart';
 import 'package:football_club/component/text/common_text.dart';
-import 'package:football_club/utils/constants/app_images.dart';
 
 class PlayerProgressCard extends StatelessWidget {
   final String imagePath;
@@ -16,11 +15,11 @@ class PlayerProgressCard extends StatelessWidget {
 
   const PlayerProgressCard({
     super.key,
-    this.imagePath = AppImages.profile_image,
-    this.name = 'James Thornton',
-    this.level = 'Advanced',
-    this.subtitle = 'U14 Elite · Attacking Midfielder',
-    this.progress = 0.87,
+    required this.imagePath,
+    required this.name,
+    required this.level,
+    required this.subtitle,
+    required this.progress,
     this.progressText,
     this.progressGradientColors = const [Color(0xFF081A4A), Color(0xFF1239D4)],
   });
