@@ -4,6 +4,7 @@ class LocalStorageKeys {
   static const String myRole = 'myRole';
   static const String isLogIn = 'isLogIn';
   static const String userId = 'userId';
+  static const String playerId = 'playerId';
   static const String myImage = 'myImage';
   static const String myName = 'myName';
   static const String myEmail = 'myEmail';

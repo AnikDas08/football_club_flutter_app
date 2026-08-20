@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:football_club/component/text/common_text.dart';
 import 'package:football_club/config/route/app_routes.dart';
 import 'package:football_club/features/profile/presentation/profile_screen/container/profile_controller.dart';
+import 'package:football_club/services/storage/storage_services.dart';
 import 'package:football_club/utils/constants/app_images.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -583,9 +584,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   SizedBox(width: 12.w),
                   Expanded(
                     child: GestureDetector(
-                      onTap: () {
+                      onTap: () async {
                         Get.back();
-                        Get.offAllNamed(AppRoutes.onboarding);
+                        await LocalStorage.removeAllPrefData();
                       },
                       child: Container(
                         padding: EdgeInsets.symmetric(vertical: 12.h),

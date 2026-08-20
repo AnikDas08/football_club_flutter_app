@@ -155,6 +155,24 @@ class CreatePassword extends StatelessWidget {
                             onChanged: (val) {
                               controller.update();
                             },
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Password is required';
+                              }
+                              if (value.length < 8) {
+                                return 'Password must be at least 8 characters';
+                              }
+                              if (!value.contains(RegExp(r'[A-Z]'))) {
+                                return 'Password must contain an uppercase letter';
+                              }
+                              if (!value.contains(RegExp(r'[0-9]'))) {
+                                return 'Password must contain a number';
+                              }
+                              if (!value.contains(RegExp(r'[!@#\$%^&*(),.?":{}|<>]'))) {
+                                return 'Password must contain a special character';
+                              }
+                              return null;
+                            },
                           ),
                           SizedBox(height: 20.h),
 
@@ -175,6 +193,15 @@ class CreatePassword extends StatelessWidget {
                             isDark: true,
                             prefixIcon: const Icon(Icons.lock_outline),
                             hintText: "••••••••••",
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please confirm your password';
+                              }
+                              if (value != controller.passwordController.text) {
+                                return 'Passwords do not match';
+                              }
+                              return null;
+                            },
                           ),
                           SizedBox(height: 24.h),
 
@@ -195,7 +222,13 @@ class CreatePassword extends StatelessWidget {
                               colors: [Color(0xFF081A4A), Color(0xFF1239D4)],
                             ),
                             onTap: () {
-                              controller.resetPassword();
+                              if (_formKey.currentState!.validate()) {
+                                if (controller.passwordController.text !=
+                                    controller.confirmPasswordController.text) {
+                                  return;
+                                }
+                                controller.resetPassword();
+                              }
                             },
                           ),
                           SizedBox(height: 24.h),

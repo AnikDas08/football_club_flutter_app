@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:football_club/component/button/common_button.dart';
 import 'package:football_club/component/text/common_text.dart';
-import 'package:football_club/config/route/app_routes.dart';
 import 'package:football_club/features/auth/presentation/forgot_password/container/forget_password_controller.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -255,7 +254,9 @@ class VerifyScreen extends StatelessWidget {
                               colors: [Color(0xFF081A4A), Color(0xFF1239D4)],
                             ),
                             onTap: () {
-                              Get.toNamed(AppRoutes.createPassword);
+                              if (_formKey.currentState!.validate()) {
+                                controller.verifyOtp();
+                              }
                             },
                           ),
                           SizedBox(height: 24.h),

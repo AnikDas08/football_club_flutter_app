@@ -88,7 +88,7 @@ class CommonButton extends StatelessWidget {
   }
 
   Widget _buildLoader() {
-    return CommonLoader(size: buttonHeight - 12);
+    return CommonLoader(size: buttonHeight - 12, color: Colors.white);
   }
 
   Widget _buildText() {

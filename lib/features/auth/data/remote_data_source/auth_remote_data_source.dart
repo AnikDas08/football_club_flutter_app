@@ -90,7 +90,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       ApiEndPoint.verifyOtp,
       body: {
         'email': email,
-        'otp': otp,
+        'oneTimeCode': int.tryParse(otp) ?? otp,
       },
     );
   }
@@ -101,10 +101,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     required String password,
     required String forgetPasswordToken,
   }) async {
-    final headers = {'Forget-password': 'Forget-password $forgetPasswordToken'};
+    final headers = {'token': forgetPasswordToken};
     final body = {
-      'email': email,
-      'password': password,
+      'newPassword': password,
+      'confirmPassword': password,
     };
     return await ApiService.post(
       ApiEndPoint.resetPassword,

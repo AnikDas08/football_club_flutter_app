@@ -11,6 +11,7 @@ class LocalStorage {
   static String refreshToken = '';
   static bool isLogIn = false;
   static String userId = '';
+  static String playerId = '';
   static String myImage = '';
   static String myName = '';
   static String myEmail = '';
@@ -35,6 +36,7 @@ class LocalStorage {
     refreshToken = localStorage.getString(LocalStorageKeys.refreshToken) ?? '';
     isLogIn = localStorage.getBool(LocalStorageKeys.isLogIn) ?? false;
     userId = localStorage.getString(LocalStorageKeys.userId) ?? '';
+    playerId = localStorage.getString(LocalStorageKeys.playerId) ?? '';
     myImage = localStorage.getString(LocalStorageKeys.myImage) ?? '';
     myName = localStorage.getString(LocalStorageKeys.myName) ?? '';
     myEmail = localStorage.getString(LocalStorageKeys.myEmail) ?? '';

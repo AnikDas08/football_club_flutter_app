@@ -3,6 +3,7 @@ import 'package:football_club/features/auth/domain/entity/user_entity.dart';
 class UserModel extends UserEntity {
   const UserModel({
     super.id,
+    super.playerId,
     super.fullName,
     super.email,
     super.phoneNumber,
@@ -15,6 +16,7 @@ class UserModel extends UserEntity {
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
       id: json['_id'] ?? json['id'],
+      playerId: json['playerId'],
       fullName: json['fullName'],
       email: json['email'],
       phoneNumber: json['phoneNumber'],
@@ -28,6 +30,7 @@ class UserModel extends UserEntity {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
+      'playerId': playerId,
       'fullName': fullName,
       'email': email,
       'phoneNumber': phoneNumber,

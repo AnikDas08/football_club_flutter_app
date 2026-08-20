@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:football_club/component/image/common_image.dart';
 import 'package:football_club/component/text/common_text.dart';
 import 'package:football_club/utils/constants/app_images.dart';
 
@@ -160,9 +161,10 @@ class UpcomingTrainingCard extends StatelessWidget {
                     ],
                   ),
                   child: ClipOval(
-                    child: Image.asset(
-                      coachAvatar,
-                      fit: BoxFit.cover,
+                    child: CommonImage(
+                      imageSrc: coachAvatar,
+                      fill: BoxFit.cover,
+                      defaultImage: AppImages.coach_image,
                     ),
                   ),
                 ),

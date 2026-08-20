@@ -19,7 +19,7 @@ class AuthRepositoryImpl implements AuthRepository {
       final Map<String, dynamic> data = response.data['data'] ?? {};
       return UserModel.fromJson(data);
     }
-    return null;
+    throw Exception(response.message);
   }
 
   @override
@@ -64,7 +64,10 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<void> sendForgotPasswordEmail({required String email}) async {
-    await remoteDataSource.forgotPassword(email: email);
+    final response = await remoteDataSource.forgotPassword(email: email);
+    if (response.statusCode != 200) {
+      throw Exception(response.message);
+    }
   }
 
   @override
@@ -75,9 +78,9 @@ class AuthRepositoryImpl implements AuthRepository {
     final response = await remoteDataSource.verifyOtp(email: email, otp: otp);
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = response.data['data'] ?? {};
-      return data['forgetPasswordToken'] as String?;
+      return data['verifyToken'] as String?;
     }
-    return null;
+    throw Exception(response.message);
   }
 
   @override
@@ -86,11 +89,14 @@ class AuthRepositoryImpl implements AuthRepository {
     required String password,
     required String forgetPasswordToken,
   }) async {
-    await remoteDataSource.resetPassword(
+    final response = await remoteDataSource.resetPassword(
       email: email,
       password: password,
       forgetPasswordToken: forgetPasswordToken,
     );
+    if (response.statusCode != 200) {
+      throw Exception(response.message);
+    }
   }
 
   @override

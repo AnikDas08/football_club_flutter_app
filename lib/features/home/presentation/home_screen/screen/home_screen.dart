@@ -9,6 +9,7 @@ import 'package:football_club/features/home/presentation/home_screen/widgets/rec
 import 'package:football_club/features/home/presentation/home_screen/widgets/stat_card.dart';
 import 'package:football_club/features/home/presentation/home_screen/widgets/target_goal_card.dart';
 import 'package:football_club/features/home/presentation/home_screen/widgets/upcoming_training_card.dart';
+import 'package:football_club/features/home/presentation/home_screen/widgets/home_screen_shimmer.dart';
 import 'package:football_club/utils/constants/app_images.dart';
 import 'package:get/get.dart';
 
@@ -23,12 +24,12 @@ class HomeScreen extends StatelessWidget {
       backgroundColor: const Color(0xFF0A0E1A),
       body: Obx(() {
         if (controller.isLoading.value && controller.homeEntity.value == null) {
-          return const Center(child: CircularProgressIndicator());
+          return const HomeScreenShimmer();
         }
 
         final homeData = controller.homeEntity.value;
         if (homeData == null) {
-          return const SizedBox();
+          return const HomeScreenShimmer();
         }
 
         return SingleChildScrollView(

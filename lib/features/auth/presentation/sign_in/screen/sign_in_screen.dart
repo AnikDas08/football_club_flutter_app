@@ -91,6 +91,7 @@ class _SignInScreenState extends State<SignInScreen> {
                         isDark: true,
                         prefixIcon: const Icon(Icons.person_outline),
                         hintText: "Enter your email",
+                        validator: AppValidation.email,
                       ),
                       SizedBox(height: 20.h),
 
@@ -144,7 +145,9 @@ class _SignInScreenState extends State<SignInScreen> {
                           size: 18.sp,
                         ),
                         onTap: () {
-                          controller.signInUser();
+                          if (_formKey.currentState!.validate()) {
+                            controller.signInUser();
+                          }
                         },
                       ),
                       SizedBox(height: 24.h),

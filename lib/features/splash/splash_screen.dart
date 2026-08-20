@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../config/route/app_routes.dart';
 import 'package:get/get.dart';
 import '../../../component/text/common_text.dart';
+import '../../../services/storage/storage_services.dart';
 import '../../../utils/constants/app_colors.dart';
 import '../../../utils/constants/app_images.dart';
 
@@ -30,7 +31,12 @@ class _SplashScreenState extends State<SplashScreen> {
     // Hide the status bar
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
     Future.delayed(const Duration(seconds: 3), () async {
-      Get.offNamed(AppRoutes.onboarding);
+      await LocalStorage.getAllPrefData();
+      if (LocalStorage.token.isNotEmpty) {
+        Get.offNamed(AppRoutes.home);
+      } else {
+        Get.offNamed(AppRoutes.onboarding);
+      }
     });
   }
 

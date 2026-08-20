@@ -1,5 +1,6 @@
 class UserEntity {
   final String? id;
+  final String? playerId;
   final String? fullName;
   final String? email;
   final String? phoneNumber;
@@ -10,6 +11,7 @@ class UserEntity {
 
   const UserEntity({
     this.id,
+    this.playerId,
     this.fullName,
     this.email,
     this.phoneNumber,
