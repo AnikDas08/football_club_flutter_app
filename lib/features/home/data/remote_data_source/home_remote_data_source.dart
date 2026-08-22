@@ -5,6 +5,11 @@ import 'package:football_club/services/storage/storage_services.dart';
 
 abstract class HomeRemoteDataSource {
   Future<ApiResponseModel> fetchHomeData();
+  Future<ApiResponseModel> fetchSessionNotes({
+    required String playerId,
+    int page = 1,
+    int limit = 10,
+  });
 }
 
 class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
@@ -86,6 +91,31 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
         : '9834348934';
 
     try {
+      final response = await ApiService.get(ApiEndPoint.userProfile);
+      if (response.statusCode == 200) {
+        final profileData = response.data['data'] as Map<String, dynamic>?;
+        if (profileData != null) {
+          final String userImg = profileData['image'] ?? '';
+          final playersList = profileData['players'] as List<dynamic>? ?? [];
+          if (playersList.isNotEmpty) {
+            final player = playersList.first as Map<String, dynamic>;
+            final String fName = player['firstName'] ?? '';
+            final String lName = player['lastName'] ?? '';
+            final String pName = '$fName $lName'.trim();
+            final String pImg = player['image'] ?? '';
+
+            if (pName.isNotEmpty) homeDataMap['playerName'] = pName;
+            if (pImg.isNotEmpty) {
+              homeDataMap['playerImagePath'] = pImg;
+            } else if (userImg.isNotEmpty) {
+              homeDataMap['playerImagePath'] = userImg;
+            }
+          }
+        }
+      }
+    } catch (_) {}
+
+    try {
       final response = await ApiService.get(ApiEndPoint.playerProfile(playerId));
       if (response.statusCode == 200) {
         final profileData = response.data['data'] as Map<String, dynamic>?;
@@ -125,7 +155,7 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
 
           if (name.isNotEmpty) homeDataMap['playerName'] = name;
           if (levelBadge.isNotEmpty) homeDataMap['playerLevel'] = levelBadge;
-          homeDataMap['playerSubtitle'] = subtitle;
+          if (subtitle.isNotEmpty) homeDataMap['playerSubtitle'] = subtitle;
           homeDataMap['playerProgress'] = progress;
           if (image.isNotEmpty) homeDataMap['playerImagePath'] = image;
         }
@@ -200,6 +230,84 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
       // Fallback silently if current target API call fails
     }
 
+    try {
+      final response = await ApiService.get(ApiEndPoint.latestFeedback(playerId));
+      if (response.statusCode == 200) {
+        final feedbackData = response.data['data'] as Map<String, dynamic>?;
+        if (feedbackData != null) {
+          final String coachName = feedbackData['coachName'] ?? '';
+          final String coachImage = feedbackData['coachImage'] ?? '';
+          final String note = feedbackData['note'] ?? '';
+          final String dateFormatted = feedbackData['dateFormatted'] ?? '';
+
+          if (coachName.isNotEmpty) {
+            homeDataMap['feedbackCoachName'] = coachName;
+          }
+          if (coachImage.isNotEmpty) {
+            homeDataMap['feedbackAvatarPath'] = coachImage;
+          }
+          if (note.isNotEmpty) {
+            homeDataMap['feedbackContent'] = note;
+          }
+          if (dateFormatted.isNotEmpty) {
+            homeDataMap['feedbackDate'] = dateFormatted;
+          }
+        }
+      }
+    } catch (_) {
+      // Fallback silently if feedback API call fails
+    }
+
+    try {
+      final response = await ApiService.get(ApiEndPoint.myAchievements(playerId));
+      if (response.statusCode == 200) {
+        dynamic rawData = response.data['data'];
+        List<dynamic> achievementsList = [];
+
+        if (rawData is Map<String, dynamic>) {
+          if (rawData['achievements'] is List && (rawData['achievements'] as List).isNotEmpty) {
+            achievementsList = rawData['achievements'] as List;
+          } else if (rawData['grid'] is List && (rawData['grid'] as List).isNotEmpty) {
+            achievementsList = rawData['grid'] as List;
+          }
+        } else if (rawData is List) {
+          achievementsList = rawData;
+        }
+
+        if (achievementsList.isNotEmpty) {
+          final firstAch = achievementsList.first as Map<String, dynamic>;
+          final String title = (firstAch['awardType'] ?? firstAch['title'] ?? firstAch['name'] ?? 'Player of the Match').toString();
+          final String event = (firstAch['matchEvent'] ?? firstAch['subtitle'] ?? firstAch['description'] ?? '').toString();
+          final String date = (firstAch['formattedDate'] ?? firstAch['date'] ?? firstAch['value'] ?? '').toString();
+
+          homeDataMap['achievementCategory'] = 'RECENT ACHIEVEMENT';
+          if (title.isNotEmpty) {
+            homeDataMap['achievementTitle'] = title;
+          }
+          if (event.isNotEmpty && date.isNotEmpty) {
+            homeDataMap['matchInfo'] = '$event · $date';
+          } else if (event.isNotEmpty) {
+            homeDataMap['matchInfo'] = event;
+          } else if (date.isNotEmpty) {
+            homeDataMap['matchInfo'] = date;
+          }
+        }
+      }
+    } catch (_) {
+      // Fallback silently if achievements API call fails
+    }
+
     return ApiResponseModel(200, {'data': homeDataMap});
+  }
+
+  @override
+  Future<ApiResponseModel> fetchSessionNotes({
+    required String playerId,
+    int page = 1,
+    int limit = 10,
+  }) async {
+    return await ApiService.get(
+      ApiEndPoint.sessionNotes(playerId, page: page, limit: limit),
+    );
   }
 }

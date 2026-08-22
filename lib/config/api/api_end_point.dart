@@ -9,7 +9,7 @@ class ApiEndPoint {
   static const forgotPassword = 'auth/forget-password';
   static const verifyOtp = 'auth/verify-otp';
   static const resetPassword = 'auth/reset-password';
-  static const changePassword = 'users/change-password';
+  static const changePassword = 'auth/change-password';
   static const user = 'users';
   static const notifications = 'notifications';
   static const privacyPolicies = 'privacy-policies';
@@ -17,7 +17,32 @@ class ApiEndPoint {
   static const chats = 'chats';
   static const messages = 'messages';
 
-  static String playerProfile(String playerId) => 'dashboard/player/profile/$playerId';
-  static String upcomingTraining(String playerId) => 'dashboard/player/upcoming-training/$playerId';
-  static String currentTarget(String playerId) => 'dashboard/player/current-target/$playerId';
+  static String playerProfile(String playerId) =>
+      'dashboard/player/profile/$playerId';
+  static String upcomingTraining(String playerId) =>
+      'dashboard/player/upcoming-training/$playerId';
+  static String currentTarget(String playerId) =>
+      'dashboard/player/current-target/$playerId';
+  static String latestFeedback(String playerId) =>
+      'dashboard/player/feedback/$playerId';
+  static String sessionNotes(String playerId, {int page = 1, int limit = 10}) =>
+      'session-notes/my-notes/$playerId?page=$page&limit=$limit';
+  static String overallScore(String playerId) =>
+      'assessment/player-development/$playerId/overall';
+  static String coreAreas(String playerId) =>
+      'assessment/player-development/$playerId/core-areas';
+  static String footballSkills(String playerId) =>
+      'assessment/player-development/$playerId/skills';
+  static String growthChart(String playerId) =>
+      'assessment/player-development/$playerId/growth-chart';
+  static String myTargets(String playerId, {int page = 1, int limit = 10}) =>
+      'targets/my-targets/$playerId?page=$page&limit=$limit';
+  static String developmentTimeline(String playerId) =>
+      'assessment/player-development/$playerId/timeline';
+  static String myAchievements(String playerId) =>
+      'achievements/my-achievements/$playerId';
+  static String playerStats(String playerId) =>
+      'dashboard/player/stats/$playerId';
+  static const userProfile = 'users/profile';
+  static String banners(String section) => 'banners?section=$section';
 }

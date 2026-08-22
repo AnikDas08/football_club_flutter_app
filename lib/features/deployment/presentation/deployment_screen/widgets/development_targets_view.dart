@@ -1,63 +1,100 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../../../../component/text/common_text.dart';
-import '../../../../../utils/constants/app_images.dart';
+import 'package:football_club/component/image/common_image.dart';
+import 'package:football_club/component/text/common_text.dart';
+import 'package:football_club/features/deployment/presentation/deployment_screen/container/deployment_controller.dart';
+import 'package:football_club/utils/constants/app_images.dart';
+import 'package:get/get.dart';
 
 class DevelopmentTargetsView extends StatelessWidget {
   const DevelopmentTargetsView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Active Target 1
-        _buildActiveTargetCard(
-          title: "Improve Left-Foot Finishing",
-          description: "Achieve 70% accuracy on left-foot shots from inside the box.",
-          coachName: "Jay Railton",
-          coachAvatar: AppImages.coach_image,
-          progress: 0.62,
-          dueDate: "Due: 28 Feb 2025",
-        ),
-        SizedBox(height: 16.h),
+    final controller = Get.find<DeploymentController>();
 
-        // Active Target 2
-        _buildActiveTargetCard(
-          title: "Pressing Intensity",
-          description: "Maintain high press for full 60 minutes in matches.",
-          coachName: "Jay Railton",
-          coachAvatar: AppImages.coach_image,
-          progress: 0.45,
-          dueDate: "Due: 15 Mar 2025",
-        ),
-        SizedBox(height: 24.h),
+    return Obx(() {
+      if (controller.isTargetsLoading.value) {
+        return Padding(
+          padding: EdgeInsets.symmetric(vertical: 40.h),
+          child: const Center(
+            child: CircularProgressIndicator(color: Color(0xFF2563EB)),
+          ),
+        );
+      }
 
-        // Completed Section Header
-        const CommonText(
-          text: "COMPLETED",
-          fontSize: 14,
-          fontWeight: FontWeight.w700,
-          color: Colors.white,
-          letterSpacing: 1.0,
-        ),
-        SizedBox(height: 12.h),
+      final allTargets = controller.targetsList;
+      if (allTargets.isEmpty) {
+        return Padding(
+          padding: EdgeInsets.symmetric(vertical: 40.h),
+          child: const Center(
+            child: CommonText(
+              text: "No targets available",
+              fontSize: 14,
+              color: Color(0xFF8E9BAE),
+            ),
+          ),
+        );
+      }
 
-        // Completed Target 1
-        _buildCompletedTargetItem(
-          title: "Ball Retention Under Pressure",
-          dateText: "Jan 2025",
-        ),
-        SizedBox(height: 12.h),
+      final activeTargets = allTargets
+          .where((t) => t.status.toLowerCase() != 'completed')
+          .toList();
+      final completedTargets = allTargets
+          .where((t) => t.status.toLowerCase() == 'completed')
+          .toList();
 
-        // Completed Target 2
-        _buildCompletedTargetItem(
-          title: "First-Touch Control (Right Foot)",
-          dateText: "Nov 2024",
-        ),
-        SizedBox(height: 24.h),
-      ],
-    );
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Active Targets List
+          if (activeTargets.isNotEmpty)
+            ...activeTargets.map((target) {
+              return Padding(
+                padding: EdgeInsets.only(bottom: 16.h),
+                child: _buildActiveTargetCard(
+                  title: target.title,
+                  description: target.description,
+                  coachName: target.coachName.isNotEmpty
+                      ? target.coachName
+                      : "Coach",
+                  coachAvatar: target.coachImage,
+                  progress: (target.progress / 100.0).clamp(0.0, 1.0),
+                  dueDate: target.dueFormatted.isNotEmpty
+                      ? target.dueFormatted
+                      : target.dueDate,
+                  statusText: target.status,
+                ),
+              );
+            }),
+
+          // Completed Section
+          if (completedTargets.isNotEmpty) ...[
+            SizedBox(height: 8.h),
+            const CommonText(
+              text: "COMPLETED",
+              fontSize: 14,
+              fontWeight: FontWeight.w700,
+              color: Colors.white,
+              letterSpacing: 1.0,
+            ),
+            SizedBox(height: 12.h),
+            ...completedTargets.map((target) {
+              return Padding(
+                padding: EdgeInsets.only(bottom: 12.h),
+                child: _buildCompletedTargetItem(
+                  title: target.title,
+                  dateText: target.dueFormatted.isNotEmpty
+                      ? target.dueFormatted
+                      : target.dueDate,
+                ),
+              );
+            }),
+          ],
+          SizedBox(height: 24.h),
+        ],
+      );
+    });
   }
 
   Widget _buildActiveTargetCard({
@@ -67,6 +104,7 @@ class DevelopmentTargetsView extends StatelessWidget {
     required String coachAvatar,
     required double progress,
     required String dueDate,
+    required String statusText,
   }) {
     final percentageText = '${(progress * 100).toInt()}%';
 
@@ -84,7 +122,7 @@ class DevelopmentTargetsView extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header with Title & "In Progress" Badge
+          // Header with Title & Status Badge
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -95,6 +133,7 @@ class DevelopmentTargetsView extends StatelessWidget {
                   fontWeight: FontWeight.w600,
                   color: Colors.white,
                   textAlign: TextAlign.start,
+                  maxLines: 2,
                 ),
               ),
               Container(
@@ -107,11 +146,11 @@ class DevelopmentTargetsView extends StatelessWidget {
                     width: 1,
                   ),
                 ),
-                child: const CommonText(
-                  text: "In Progress",
+                child: CommonText(
+                  text: statusText,
                   fontSize: 12,
                   fontWeight: FontWeight.w500,
-                  color: Color(0xFF2563EB),
+                  color: const Color(0xFF2563EB),
                 ),
               ),
             ],
@@ -140,9 +179,10 @@ class DevelopmentTargetsView extends StatelessWidget {
                   border: Border.all(color: Colors.white, width: 1.2),
                 ),
                 child: ClipOval(
-                  child: Image.asset(
-                    coachAvatar,
-                    fit: BoxFit.cover,
+                  child: CommonImage(
+                    imageSrc: coachAvatar,
+                    fill: BoxFit.cover,
+                    defaultImage: AppImages.coach_image,
                   ),
                 ),
               ),
@@ -230,31 +270,38 @@ class DevelopmentTargetsView extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Row(
-            children: [
-              Container(
-                width: 32.w,
-                height: 32.h,
-                decoration: const BoxDecoration(
-                  color: Color(0xFF064E3B),
-                  shape: BoxShape.circle,
+          Expanded(
+            child: Row(
+              children: [
+                Container(
+                  width: 32.w,
+                  height: 32.h,
+                  decoration: const BoxDecoration(
+                    color: Color(0xFF064E3B),
+                    shape: BoxShape.circle,
+                  ),
+                  alignment: Alignment.center,
+                  child: Icon(
+                    Icons.check,
+                    color: const Color(0xFF10B981),
+                    size: 18.sp,
+                  ),
                 ),
-                alignment: Alignment.center,
-                child: Icon(
-                  Icons.check,
-                  color: const Color(0xFF10B981),
-                  size: 18.sp,
+                SizedBox(width: 12.w),
+                Expanded(
+                  child: CommonText(
+                    text: title,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.white,
+                    textAlign: TextAlign.start,
+                    maxLines: 2,
+                  ),
                 ),
-              ),
-              SizedBox(width: 12.w),
-              CommonText(
-                text: title,
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-                color: Colors.white,
-              ),
-            ],
+              ],
+            ),
           ),
+          SizedBox(width: 8.w),
           CommonText(
             text: dateText,
             fontSize: 12,

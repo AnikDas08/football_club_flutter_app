@@ -189,6 +189,50 @@ class HomeScreenShimmer extends StatelessWidget {
                       ],
                     ),
                   ),
+                  SizedBox(height: 20.h),
+
+                  // 5. Coach Feedback Card Shimmer
+                  Container(
+                    width: double.infinity,
+                    padding: EdgeInsets.all(18.w),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF0C1427),
+                      borderRadius: BorderRadius.circular(12.r),
+                    ),
+                    child: Column(
+                      children: [
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            ShimmerBox(width: 44.w, height: 44.h, borderRadius: 22.r),
+                            SizedBox(width: 12.w),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      ShimmerBox(width: 120.w, height: 15.h, borderRadius: 4.r),
+                                      ShimmerBox(width: 50.w, height: 13.h, borderRadius: 4.r),
+                                    ],
+                                  ),
+                                  SizedBox(height: 8.h),
+                                  ShimmerBox(width: double.infinity, height: 13.h, borderRadius: 4.r),
+                                  SizedBox(height: 6.h),
+                                  ShimmerBox(width: 180.w, height: 13.h, borderRadius: 4.r),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 12.h),
+                        Center(
+                          child: ShimmerBox(width: 110.w, height: 13.h, borderRadius: 4.r),
+                        ),
+                      ],
+                    ),
+                  ),
                   SizedBox(height: 24.h),
                 ],
               ),

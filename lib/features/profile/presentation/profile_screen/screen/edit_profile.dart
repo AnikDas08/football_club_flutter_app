@@ -1,20 +1,22 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:football_club/config/api/api_end_point.dart';
 import 'package:get/get.dart';
 
+import 'package:football_club/component/image/common_image.dart';
 import 'package:football_club/component/text/common_text.dart';
 import 'package:football_club/component/text_field/common_text_field.dart';
 import 'package:football_club/features/profile/presentation/profile_screen/container/profile_controller.dart';
 import 'package:football_club/utils/constants/app_images.dart';
 
 class EditProfile extends StatelessWidget {
-  EditProfile({super.key});
+  const EditProfile({super.key});
 
   @override
   Widget build(BuildContext context) {
     return GetBuilder<ProfileController>(
-      init: ProfileController(),
+      init: Get.put(ProfileController()),
       builder: (controller) {
         return Scaffold(
           backgroundColor: const Color(0xFF0A0E1A),
@@ -95,15 +97,7 @@ class EditProfile extends StatelessWidget {
                                   ],
                                 ),
                                 child: ClipOval(
-                                  child: controller.profileImagePath != null
-                                      ? Image.file(
-                                          File(controller.profileImagePath!),
-                                          fit: BoxFit.cover,
-                                        )
-                                      : Image.asset(
-                                          AppImages.profile_image,
-                                          fit: BoxFit.cover,
-                                        ),
+                                  child: _buildProfileAvatar(controller.profileImagePath),
                                 ),
                               ),
                               Container(
@@ -136,16 +130,45 @@ class EditProfile extends StatelessWidget {
                   SizedBox(height: 24.h),
 
                   // 4. Form Fields
-                  // PLAYER FULL NAME
-                  _buildFieldLabel("PLAYER FULL NAME"),
-                  CommonTextField(
-                    controller: controller.playerNameController,
-                    isDark: true,
-                    prefixIcon: Icon(
-                      Icons.person_outline_rounded,
-                      size: 18.sp,
-                      color: const Color(0xFF8E9BAE),
-                    ),
+                  // FIRST NAME & LAST NAME FIELDS
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _buildFieldLabel("FIRST NAME"),
+                            CommonTextField(
+                              controller: controller.firstNameController,
+                              isDark: true,
+                              prefixIcon: Icon(
+                                Icons.person_outline_rounded,
+                                size: 18.sp,
+                                color: const Color(0xFF8E9BAE),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(width: 12.w),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _buildFieldLabel("LAST NAME"),
+                            CommonTextField(
+                              controller: controller.lastNameController,
+                              isDark: true,
+                              prefixIcon: Icon(
+                                Icons.person_outline_rounded,
+                                size: 18.sp,
+                                color: const Color(0xFF8E9BAE),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                   SizedBox(height: 16.h),
 
@@ -194,19 +217,7 @@ class EditProfile extends StatelessWidget {
                   ),
                   SizedBox(height: 16.h),
 
-                  // EMAIL ADDRESS
-                  _buildFieldLabel("EMAIL ADDRESS"),
-                  CommonTextField(
-                    controller: controller.emailController,
-                    isDark: true,
-                    keyboardType: TextInputType.emailAddress,
-                    prefixIcon: Icon(
-                      Icons.email_outlined,
-                      size: 18.sp,
-                      color: const Color(0xFF8E9BAE),
-                    ),
-                  ),
-                  SizedBox(height: 16.h),
+
 
                   // MOBILE NUMBER
                   _buildFieldLabel("MOBILE NUMBER"),
@@ -261,6 +272,16 @@ class EditProfile extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+
+  Widget _buildProfileAvatar(String? path) {
+    return CommonImage(
+      imageSrc: path ?? '',
+      defaultImage: AppImages.profile_image,
+      fill: BoxFit.cover,
+      width: 80.w,
+      height: 80.h,
     );
   }
 

@@ -62,8 +62,10 @@ class DevelopmentGrowthCard extends StatelessWidget {
                     size: Size.infinite,
                     painter: GrowthChartPainter(
                       values: values,
-                      minY: 6.0,
-                      maxY: 9.0,
+                      minY: 0.0,
+                      maxY: values.isNotEmpty && values.reduce((a, b) => a > b ? a : b) > 10
+                          ? values.reduce((a, b) => a > b ? a : b)
+                          : 10.0,
                     ),
                   ),
                 ),
@@ -127,12 +129,13 @@ class GrowthChartPainter extends CustomPainter {
       ..strokeWidth = 1.5
       ..style = PaintingStyle.stroke;
 
-    final double widthStep = size.width / (values.length - 1);
+    final double widthStep = values.length > 1 ? size.width / (values.length - 1) : size.width;
     final List<Offset> points = [];
 
+    final double range = maxY - minY;
     for (int i = 0; i < values.length; i++) {
-      final double x = i * widthStep;
-      final double normalizedY = (values[i] - minY) / (maxY - minY);
+      final double x = values.length > 1 ? i * widthStep : size.width / 2;
+      final double normalizedY = range > 0 ? (values[i] - minY) / range : 0.0;
       final double y = size.height - (normalizedY * size.height);
       points.add(Offset(x, y));
     }

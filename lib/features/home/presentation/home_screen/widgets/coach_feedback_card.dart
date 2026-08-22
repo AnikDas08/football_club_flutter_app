@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:football_club/component/image/common_image.dart';
 import 'package:football_club/component/text/common_text.dart';
+import 'package:football_club/utils/constants/app_images.dart';
 
 class CoachFeedbackCard extends StatelessWidget {
   final String title;
@@ -104,9 +106,10 @@ class CoachFeedbackCard extends StatelessWidget {
                     ),
                     padding: EdgeInsets.all(2.r),
                     child: ClipOval(
-                      child: Image.asset(
-                        avatarPath,
-                        fit: BoxFit.cover,
+                      child: CommonImage(
+                        imageSrc: avatarPath,
+                        fill: BoxFit.cover,
+                        defaultImage: AppImages.coach_image,
                       ),
                     ),
                   ),
@@ -232,9 +235,10 @@ class CoachFeedbackCard extends StatelessWidget {
                     ),
                     padding: EdgeInsets.all(2.r),
                     child: ClipOval(
-                      child: Image.asset(
-                        avatarPath,
-                        fit: BoxFit.cover,
+                      child: CommonImage(
+                        imageSrc: avatarPath,
+                        fill: BoxFit.cover,
+                        defaultImage: AppImages.coach_image,
                       ),
                     ),
                   ),

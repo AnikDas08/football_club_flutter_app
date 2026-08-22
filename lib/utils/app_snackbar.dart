@@ -1,26 +1,26 @@
-import 'package:flutter/foundation.dart';
-import 'package:get/get.dart';
-import 'constants/app_colors.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class AppSnackbar {
   AppSnackbar._();
 
   static void success({required String title, required String message}) {
     _showSnackbar(
-      title: kDebugMode ? title : 'Success',
+      title: title.isNotEmpty ? title : 'Success',
       message: message,
-      backgroundColor: AppColors.black,
-      position: .BOTTOM,
+      backgroundColor: const Color(0xFF052E16),
+      textColor: const Color(0xFF22C55E),
+      position: SnackPosition.BOTTOM,
     );
   }
 
   static void error({String? title, required String message}) {
     _showSnackbar(
-      title: kDebugMode ? (title ?? 'Error') : 'Oops',
+      title: (title != null && title.isNotEmpty) ? title : 'Error',
       message: message,
-      backgroundColor: AppColors.red,
-      position: .TOP,
+      backgroundColor: const Color(0xFF450A0A),
+      textColor: const Color(0xFFEF4444),
+      position: SnackPosition.TOP,
     );
   }
 
@@ -28,16 +28,18 @@ class AppSnackbar {
     required String title,
     required String message,
     required Color backgroundColor,
+    required Color textColor,
     required SnackPosition position,
   }) {
     Get.snackbar(
       title,
       message,
-      colorText: AppColors.white,
+      colorText: textColor,
       backgroundColor: backgroundColor,
       snackPosition: position,
-      margin: const .all(12),
+      margin: const EdgeInsets.all(12),
       borderRadius: 8,
+      duration: const Duration(seconds: 3),
     );
   }
 }

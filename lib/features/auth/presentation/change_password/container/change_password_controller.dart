@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:football_club/config/api/api_end_point.dart';
+import 'package:football_club/config/route/app_routes.dart';
+import 'package:football_club/services/api/api_response_model.dart';
 import 'package:football_club/services/api/api_service.dart';
 import 'package:football_club/utils/app_snackbar.dart';
 import 'package:get/get.dart';
@@ -29,31 +31,45 @@ class ChangePasswordController extends GetxController {
       _setLoading(true);
 
       final Map<String, String> body = {
-        'oldPassword': currentPasswordController.text.trim(),
+        'currentPassword': currentPasswordController.text.trim(),
         'newPassword': newPasswordController.text.trim(),
+        'confirmPassword': confirmPasswordController.text.trim(),
       };
 
-      final response = await ApiService.patch(
+      ApiResponseModel response = await ApiService.post(
         ApiEndPoint.changePassword,
         body: body,
       );
 
-      if (response.statusCode == 200) {
-        AppSnackbar.success(
-          title: 'Success',
-          message: 'Password changed successfully',
+      if (response.statusCode != 200) {
+        response = await ApiService.patch(
+          ApiEndPoint.changePassword,
+          body: body,
         );
+      }
 
+      if (response.statusCode == 200) {
         /// Clear text fields
         currentPasswordController.clear();
         newPasswordController.clear();
         confirmPasswordController.clear();
 
-        Get.back();
+        // Redirect to Home screen
+        Get.offAllNamed(AppRoutes.home);
+
+        // Show global success snackbar on Home screen
+        AppSnackbar.success(
+          title: 'Success',
+          message: response.message.isNotEmpty
+              ? response.message
+              : 'Password changed successfully',
+        );
       } else {
         AppSnackbar.error(
-          title: response.statusCode.toString(),
-          message: response.message,
+          title: 'Error',
+          message: response.message.isNotEmpty
+              ? response.message
+              : 'Failed to change password',
         );
       }
     } catch (e) {

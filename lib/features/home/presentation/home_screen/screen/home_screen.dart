@@ -40,9 +40,12 @@ class HomeScreen extends StatelessWidget {
               Container(
                 width: double.infinity,
                 height: 290.h,
-                decoration: const BoxDecoration(
+                decoration: BoxDecoration(
                   image: DecorationImage(
-                    image: AssetImage(AppImages.home_bg),
+                    image: controller.bannerUrl.value.isNotEmpty
+                        ? NetworkImage(controller.bannerUrl.value)
+                              as ImageProvider
+                        : const AssetImage(AppImages.home_bg),
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -61,7 +64,12 @@ class HomeScreen extends StatelessWidget {
                   child: SafeArea(
                     bottom: false,
                     child: Padding(
-                      padding: const EdgeInsets.only(right: 16, top: 16, left: 16, bottom: 16),
+                      padding: const EdgeInsets.only(
+                        right: 16,
+                        top: 16,
+                        left: 16,
+                        bottom: 16,
+                      ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -76,12 +84,15 @@ class HomeScreen extends StatelessWidget {
                                 color: Colors.white.withOpacity(0.5),
                               ),
                               GestureDetector(
-                                onTap: () => Get.toNamed(AppRoutes.notifications),
+                                onTap: () =>
+                                    Get.toNamed(AppRoutes.notifications),
                                 child: Container(
                                   width: 40.w,
                                   height: 40.h,
                                   decoration: BoxDecoration(
-                                    color: const Color(0xFF0C1322).withOpacity(0.6),
+                                    color: const Color(
+                                      0xFF0C1322,
+                                    ).withOpacity(0.6),
                                     shape: BoxShape.circle,
                                     border: Border.all(
                                       color: Colors.white.withOpacity(0.08),
@@ -209,7 +220,8 @@ class HomeScreen extends StatelessWidget {
                       date: homeData.feedbackDate,
                       feedback: homeData.feedbackContent,
                       avatarPath: homeData.feedbackAvatarPath,
-                      onViewAllTap: () => Get.toNamed(AppRoutes.allCoachFeedback),
+                      onViewAllTap: () =>
+                          Get.toNamed(AppRoutes.allCoachFeedback),
                     ),
                     SizedBox(height: 20.h),
 

@@ -6,9 +6,7 @@ import 'package:football_club/features/auth/presentation/change_password/contain
 import 'package:get/get.dart';
 
 class ChangePasswordScreen extends StatelessWidget {
-  ChangePasswordScreen({super.key});
-
-  final _formKey = GlobalKey<FormState>();
+  const ChangePasswordScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +19,7 @@ class ChangePasswordScreen extends StatelessWidget {
             child: SingleChildScrollView(
               padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
               child: Form(
-                key: _formKey,
+                key: controller.formKey,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -58,7 +56,7 @@ class ChangePasswordScreen extends StatelessWidget {
                     SizedBox(height: 24.h),
 
                     // 3. OLD PASSWORD
-                    _buildFieldLabel("OLD PASSWORD"),
+                    _buildFieldLabel("CURRENT PASSWORD"),
                     CommonTextField(
                       controller: controller.currentPasswordController,
                       hintText: "At least 8 characters",
@@ -107,9 +105,7 @@ class ChangePasswordScreen extends StatelessWidget {
                       onTap: controller.isLoading
                           ? null
                           : () {
-                              if (_formKey.currentState!.validate()) {
-                                controller.changePassword();
-                              }
+                              controller.changePassword();
                             },
                       child: Container(
                         width: double.infinity,

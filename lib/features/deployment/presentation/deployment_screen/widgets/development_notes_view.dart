@@ -1,52 +1,79 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
-import '../../../../../component/text/common_text.dart';
-import '../../../../../utils/constants/app_images.dart';
+import 'package:football_club/component/image/common_image.dart';
+import 'package:football_club/component/text/common_text.dart';
+import 'package:football_club/features/deployment/presentation/deployment_screen/container/deployment_controller.dart';
+import 'package:football_club/utils/constants/app_images.dart';
+import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 class DevelopmentNotesView extends StatelessWidget {
   const DevelopmentNotesView({super.key});
 
+  String _formatTimestamp(String rawDate) {
+    if (rawDate.isEmpty) return '';
+    try {
+      final dateTime = DateTime.parse(rawDate);
+      return DateFormat('dd MMM yyyy · h:mm a').format(dateTime);
+    } catch (_) {
+      return rawDate;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        _buildNoteCard(
-          coachName: "Mike Davies",
-          timestamp: "14 Feb 2025 · 6:30 PM",
-          badgeText: "Positive",
-          badgeColor: const Color(0xFF22C55E),
-          badgeBgColor: const Color(0xFF052E16),
-          bodyText:
-              "Outstanding positioning in the second half. James read the game brilliantly and created three goal-scoring opportunities through intelligent runs.",
-        ),
-        SizedBox(height: 14.h),
-        _buildNoteCard(
-          coachName: "Mike Davies",
-          timestamp: "10 Feb 2025 · 6:45 PM",
-          badgeText: "Improvement",
-          badgeColor: const Color(0xFFF59E0B),
-          badgeBgColor: const Color(0xFF451A03),
-          bodyText:
-              "Work on weak foot finishing. Left-foot shots need more accuracy under pressure. Set extra reps at end of session next week.",
-        ),
-        SizedBox(height: 14.h),
-        _buildNoteCard(
-          coachName: "Mike Davies",
-          timestamp: "10 Feb 2025 · 6:45 PM",
-          badgeText: "Positive",
-          badgeColor: const Color(0xFF22C55E),
-          badgeBgColor: const Color(0xFF052E16),
-          bodyText:
-              "James showed excellent leadership qualities, organising teammates and communicating clearly throughout small-sided games.",
-        ),
-        SizedBox(height: 24.h),
-      ],
-    );
+    final controller = Get.find<DeploymentController>();
+
+    return Obx(() {
+      if (controller.isNotesLoading.value) {
+        return Padding(
+          padding: EdgeInsets.symmetric(vertical: 40.h),
+          child: const Center(
+            child: CircularProgressIndicator(color: Color(0xFF2563EB)),
+          ),
+        );
+      }
+
+      final notesList = controller.notesList;
+      if (notesList.isEmpty) {
+        return Padding(
+          padding: EdgeInsets.symmetric(vertical: 40.h),
+          child: const Center(
+            child: CommonText(
+              text: "No session notes available",
+              fontSize: 14,
+              color: Color(0xFF8E9BAE),
+            ),
+          ),
+        );
+      }
+
+      return Column(
+        children: notesList.map((item) {
+          final timestampText = _formatTimestamp(item.createdAt);
+
+          return Padding(
+            padding: EdgeInsets.only(bottom: 14.h),
+            child: _buildNoteCard(
+              coachName: item.coachName.isNotEmpty
+                  ? item.coachName
+                  : "Coach",
+              coachAvatar: item.coachImage,
+              timestamp: timestampText,
+              badgeText: item.category.isNotEmpty ? item.category : "Feedback",
+              badgeColor: const Color(0xFF60A5FA),
+              badgeBgColor: const Color(0xFF2563EB).withOpacity(0.2),
+              bodyText: item.note,
+            ),
+          );
+        }).toList(),
+      );
+    });
   }
 
   Widget _buildNoteCard({
     required String coachName,
+    required String coachAvatar,
     required String timestamp,
     required String badgeText,
     required Color badgeColor,
@@ -71,55 +98,65 @@ class DevelopmentNotesView extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(
-                children: [
-                  Container(
-                    width: 36.w,
-                    height: 36.h,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(color: Colors.white, width: 1.2),
-                    ),
-                    child: ClipOval(
-                      child: Image.asset(
-                        AppImages.coach_image,
-                        fit: BoxFit.cover,
+              Expanded(
+                child: Row(
+                  children: [
+                    Container(
+                      width: 36.w,
+                      height: 36.h,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(color: Colors.white, width: 1.2),
+                      ),
+                      child: ClipOval(
+                        child: CommonImage(
+                          imageSrc: coachAvatar,
+                          fill: BoxFit.cover,
+                          defaultImage: AppImages.coach_image,
+                        ),
                       ),
                     ),
-                  ),
-                  SizedBox(width: 10.w),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      CommonText(
-                        text: coachName,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.white,
+                    SizedBox(width: 10.w),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          CommonText(
+                            text: coachName,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                            textAlign: TextAlign.start,
+                          ),
+                          if (timestamp.isNotEmpty)
+                            CommonText(
+                              text: timestamp,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w400,
+                              color: const Color(0xFF8E9BAE),
+                              textAlign: TextAlign.start,
+                            ),
+                        ],
                       ),
-                      CommonText(
-                        text: timestamp,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w400,
-                        color: const Color(0xFF8E9BAE),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 4.h),
-                decoration: BoxDecoration(
-                  color: badgeBgColor,
-                  borderRadius: BorderRadius.circular(16.r),
-                ),
-                child: CommonText(
-                  text: badgeText,
-                  fontSize: 11,
-                  fontWeight: FontWeight.w600,
-                  color: badgeColor,
+                    ),
+                  ],
                 ),
               ),
+              SizedBox(width: 8.w),
+              if (badgeText.isNotEmpty)
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 4.h),
+                  decoration: BoxDecoration(
+                    color: badgeBgColor,
+                    borderRadius: BorderRadius.circular(16.r),
+                  ),
+                  child: CommonText(
+                    text: badgeText,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                    color: badgeColor,
+                  ),
+                ),
             ],
           ),
           SizedBox(height: 14.h),
@@ -131,7 +168,7 @@ class DevelopmentNotesView extends StatelessWidget {
             fontWeight: FontWeight.w400,
             color: const Color(0xFFCBD5E1),
             textAlign: TextAlign.start,
-            maxLines: 4,
+            maxLines: 10,
             height: 1.4,
           ),
         ],

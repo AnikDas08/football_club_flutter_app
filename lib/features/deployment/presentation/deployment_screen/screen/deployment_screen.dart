@@ -54,9 +54,12 @@ class _DeploymentScreenState extends State<DeploymentScreen> {
               // 1. Top Header with Background Image & Gradient
               Container(
                 width: double.infinity,
-                decoration: const BoxDecoration(
+                decoration: BoxDecoration(
                   image: DecorationImage(
-                    image: AssetImage(AppImages.development_image),
+                    image: controller.bannerUrl.value.isNotEmpty
+                        ? NetworkImage(controller.bannerUrl.value)
+                              as ImageProvider
+                        : const AssetImage(AppImages.development_image),
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -120,8 +123,9 @@ class _DeploymentScreenState extends State<DeploymentScreen> {
                                   width: 40.w,
                                   height: 40.h,
                                   decoration: BoxDecoration(
-                                    color: const Color(0xFF0C1322)
-                                        .withOpacity(0.6),
+                                    color: const Color(
+                                      0xFF0C1322,
+                                    ).withOpacity(0.6),
                                     shape: BoxShape.circle,
                                     border: Border.all(
                                       color: Colors.white.withOpacity(0.08),
@@ -185,8 +189,9 @@ class _DeploymentScreenState extends State<DeploymentScreen> {
                                       });
                                     },
                                     child: AnimatedContainer(
-                                      duration:
-                                          const Duration(milliseconds: 200),
+                                      duration: const Duration(
+                                        milliseconds: 200,
+                                      ),
                                       padding: EdgeInsets.symmetric(
                                         horizontal: 18.w,
                                         vertical: 8.h,
@@ -204,10 +209,12 @@ class _DeploymentScreenState extends State<DeploymentScreen> {
                                             : null,
                                         color: isSelected
                                             ? null
-                                            : const Color(0xFF0C1427)
-                                                .withOpacity(0.8),
-                                        borderRadius:
-                                            BorderRadius.circular(20.r),
+                                            : const Color(
+                                                0xFF0C1427,
+                                              ).withOpacity(0.8),
+                                        borderRadius: BorderRadius.circular(
+                                          20.r,
+                                        ),
                                         border: Border.all(
                                           color: isSelected
                                               ? const Color(0xFF1239D4)
@@ -273,13 +280,9 @@ class _DeploymentScreenState extends State<DeploymentScreen> {
               status: deploymentData.status,
             ),
             const SizedBox(height: 20),
-            CoreDevelopmentAreasCard(
-              areas: deploymentData.developmentAreas,
-            ),
+            CoreDevelopmentAreasCard(areas: deploymentData.developmentAreas),
             const SizedBox(height: 20),
-            FootballSkillsCard(
-              skills: deploymentData.footballSkills,
-            ),
+            FootballSkillsCard(skills: deploymentData.footballSkills),
             const SizedBox(height: 20),
             DevelopmentGrowthCard(
               months: deploymentData.growthMonths,

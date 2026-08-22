@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
+import 'package:football_club/component/image/common_image.dart';
 import 'package:football_club/component/text/common_text.dart';
 import 'package:football_club/config/route/app_routes.dart';
 import 'package:football_club/features/profile/presentation/profile_screen/container/profile_controller.dart';
@@ -27,259 +28,312 @@ class _ProfileScreenState extends State<ProfileScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // 1. Top Header with Background Image & Profile Summary
-            Container(
-              width: double.infinity,
-              decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage(AppImages.home_bg),
-                  fit: BoxFit.cover,
-                ),
-              ),
-              child: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      const Color(0xFF0A0E1A).withOpacity(0.1),
-                      const Color(0xFF0A0E1A).withOpacity(0.85),
-                      const Color(0xFF0A0E1A),
-                    ],
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
+            GetBuilder<ProfileController>(
+              init: Get.put(ProfileController()),
+              builder: (controller) {
+                final String? banner = controller.bannerUrl;
+                return Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: (banner != null && banner.isNotEmpty)
+                          ? NetworkImage(banner) as ImageProvider
+                          : const AssetImage(AppImages.home_bg),
+                      fit: BoxFit.cover,
+                    ),
                   ),
-                ),
-                child: SafeArea(
-                  bottom: false,
-                  child: Padding(
-                    padding: EdgeInsets.only(right: 24.w, top: 8.h, left: 24.w, bottom: 10.h),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Header Logo & Notification Bell
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          const Color(0xFF0A0E1A).withOpacity(0.1),
+                          const Color(0xFF0A0E1A).withOpacity(0.85),
+                          const Color(0xFF0A0E1A),
+                        ],
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                      ),
+                    ),
+                    child: SafeArea(
+                      bottom: false,
+                      child: Padding(
+                        padding: EdgeInsets.only(
+                          right: 24.w,
+                          top: 8.h,
+                          left: 24.w,
+                          bottom: 10.h,
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            // Header Logo & Notification Bell
                             Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Container(
-                                  width: 22.w,
-                                  height: 22.h,
-                                  decoration: const BoxDecoration(
-                                    color: Color(0xFF2563EB),
-                                    shape: BoxShape.circle,
-                                  ),
-                                  alignment: Alignment.center,
-                                  child: Icon(
-                                    Icons.sports_soccer,
-                                    color: Colors.white,
-                                    size: 14.sp,
-                                  ),
+                                Row(
+                                  children: [
+                                    Container(
+                                      width: 22.w,
+                                      height: 22.h,
+                                      decoration: const BoxDecoration(
+                                        color: Color(0xFF2563EB),
+                                        shape: BoxShape.circle,
+                                      ),
+                                      alignment: Alignment.center,
+                                      child: Icon(
+                                        Icons.sports_soccer,
+                                        color: Colors.white,
+                                        size: 14.sp,
+                                      ),
+                                    ),
+                                    SizedBox(width: 8.w),
+                                    const CommonText(
+                                      text: "TFP Academy",
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w600,
+                                      color: Color(0xFF2563EB),
+                                    ),
+                                  ],
                                 ),
-                                SizedBox(width: 8.w),
-                                const CommonText(
-                                  text: "TFP Academy",
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w600,
-                                  color: Color(0xFF2563EB),
+                                GestureDetector(
+                                  onTap: () =>
+                                      Get.toNamed(AppRoutes.notifications),
+                                  child: Container(
+                                    width: 40.w,
+                                    height: 40.h,
+                                    decoration: BoxDecoration(
+                                      color: const Color(
+                                        0xFF0C1322,
+                                      ).withOpacity(0.6),
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
+                                        color: Colors.white.withOpacity(0.08),
+                                        width: 1,
+                                      ),
+                                    ),
+                                    child: Center(
+                                      child: Stack(
+                                        alignment: Alignment.center,
+                                        clipBehavior: Clip.none,
+                                        children: [
+                                          Icon(
+                                            Icons.notifications_none_outlined,
+                                            color: Colors.white,
+                                            size: 22.sp,
+                                          ),
+                                          Positioned(
+                                            right: 0,
+                                            top: 0,
+                                            child: Container(
+                                              width: 8.w,
+                                              height: 8.h,
+                                              decoration: const BoxDecoration(
+                                                color: Color(0xFF2563EB),
+                                                shape: BoxShape.circle,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
                                 ),
                               ],
                             ),
-                            GestureDetector(
-                              onTap: () => Get.toNamed(AppRoutes.notifications),
-                              child: Container(
-                                width: 40.w,
-                                height: 40.h,
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFF0C1322).withOpacity(0.6),
-                                  shape: BoxShape.circle,
-                                  border: Border.all(
-                                    color: Colors.white.withOpacity(0.08),
-                                    width: 1,
-                                  ),
-                                ),
-                                child: Center(
-                                  child: Stack(
-                                    alignment: Alignment.center,
-                                    clipBehavior: Clip.none,
-                                    children: [
-                                      Icon(
-                                        Icons.notifications_none_outlined,
-                                        color: Colors.white,
-                                        size: 22.sp,
+                            SizedBox(height: 6.h),
+
+                            // Title
+                            const CommonText(
+                              text: "Profile",
+                              fontSize: 30,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.white,
+                              textAlign: TextAlign.start,
+                            ),
+                            SizedBox(height: 8.h),
+
+                            // Profile Info Section Centered
+                            Center(
+                              child: Column(
+                                children: [
+                                  // Avatar Container with Blue Glow
+                                  Container(
+                                    width: 86.w,
+                                    height: 86.h,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
+                                        color: const Color(0xFF2563EB),
+                                        width: 2,
                                       ),
-                                      Positioned(
-                                        right: 0,
-                                        top: 0,
-                                        child: Container(
-                                          width: 8.w,
-                                          height: 8.h,
-                                          decoration: const BoxDecoration(
-                                            color: Color(0xFF2563EB),
-                                            shape: BoxShape.circle,
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: const Color(
+                                            0xFF2563EB,
+                                          ).withOpacity(0.5),
+                                          blurRadius: 16,
+                                          spreadRadius: 2,
+                                        ),
+                                      ],
+                                    ),
+                                    child: ClipOval(
+                                      child: GetBuilder<ProfileController>(
+                                        builder: (controller) {
+                                          return CommonImage(
+                                            imageSrc:
+                                                controller.profileImagePath ??
+                                                controller
+                                                    .profileEntity
+                                                    .value
+                                                    ?.profileImagePath ??
+                                                '',
+                                            defaultImage:
+                                                AppImages.profile_image,
+                                            fill: BoxFit.cover,
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(height: 12.h),
+
+                                  // Name & Subtitle dynamically from ProfileController / ProfileRemoteDataSource
+                                  GetBuilder<ProfileController>(
+                                    init: Get.put(ProfileController()),
+                                    builder: (controller) {
+                                      final profile =
+                                          controller.profileEntity.value;
+                                      final name =
+                                          profile?.playerName ??
+                                          controller.playerNameController.text;
+                                      final pos =
+                                          profile?.position ??
+                                          controller.selectedPosition;
+
+                                      return Column(
+                                        children: [
+                                          CommonText(
+                                            text: name.isNotEmpty
+                                                ? name
+                                                : "James Thornton",
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.w700,
+                                            color: Colors.white,
                                           ),
+                                          SizedBox(height: 4.h),
+                                          CommonText(
+                                            text: "U14 Elite · $pos",
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.w400,
+                                            color: const Color(0xFF8E9BAE),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  ),
+                                  SizedBox(height: 12.h),
+
+                                  // Badges Row
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Container(
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: 14.w,
+                                          vertical: 5.h,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: const Color(0xFFF59E0B),
+                                          borderRadius: BorderRadius.circular(
+                                            16.r,
+                                          ),
+                                        ),
+                                        child: const CommonText(
+                                          text: "Advanced",
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w600,
+                                          color: Color(0xFF0F172A),
+                                        ),
+                                      ),
+                                      SizedBox(width: 10.w),
+                                      Container(
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: 14.w,
+                                          vertical: 5.h,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: const Color(0xFF091C4A),
+                                          borderRadius: BorderRadius.circular(
+                                            16.r,
+                                          ),
+                                          border: Border.all(
+                                            color: const Color(
+                                              0xFF1D4ED8,
+                                            ).withOpacity(0.4),
+                                            width: 1,
+                                          ),
+                                        ),
+                                        child: const CommonText(
+                                          text: "Season 24/25",
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w500,
+                                          color: Color(0xFF2563EB),
                                         ),
                                       ),
                                     ],
                                   ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 6.h),
+                                  SizedBox(height: 14.h),
 
-                        // Title
-                        const CommonText(
-                          text: "Profile",
-                          fontSize: 30,
-                          fontWeight: FontWeight.w700,
-                          color: Colors.white,
-                          textAlign: TextAlign.start,
-                        ),
-                        SizedBox(height: 8.h),
-
-                        // Profile Info Section Centered
-                        Center(
-                          child: Column(
-                            children: [
-                              // Avatar Container with Blue Glow
-                              Container(
-                                width: 86.w,
-                                height: 86.h,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  border: Border.all(
-                                    color: const Color(0xFF2563EB),
-                                    width: 2,
-                                  ),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: const Color(0xFF2563EB).withOpacity(0.5),
-                                      blurRadius: 16,
-                                      spreadRadius: 2,
-                                    ),
-                                  ],
-                                ),
-                                child: ClipOval(
-                                  child: Image.asset(
-                                    AppImages.profile_image,
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                              ),
-                              SizedBox(height: 12.h),
-
-                              // Name & Subtitle dynamically from ProfileController / ProfileRemoteDataSource
-                              GetBuilder<ProfileController>(
-                                init: Get.put(ProfileController()),
-                                builder: (controller) {
-                                  final profile = controller.profileEntity.value;
-                                  final name = profile?.playerName ??
-                                      controller.playerNameController.text;
-                                  final pos = profile?.position ??
-                                      controller.selectedPosition;
-
-                                  return Column(
-                                    children: [
-                                      CommonText(
-                                        text: name.isNotEmpty
-                                            ? name
-                                            : "James Thornton",
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.w700,
-                                        color: Colors.white,
+                                  // Edit Profile Button
+                                  GestureDetector(
+                                    onTap: () =>
+                                        Get.toNamed(AppRoutes.editProfile),
+                                    child: Container(
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: 16.w,
+                                        vertical: 8.h,
                                       ),
-                                      SizedBox(height: 4.h),
-                                      CommonText(
-                                        text: "U14 Elite · $pos",
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.w400,
-                                        color: const Color(0xFF8E9BAE),
+                                      decoration: BoxDecoration(
+                                        color: const Color(
+                                          0xFF0C1427,
+                                        ).withOpacity(0.8),
+                                        borderRadius: BorderRadius.circular(
+                                          8.r,
+                                        ),
+                                        border: Border.all(
+                                          color: Colors.white.withOpacity(0.15),
+                                          width: 1,
+                                        ),
                                       ),
-                                    ],
-                                  );
-                                },
-                              ),
-                              SizedBox(height: 12.h),
-
-                              // Badges Row
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Container(
-                                    padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 5.h),
-                                    decoration: BoxDecoration(
-                                      color: const Color(0xFFF59E0B),
-                                      borderRadius: BorderRadius.circular(16.r),
-                                    ),
-                                    child: const CommonText(
-                                      text: "Advanced",
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w600,
-                                      color: Color(0xFF0F172A),
-                                    ),
-                                  ),
-                                  SizedBox(width: 10.w),
-                                  Container(
-                                    padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 5.h),
-                                    decoration: BoxDecoration(
-                                      color: const Color(0xFF091C4A),
-                                      borderRadius: BorderRadius.circular(16.r),
-                                      border: Border.all(
-                                        color: const Color(0xFF1D4ED8).withOpacity(0.4),
-                                        width: 1,
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Icon(
+                                            Icons.edit_note_outlined,
+                                            color: Colors.white,
+                                            size: 16.sp,
+                                          ),
+                                          SizedBox(width: 6.w),
+                                          const CommonText(
+                                            text: "Edit Profile",
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.w500,
+                                            color: Colors.white,
+                                          ),
+                                        ],
                                       ),
-                                    ),
-                                    child: const CommonText(
-                                      text: "Season 24/25",
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w500,
-                                      color: Color(0xFF2563EB),
                                     ),
                                   ),
                                 ],
                               ),
-                              SizedBox(height: 14.h),
-
-                              // Edit Profile Button
-                              GestureDetector(
-                                onTap: () => Get.toNamed(AppRoutes.editProfile),
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xFF0C1427).withOpacity(0.8),
-                                    borderRadius: BorderRadius.circular(8.r),
-                                    border: Border.all(
-                                      color: Colors.white.withOpacity(0.15),
-                                      width: 1,
-                                    ),
-                                  ),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Icon(
-                                        Icons.edit_note_outlined,
-                                        color: Colors.white,
-                                        size: 16.sp,
-                                      ),
-                                      SizedBox(width: 6.w),
-                                      const CommonText(
-                                        text: "Edit Profile",
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.w500,
-                                        color: Colors.white,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
-                      ],
+                      ),
                     ),
                   ),
-                ),
-              ),
+                );
+              },
             ),
 
             // 2. Body Cards Content
@@ -289,27 +343,118 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 children: [
                   SizedBox(height: 8.h),
 
-                  // Player Information Card
-                  _buildSectionCard(
-                    title: "Player Information",
-                    rows: [
-                      {"label": "Date of Birth", "value": "12 March 2011"},
-                      {"label": "Age", "value": "13 years"},
-                      {"label": "Favourite Foot", "value": "Right"},
-                      {"label": "Date Joined TFP", "value": "September 2022"},
-                      {"label": "Assigned Coach", "value": "Coach Mike Davies"},
-                    ],
-                  ),
-                  SizedBox(height: 16.h),
+                  GetBuilder<ProfileController>(
+                    init: Get.put(ProfileController()),
+                    builder: (controller) {
+                      final profile = controller.profileEntity.value;
+                      final playerName =
+                          profile?.playerName ??
+                          controller.playerNameController.text;
+                      final dob = profile?.dob ?? controller.dobController.text;
+                      final foot =
+                          profile?.preferredFoot ?? controller.selectedFoot;
+                      final parentName =
+                          profile?.parentName ??
+                          controller.parentNameController.text;
+                      final mobile =
+                          profile?.mobile ?? controller.mobileController.text;
 
-                  // Parent / Guardian Card
-                  _buildSectionCard(
-                    title: "Parent / Guardian",
-                    rows: [
-                      {"label": "Name", "value": "Sarah Thornton"},
-                      {"label": "Email", "value": "s.thornton@email.com"},
-                      {"label": "Mobile", "value": "+44 7912 345678"},
-                    ],
+                      return Column(
+                        children: [
+                          // Player Information Card
+                          _buildSectionCard(
+                            title: "Player Information",
+                            rows: [
+                              {
+                                "label": "Player Name",
+                                "value": playerName.isNotEmpty ? playerName : "Rahim Uddin",
+                              },
+                              {
+                                "label": "Date of Birth",
+                                "value": dob.isNotEmpty ? dob : "15-05-2010",
+                              },
+                              {
+                                "label": "Favourite Foot",
+                                "value": foot.isNotEmpty ? foot : "Right",
+                              },
+                              {
+                                "label": "Assigned Coach",
+                                "value": "Coach John Doe",
+                              },
+                            ],
+                          ),
+                          SizedBox(height: 16.h),
+
+                          // Parent / Guardian Card
+                          _buildSectionCard(
+                            title: "Parent / Guardian",
+                            rows: [
+                              {
+                                "label": "Name",
+                                "value": parentName.isNotEmpty
+                                    ? parentName
+                                    : "Karim Uddin",
+                              },
+                              {
+                                "label": "Mobile",
+                                "value": mobile.isNotEmpty
+                                    ? mobile
+                                    : "+8801800000000",
+                              },
+                            ],
+                          ),
+
+                          // Medical & Emergency Info Card
+                          if (profile?.bloodGroup.isNotEmpty == true ||
+                              profile?.emergencyContactName.isNotEmpty == true ||
+                              profile?.medicalConditions.isNotEmpty == true)
+                            Column(
+                              children: [
+                                SizedBox(height: 16.h),
+                                _buildSectionCard(
+                                  title: "Medical & Emergency Info",
+                                  rows: [
+                                    if (profile?.bloodGroup.isNotEmpty == true)
+                                      {"label": "Blood Group", "value": profile!.bloodGroup},
+                                    if (profile?.allergies.isNotEmpty == true)
+                                      {"label": "Allergies", "value": profile!.allergies},
+                                    if (profile?.medicalConditions.isNotEmpty == true)
+                                      {"label": "Conditions", "value": profile!.medicalConditions},
+                                    if (profile?.medications.isNotEmpty == true)
+                                      {"label": "Medications", "value": profile!.medications},
+                                    if (profile?.emergencyContactName.isNotEmpty == true)
+                                      {"label": "Emergency Contact", "value": profile!.emergencyContactName},
+                                    if (profile?.emergencyPhone.isNotEmpty == true)
+                                      {"label": "Emergency Phone", "value": profile!.emergencyPhone},
+                                    if (profile?.medicalNotes.isNotEmpty == true)
+                                      {"label": "Medical Notes", "value": profile!.medicalNotes},
+                                  ],
+                                ),
+                              ],
+                            ),
+
+                          // Address Info Card
+                          if (profile?.homeAddress.isNotEmpty == true ||
+                              profile?.city.isNotEmpty == true)
+                            Column(
+                              children: [
+                                SizedBox(height: 16.h),
+                                _buildSectionCard(
+                                  title: "Address Information",
+                                  rows: [
+                                    if (profile?.homeAddress.isNotEmpty == true)
+                                      {"label": "Home Address", "value": profile!.homeAddress},
+                                    if (profile?.city.isNotEmpty == true)
+                                      {"label": "City", "value": profile!.city},
+                                    if (profile?.postcode.isNotEmpty == true)
+                                      {"label": "Postcode", "value": profile!.postcode},
+                                  ],
+                                ),
+                              ],
+                            ),
+                        ],
+                      );
+                    },
                   ),
                   SizedBox(height: 16.h),
 
@@ -457,10 +602,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       decoration: BoxDecoration(
         color: const Color(0xFF0C1427).withOpacity(0.85),
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(
-          color: Colors.white.withOpacity(0.08),
-          width: 1,
-        ),
+        border: Border.all(color: Colors.white.withOpacity(0.08), width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -500,10 +642,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ),
                   if (!isLast)
-                    Divider(
-                      height: 1,
-                      color: Colors.white.withOpacity(0.05),
-                    ),
+                    Divider(height: 1, color: Colors.white.withOpacity(0.05)),
                 ],
               );
             }),
@@ -519,10 +658,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         backgroundColor: const Color(0xFF0C1427),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16.r),
-          side: BorderSide(
-            color: Colors.white.withOpacity(0.12),
-            width: 1,
-          ),
+          side: BorderSide(color: Colors.white.withOpacity(0.12), width: 1),
         ),
         child: Padding(
           padding: EdgeInsets.all(20.w),
@@ -643,11 +779,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     shape: BoxShape.circle,
                   ),
                   alignment: Alignment.center,
-                  child: Icon(
-                    icon,
-                    color: iconColor,
-                    size: 18.sp,
-                  ),
+                  child: Icon(icon, color: iconColor, size: 18.sp),
                 ),
                 SizedBox(width: 14.w),
                 CommonText(

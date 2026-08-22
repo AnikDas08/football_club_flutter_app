@@ -49,7 +49,7 @@ class OverallScoreCard extends StatelessWidget {
                 height: 72.h,
                 child: CustomPaint(
                   painter: SegmentedCircularProgressPainter(
-                    progress: (score / maxScore).clamp(0.0, 1.0),
+                    progress: maxScore > 0 ? (score / maxScore).clamp(0.0, 1.0) : 0.0,
                     gradientColors: const [Color(0xFF1D4ED8), Color(0xFF2563EB)],
                     inactiveColor: const Color(0xFF0F265C),
                     strokeWidth: 4.w,
@@ -61,7 +61,7 @@ class OverallScoreCard extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         CommonText(
-                          text: score.toStringAsFixed(1),
+                          text: score % 1 == 0 ? score.toInt().toString() : score.toStringAsFixed(1),
                           fontSize: 18,
                           fontWeight: FontWeight.w700,
                           color: Colors.white,

@@ -13,8 +13,19 @@ class GoalsByMonthCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const int maxValue = 4;
-    final List<String> yAxisLabels = ["4", "3", "2", "1", "0"];
+    int maxValue = 4;
+    if (goalsByMonth.isNotEmpty) {
+      final highest = goalsByMonth.map((e) => e.value).reduce((a, b) => a > b ? a : b);
+      if (highest > maxValue) maxValue = highest;
+    }
+
+    final List<String> yAxisLabels = [
+      maxValue.toString(),
+      (maxValue * 0.75).round().toString(),
+      (maxValue * 0.5).round().toString(),
+      (maxValue * 0.25).round().toString(),
+      "0"
+    ];
 
     return Container(
       width: double.infinity,

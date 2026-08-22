@@ -1,7 +1,9 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:football_club/component/image/common_image.dart';
 import 'package:football_club/component/text/common_text.dart';
+import 'package:football_club/utils/constants/app_images.dart';
 
 class AttendanceAnalyticsCard extends StatelessWidget {
   final double attendanceRate;
@@ -56,11 +58,15 @@ class AttendanceAnalyticsCard extends StatelessWidget {
                         color: const Color(0xFF165DFF),
                       ),
                       DonutSection(
-                        percentage: 0.08,
+                        percentage: double.tryParse(missedPercentage.replaceAll('%', '').trim()) != null
+                            ? (double.parse(missedPercentage.replaceAll('%', '').trim()) / 100.0)
+                            : 0.08,
                         color: const Color(0xFFEF4444),
                       ),
                       DonutSection(
-                        percentage: 0.05,
+                        percentage: double.tryParse(latePercentage.replaceAll('%', '').trim()) != null
+                            ? (double.parse(latePercentage.replaceAll('%', '').trim()) / 100.0)
+                            : 0.05,
                         color: const Color(0xFFF59E0B),
                       ),
                     ],
@@ -126,9 +132,10 @@ class AttendanceAnalyticsCard extends StatelessWidget {
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(10.r),
-                  child: Image.asset(
-                    playerImagePath,
-                    fit: BoxFit.cover,
+                  child: CommonImage(
+                    imageSrc: playerImagePath,
+                    fill: BoxFit.cover,
+                    defaultImage: AppImages.profile_image,
                   ),
                 ),
               ),
