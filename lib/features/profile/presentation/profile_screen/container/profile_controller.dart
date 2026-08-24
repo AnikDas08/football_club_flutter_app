@@ -103,6 +103,8 @@ class ProfileController extends GetxController {
     }
   }
 
+  bool isPushNotificationEnabled = false;
+
   @override
   void onInit() {
     super.onInit();
@@ -111,6 +113,28 @@ class ProfileController extends GetxController {
     }
     fetchProfileData();
     fetchProfileBanner();
+    fetchNotificationPreferences();
+  }
+
+  Future<void> fetchNotificationPreferences() async {
+    try {
+      final pushStatus = await profileRepository.getNotificationPreferences();
+      if (pushStatus != null) {
+        isPushNotificationEnabled = pushStatus;
+        update();
+      }
+    } catch (_) {}
+  }
+
+  Future<void> toggleNotificationPreference(bool value) async {
+    isPushNotificationEnabled = value;
+    update();
+    final success =
+        await profileRepository.updateNotificationPreferences(value);
+    if (!success) {
+      isPushNotificationEnabled = !value;
+      update();
+    }
   }
 
   Future<void> fetchProfileBanner() async {
@@ -217,6 +241,14 @@ class ProfileController extends GetxController {
     final bool isPosChanged = initial == null || selectedPosition != initial.position;
     final bool isFootChanged = initial == null || selectedFoot != initial.preferredFoot;
 
+    if (currentFirstName.isEmpty) {
+      AppSnackbar.error(
+        title: 'Validation Error',
+        message: 'First name is required',
+      );
+      return;
+    }
+
     final bool hasChanges = isImageChanged ||
         isFirstNameChanged ||
         isLastNameChanged ||
@@ -227,11 +259,11 @@ class ProfileController extends GetxController {
         isFootChanged;
 
     if (!hasChanges) {
+      Get.back();
       AppSnackbar.success(
         title: 'Info',
         message: 'No changes to update',
       );
-      Get.back();
       return;
     }
 
@@ -302,11 +334,16 @@ class ProfileController extends GetxController {
           position: updatedProfile.position,
         );
       }
+      Get.back();
       AppSnackbar.success(
         title: 'Success',
         message: 'Profile updated successfully',
       );
-      Get.back();
+    } else {
+      AppSnackbar.error(
+        title: 'Error',
+        message: 'Failed to update profile. Please try again.',
+      );
     }
   }
 

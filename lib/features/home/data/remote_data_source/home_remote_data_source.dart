@@ -165,6 +165,29 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
     }
 
     try {
+      final response = await ApiService.get(ApiEndPoint.developmentStats(playerId));
+      if (response.statusCode == 200) {
+        final statsData = response.data['data'] as Map<String, dynamic>?;
+        if (statsData != null) {
+          if (statsData.containsKey('sessions')) {
+            homeDataMap['sessionsCount'] = (statsData['sessions'] as num?)?.toInt() ?? 0;
+          }
+          if (statsData.containsKey('goals')) {
+            homeDataMap['goalsCount'] = (statsData['goals'] as num?)?.toInt() ?? 0;
+          }
+          if (statsData.containsKey('assists')) {
+            homeDataMap['assistsCount'] = (statsData['assists'] as num?)?.toInt() ?? 0;
+          }
+          if (statsData.containsKey('potm')) {
+            homeDataMap['potmCount'] = (statsData['potm'] as num?)?.toInt() ?? 0;
+          }
+        }
+      }
+    } catch (_) {
+      // Fallback silently if development stats API call fails
+    }
+
+    try {
       final response = await ApiService.get(ApiEndPoint.upcomingTraining(playerId));
       if (response.statusCode == 200) {
         final trainingData = response.data['data'] as Map<String, dynamic>?;

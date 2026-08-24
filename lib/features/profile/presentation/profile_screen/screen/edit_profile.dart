@@ -235,7 +235,10 @@ class EditProfile extends StatelessWidget {
 
                   // 5. Save Changes Button
                   GestureDetector(
-                    onTap: controller.isLoading ? null : controller.saveProfile,
+                    behavior: HitTestBehavior.opaque,
+                    onTap: controller.isLoading
+                        ? null
+                        : () => controller.saveProfile(),
                     child: Container(
                       width: double.infinity,
                       padding: EdgeInsets.symmetric(vertical: 14.h),

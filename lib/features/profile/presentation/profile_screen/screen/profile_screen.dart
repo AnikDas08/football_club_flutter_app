@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -17,7 +18,6 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  bool _isNotificationsEnabled = true;
 
   @override
   Widget build(BuildContext context) {
@@ -32,31 +32,55 @@ class _ProfileScreenState extends State<ProfileScreen> {
               init: Get.put(ProfileController()),
               builder: (controller) {
                 final String? banner = controller.bannerUrl;
-                return Container(
+                return SizedBox(
                   width: double.infinity,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: (banner != null && banner.isNotEmpty)
-                          ? NetworkImage(banner) as ImageProvider
-                          : const AssetImage(AppImages.home_bg),
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          const Color(0xFF0A0E1A).withOpacity(0.1),
-                          const Color(0xFF0A0E1A).withOpacity(0.85),
-                          const Color(0xFF0A0E1A),
-                        ],
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
+                  child: Stack(
+                    children: [
+                      // Background Image Layer with Smooth Transition
+                      Positioned.fill(
+                        child: (banner != null && banner.isNotEmpty)
+                            ? CachedNetworkImage(
+                                imageUrl: banner,
+                                fit: BoxFit.fill,
+                                fadeInDuration:
+                                    const Duration(milliseconds: 500),
+                                placeholder: (context, url) => Image.asset(
+                                  AppImages.home_bg,
+                                  fit: BoxFit.cover,
+                                ),
+                                errorWidget: (context, url, error) =>
+                                    Image.asset(
+                                  AppImages.home_bg,
+                                  fit: BoxFit.cover,
+                                ),
+                              )
+                            : Image.asset(
+                                AppImages.home_bg,
+                                fit: BoxFit.cover,
+                              ),
                       ),
-                    ),
-                    child: SafeArea(
-                      bottom: false,
-                      child: Padding(
+
+                      // Gradient Overlay Layer
+                      Positioned.fill(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [
+                                const Color(0xFF0A0E1A).withOpacity(0.1),
+                                const Color(0xFF0A0E1A).withOpacity(0.85),
+                                const Color(0xFF0A0E1A),
+                              ],
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      // Content Layer
+                      SafeArea(
+                        bottom: false,
+                        child: Padding(
                         padding: EdgeInsets.only(
                           right: 24.w,
                           top: 8.h,
@@ -331,10 +355,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                       ),
                     ),
-                  ),
-                );
-              },
-            ),
+                  ],
+                ),
+              );
+            },
+          ),
 
             // 2. Body Cards Content
             Padding(
@@ -473,23 +498,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     child: Column(
                       children: [
                         // Notifications Switch Item
-                        _buildOptionItem(
-                          icon: Icons.notifications_none_outlined,
-                          iconColor: const Color(0xFF2563EB),
-                          iconBgColor: const Color(0xFF091C4A),
-                          title: "Notifications",
-                          trailing: Transform.scale(
-                            scale: 0.75,
-                            child: Switch.adaptive(
-                              value: _isNotificationsEnabled,
-                              activeColor: const Color(0xFF2563EB),
-                              onChanged: (val) {
-                                setState(() {
-                                  _isNotificationsEnabled = val;
-                                });
-                              },
-                            ),
-                          ),
+                        GetBuilder<ProfileController>(
+                          builder: (controller) {
+                            return _buildOptionItem(
+                              icon: Icons.notifications_none_outlined,
+                              iconColor: const Color(0xFF2563EB),
+                              iconBgColor: const Color(0xFF091C4A),
+                              title: "Notifications",
+                              trailing: Transform.scale(
+                                scale: 0.75,
+                                child: Switch.adaptive(
+                                  value: controller.isPushNotificationEnabled,
+                                  activeColor: const Color(0xFF2563EB),
+                                  onChanged: (val) {
+                                    controller
+                                        .toggleNotificationPreference(val);
+                                  },
+                                ),
+                              ),
+                            );
+                          },
                         ),
 
                         // Change Password Item

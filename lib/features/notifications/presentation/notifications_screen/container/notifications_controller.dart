@@ -40,4 +40,23 @@ class NotificationsController extends GetxController {
     page = 1;
     await getNotifications();
   }
+
+  /// Mark notification as read when clicked
+  Future<void> markAsRead(String id) async {
+    final index = notifications.indexWhere((element) => element.id == id);
+    if (index != -1 && notifications[index].isUnread) {
+      final old = notifications[index];
+      notifications[index] = NotificationEntity(
+        id: old.id,
+        title: old.title,
+        message: old.message,
+        time: old.time,
+        isUnread: false,
+        icon: old.icon,
+        iconColor: old.iconColor,
+      );
+      notifications.refresh();
+      await repository.markAsRead(id);
+    }
+  }
 }

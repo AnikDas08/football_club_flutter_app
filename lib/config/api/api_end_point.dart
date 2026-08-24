@@ -16,6 +16,7 @@ class ApiEndPoint {
   static const termsOfServices = 'terms-and-conditions';
   static const chats = 'chats';
   static const messages = 'messages';
+  static const faqsPublic = 'faqs/public';
 
   static String playerProfile(String playerId) =>
       'dashboard/player/profile/$playerId';
@@ -43,6 +44,9 @@ class ApiEndPoint {
       'achievements/my-achievements/$playerId';
   static String playerStats(String playerId) =>
       'dashboard/player/stats/$playerId';
+  static String developmentStats(String playerId) =>
+      'dashboard/get-development-stats/$playerId';
   static const userProfile = 'users/profile';
+  static const notificationPreferences = 'notification/preferences';
   static String banners(String section) => 'banners?section=$section';
 }

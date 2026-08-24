@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:football_club/component/text/common_text.dart';
@@ -36,31 +37,48 @@ class HomeScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Top Header with background image decoration
-              Container(
+              // Top Header with background image decoration & smooth fade transition
+              SizedBox(
                 width: double.infinity,
                 height: 290.h,
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: controller.bannerUrl.value.isNotEmpty
-                        ? NetworkImage(controller.bannerUrl.value)
-                              as ImageProvider
-                        : const AssetImage(AppImages.home_bg),
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                child: Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        const Color(0xFF0A0E1A).withOpacity(0.1),
-                        const Color(0xFF0A0E1A).withOpacity(0.85),
-                        const Color(0xFF0A0E1A),
-                      ],
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
+                child: Stack(
+                  children: [
+                    // Background Image Layer with Smooth Transition
+                    Positioned.fill(
+                      child: controller.bannerUrl.value.isNotEmpty
+                          ? CachedNetworkImage(
+                              imageUrl: controller.bannerUrl.value,
+                              fit: BoxFit.fill,
+                              fadeInDuration: const Duration(milliseconds: 500),
+                              placeholder: (context, url) => Image.asset(
+                                AppImages.home_bg,
+                                fit: BoxFit.cover,
+                              ),
+                              errorWidget: (context, url, error) => Image.asset(
+                                AppImages.home_bg,
+                                fit: BoxFit.cover,
+                              ),
+                            )
+                          : Image.asset(
+                              AppImages.home_bg,
+                              fit: BoxFit.cover,
+                            ),
                     ),
-                  ),
+
+                    // Gradient Overlay & Content Layer
+                    Positioned.fill(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [
+                              const Color(0xFF0A0E1A).withOpacity(0.1),
+                              const Color(0xFF0A0E1A).withOpacity(0.85),
+                              const Color(0xFF0A0E1A),
+                            ],
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                          ),
+                        ),
                   child: SafeArea(
                     bottom: false,
                     child: Padding(
@@ -146,6 +164,9 @@ class HomeScreen extends StatelessWidget {
                   ),
                 ),
               ),
+            ],
+          ),
+        ),
 
               // Content Area
               Padding(

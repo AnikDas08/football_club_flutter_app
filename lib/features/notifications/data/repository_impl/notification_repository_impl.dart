@@ -13,4 +13,9 @@ class NotificationRepositoryImpl implements NotificationRepository {
   Future<List<NotificationEntity>> getNotifications(int page) async {
     return await remoteDataSource.getNotifications(page);
   }
+
+  @override
+  Future<bool> markAsRead(String id) async {
+    return await remoteDataSource.markAsRead(id);
+  }
 }

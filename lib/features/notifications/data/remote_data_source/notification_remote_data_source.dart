@@ -1,11 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:football_club/config/api/api_end_point.dart';
+import 'package:football_club/services/api/api_service.dart';
 import '../../domain/entity/notification_entity.dart';
 
 abstract class NotificationRemoteDataSource {
   Future<List<NotificationEntity>> getNotifications(int page);
+  Future<bool> markAsRead(String id);
 }
 
 class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
+  @override
+  Future<bool> markAsRead(String id) async {
+    try {
+      final response = await ApiService.patch(
+        '${ApiEndPoint.notifications}/$id',
+        body: {'isUnread': false},
+      );
+      return response.isSuccess;
+    } catch (_) {
+      return false;
+    }
+  }
+
   @override
   Future<List<NotificationEntity>> getNotifications(int page) async {
     return const [

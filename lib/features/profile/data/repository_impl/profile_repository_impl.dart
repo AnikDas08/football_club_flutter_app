@@ -25,4 +25,23 @@ class ProfileRepositoryImpl implements ProfileRepository {
     final response = await remoteDataSource.updateProfile(body);
     return response.isSuccess;
   }
+
+  @override
+  Future<bool?> getNotificationPreferences() async {
+    final response = await remoteDataSource.fetchNotificationPreferences();
+    if (response.statusCode == 200) {
+      final data = response.data['data'];
+      if (data != null && data['push'] != null) {
+        return data['push'] as bool;
+      }
+    }
+    return null;
+  }
+
+  @override
+  Future<bool> updateNotificationPreferences(bool push) async {
+    final response =
+        await remoteDataSource.updateNotificationPreferences(push);
+    return response.isSuccess;
+  }
 }

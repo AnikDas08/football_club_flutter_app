@@ -6,9 +6,24 @@ import 'package:football_club/services/api/api_service.dart';
 abstract class ProfileRemoteDataSource {
   Future<ApiResponseModel> fetchProfileData();
   Future<ApiResponseModel> updateProfile(Map<String, dynamic> body);
+  Future<ApiResponseModel> fetchNotificationPreferences();
+  Future<ApiResponseModel> updateNotificationPreferences(bool push);
 }
 
 class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
+  @override
+  Future<ApiResponseModel> fetchNotificationPreferences() async {
+    return await ApiService.get(ApiEndPoint.notificationPreferences);
+  }
+
+  @override
+  Future<ApiResponseModel> updateNotificationPreferences(bool push) async {
+    return await ApiService.patch(
+      ApiEndPoint.notificationPreferences,
+      body: {'push': push},
+    );
+  }
+
   @override
   Future<ApiResponseModel> fetchProfileData() async {
     return await ApiService.get(ApiEndPoint.userProfile);

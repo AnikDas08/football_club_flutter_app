@@ -157,6 +157,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                       isUnread: item.isUnread,
                       icon: item.icon,
                       iconColor: item.iconColor,
+                      onTap: () => controller.markAsRead(item.id),
                     );
                   },
                 );

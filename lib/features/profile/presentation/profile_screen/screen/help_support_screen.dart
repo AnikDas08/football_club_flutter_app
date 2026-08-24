@@ -3,6 +3,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import 'package:football_club/component/text/common_text.dart';
+import 'package:football_club/config/api/api_end_point.dart';
+import 'package:football_club/services/api/api_service.dart';
 import 'package:football_club/utils/constants/app_images.dart';
 
 class HelpSupportScreen extends StatefulWidget {
@@ -13,43 +15,54 @@ class HelpSupportScreen extends StatefulWidget {
 }
 
 class _HelpSupportScreenState extends State<HelpSupportScreen> {
-  int? _expandedIndex = 0; // First item expanded by default as in screenshot
+  int? _expandedIndex = 0; // First item expanded by default
+  bool _isLoading = true;
+  List<Map<String, String>> _faqItems = [];
 
-  final List<Map<String, String>> _faqItems = [
-    {
-      "question": "How do I update my player's details?",
-      "answer":
-          "Go to Profile → Settings → Edit Profile to update any information.",
-    },
-    {
-      "question": "How often are assessments updated?",
-      "answer":
-          "Assessments are updated monthly by your assigned coach following evaluations.",
-    },
-    {
-      "question": "Can I message the coach directly?",
-      "answer":
-          "Yes, you can send direct messages to your coach via the Messages tab.",
-    },
-    {
-      "question": "How do I change my password?",
-      "answer": "Go to Profile → Settings → Change Password.",
-    },
-    {
-      "question": "How often are assessments updated?",
-      "answer":
-          "Assessments are updated monthly by your assigned coach following evaluations.",
-    },
-    {
-      "question": "Can I message the coach directly?",
-      "answer":
-          "Yes, you can send direct messages to your coach via the Messages tab.",
-    },
-    {
-      "question": "How do I change my password?",
-      "answer": "Go to Profile → Settings → Change Password.",
-    },
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _fetchFaqs();
+  }
+
+  Future<void> _fetchFaqs() async {
+    try {
+      final response = await ApiService.get(ApiEndPoint.faqsPublic);
+      if (response.statusCode == 200) {
+        final List<dynamic> rawData = response.data['data'] as List<dynamic>? ?? [];
+        if (rawData.isNotEmpty) {
+          final List<Map<String, String>> fetchedFaqs = [];
+          for (final item in rawData) {
+            if (item is Map<String, dynamic>) {
+              final String q = item['question'] ?? '';
+              final String a = item['answer'] ?? '';
+              if (q.isNotEmpty) {
+                fetchedFaqs.add({
+                  'question': q,
+                  'answer': a,
+                });
+              }
+            }
+          }
+          if (fetchedFaqs.isNotEmpty) {
+            if (mounted) {
+              setState(() {
+                _faqItems = fetchedFaqs;
+                _isLoading = false;
+              });
+            }
+            return;
+          }
+        }
+      }
+    } catch (_) {}
+
+    if (mounted) {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -154,87 +167,109 @@ class _HelpSupportScreenState extends State<HelpSupportScreen> {
               ),
               SizedBox(height: 12.h),
 
-              // FAQ Accordion List
-              ListView.builder(
-                padding: EdgeInsets.zero,
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: _faqItems.length,
-                itemBuilder: (context, index) {
-                  final item = _faqItems[index];
-                  final isExpanded = _expandedIndex == index;
+              // Content Area: Loading / Empty / FAQ List
+              if (_isLoading)
+                Padding(
+                  padding: EdgeInsets.symmetric(vertical: 40.h),
+                  child: const Center(
+                    child: CircularProgressIndicator(
+                      color: Color(0xFF2563EB),
+                    ),
+                  ),
+                )
+              else if (_faqItems.isEmpty)
+                Padding(
+                  padding: EdgeInsets.symmetric(vertical: 40.h),
+                  child: const Center(
+                    child: CommonText(
+                      text: "No FAQs available",
+                      fontSize: 14,
+                      color: Color(0xFF8E9BAE),
+                    ),
+                  ),
+                )
+              else
+                ListView.builder(
+                  padding: EdgeInsets.zero,
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: _faqItems.length,
+                  itemBuilder: (context, index) {
+                    final item = _faqItems[index];
+                    final isExpanded = _expandedIndex == index;
 
-                  return Padding(
-                    padding: EdgeInsets.only(bottom: 12.h),
-                    child: GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          if (isExpanded) {
-                            _expandedIndex = null;
-                          } else {
-                            _expandedIndex = index;
-                          }
-                        });
-                      },
-                      child: Container(
-                        padding: EdgeInsets.all(16.w),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF0C1427).withOpacity(0.85),
-                          borderRadius: BorderRadius.circular(12.r),
-                          border: Border.all(
-                            color: Colors.white.withOpacity(0.12),
-                            width: 1,
+                    return Padding(
+                      padding: EdgeInsets.only(bottom: 12.h),
+                      child: GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            if (isExpanded) {
+                              _expandedIndex = null;
+                            } else {
+                              _expandedIndex = index;
+                            }
+                          });
+                        },
+                        child: Container(
+                          padding: EdgeInsets.all(16.w),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF0C1427).withOpacity(0.85),
+                            borderRadius: BorderRadius.circular(12.r),
+                            border: Border.all(
+                              color: Colors.white.withOpacity(0.12),
+                              width: 1,
+                            ),
                           ),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Expanded(
-                                  child: CommonText(
-                                    text: item["question"]!,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.white,
-                                    textAlign: TextAlign.start,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Expanded(
+                                    child: CommonText(
+                                      text: item["question"] ?? '',
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.white,
+                                      textAlign: TextAlign.start,
+                                    ),
                                   ),
+                                  SizedBox(width: 8.w),
+                                  Icon(
+                                    isExpanded
+                                        ? Icons.keyboard_arrow_down
+                                        : Icons.chevron_right,
+                                    color: const Color(0xFF8E9BAE),
+                                    size: 20.sp,
+                                  ),
+                                ],
+                              ),
+                              if (isExpanded) ...[
+                                SizedBox(height: 12.h),
+                                Divider(
+                                  height: 1,
+                                  color: Colors.white.withOpacity(0.05),
                                 ),
-                                SizedBox(width: 8.w),
-                                Icon(
-                                  isExpanded
-                                      ? Icons.keyboard_arrow_down
-                                      : Icons.chevron_right,
-                                  color: const Color(0xFF8E9BAE),
-                                  size: 20.sp,
+                                SizedBox(height: 12.h),
+                                CommonText(
+                                  text: item["answer"] ?? '',
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w400,
+                                  maxLines: 10,
+                                  color: const Color(0xFFCBD5E1),
+                                  textAlign: TextAlign.start,
+                                  height: 1.4,
                                 ),
                               ],
-                            ),
-                            if (isExpanded) ...[
-                              SizedBox(height: 12.h),
-                              Divider(
-                                height: 1,
-                                color: Colors.white.withOpacity(0.05),
-                              ),
-                              SizedBox(height: 12.h),
-                              CommonText(
-                                text: item["answer"]!,
-                                fontSize: 13,
-                                fontWeight: FontWeight.w400,
-                                maxLines: 5,
-                                color: const Color(0xFFCBD5E1),
-                                textAlign: TextAlign.start,
-                                height: 1.4,
-                              ),
                             ],
-                          ],
+                          ),
                         ),
                       ),
-                    ),
-                  );
-                },
-              ),
+                    );
+                  },
+                ),
               SizedBox(height: 24.h),
             ],
           ),

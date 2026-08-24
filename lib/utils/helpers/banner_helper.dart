@@ -6,10 +6,14 @@ class BannerHelper {
 
   static Future<String?> fetchBanner(String section) async {
     try {
-      // 1. Try banners?section=$section
-      var response = await ApiService.get(ApiEndPoint.banners(section));
-      if (response.statusCode != 200 || response.data['data'] == null) {
-        // 2. Try fallback endpoint banners/$section
+      // 1. Try banners/section?section=$section
+      var response = await ApiService.get('banners/section?section=$section');
+      if (response.statusCode != 200 || response.data == null || response.data['data'] == null) {
+        // 2. Try banners?section=$section
+        response = await ApiService.get(ApiEndPoint.banners(section));
+      }
+      if (response.statusCode != 200 || response.data == null || response.data['data'] == null) {
+        // 3. Try banners/$section
         response = await ApiService.get('banners/$section');
       }
 
