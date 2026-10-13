@@ -12,7 +12,17 @@ class NotificationsController extends GetxController {
 
   /// Reactive notification list - no update() needed
   final notifications = <NotificationEntity>[].obs;
+  final isLoading = false.obs;
+  final unreadCount = 0.obs;
   int page = 1;
+
+  bool get hasUnread =>
+      unreadCount.value > 0 || notifications.any((e) => e.isUnread);
+
+  int get totalUnreadCount {
+    if (unreadCount.value > 0) return unreadCount.value;
+    return notifications.where((e) => e.isUnread).length;
+  }
 
   /// Get instance
   static NotificationsController get instance =>
@@ -27,10 +37,17 @@ class NotificationsController extends GetxController {
   /// Fetch notifications from RemoteDataSource
   Future<void> getNotifications() async {
     try {
+      isLoading.value = true;
       final list = await repository.getNotifications(page);
       notifications.assignAll(list);
+      final localCount = notifications.where((e) => e.isUnread).length;
+      if (unreadCount.value == 0 && localCount > 0) {
+        unreadCount.value = localCount;
+      }
     } catch (e) {
       AppSnackbar.error(title: 'Error', message: e.toString());
+    } finally {
+      isLoading.value = false;
     }
   }
 
@@ -43,6 +60,7 @@ class NotificationsController extends GetxController {
 
   /// Mark notification as read when clicked
   Future<void> markAsRead(String id) async {
+    if (id.isEmpty) return;
     final index = notifications.indexWhere((element) => element.id == id);
     if (index != -1 && notifications[index].isUnread) {
       final old = notifications[index];
@@ -54,8 +72,13 @@ class NotificationsController extends GetxController {
         isUnread: false,
         icon: old.icon,
         iconColor: old.iconColor,
+        screen: old.screen,
+        type: old.type,
       );
       notifications.refresh();
+      if (unreadCount.value > 0) {
+        unreadCount.value--;
+      }
       await repository.markAsRead(id);
     }
   }

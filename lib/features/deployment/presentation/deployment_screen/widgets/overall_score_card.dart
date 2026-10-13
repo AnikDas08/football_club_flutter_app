@@ -12,10 +12,10 @@ class OverallScoreCard extends StatelessWidget {
 
   const OverallScoreCard({
     super.key,
-    this.score = 8.2,
+    this.score = 0.0,
     this.maxScore = 10.0,
-    this.improvement = '+6.1%',
-    this.status = 'Excellent',
+    this.improvement = '0%',
+    this.status = 'No Assessment',
   });
 
   @override

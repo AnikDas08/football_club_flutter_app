@@ -1,4 +1,6 @@
+import 'package:football_club/config/api/api_end_point.dart';
 import 'package:football_club/features/profile/domain/entity/profile_entity.dart';
+import 'package:football_club/services/storage/storage_keys.dart';
 import 'package:football_club/services/storage/storage_services.dart';
 
 class ProfileModel extends ProfileEntity {
@@ -97,7 +99,6 @@ class ProfileModel extends ProfileEntity {
         emgName = medicalInfo['emergencyContactName'] ?? '';
         emgPhone = medicalInfo['emergencyPhone'] ?? '';
         medNotes = medicalInfo['medicalNotes'] ?? '';
-
         if (phone.isEmpty && emgPhone.isNotEmpty) {
           phone = emgPhone;
         }
@@ -120,6 +121,12 @@ class ProfileModel extends ProfileEntity {
       playerName = json['playerName'] ?? parentName;
     }
 
+    final String fullImg = ApiEndPoint.getFullImageUrl(img);
+    if (fullImg.isNotEmpty) {
+      LocalStorage.myImage = fullImg;
+      LocalStorage.setString(LocalStorageKeys.myImage, fullImg);
+    }
+
     return ProfileModel(
       playerName: playerName,
       email: userEmail.isNotEmpty ? userEmail : (json['email'] ?? ''),
@@ -128,7 +135,7 @@ class ProfileModel extends ProfileEntity {
       mobile: phone.isNotEmpty ? phone : (json['mobile'] ?? ''),
       position: pos,
       preferredFoot: foot,
-      profileImagePath: img,
+      profileImagePath: fullImg,
       bloodGroup: blood,
       allergies: allergyStr,
       medicalConditions: medConditions,

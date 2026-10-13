@@ -1,13 +1,83 @@
+import 'dart:io';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:football_club/component/image/common_image.dart';
 import 'package:football_club/component/text/common_text.dart';
-import 'package:football_club/features/deployment/presentation/deployment_screen/container/deployment_controller.dart';
-import 'package:football_club/utils/constants/app_images.dart';
+import 'package:football_club/config/api/api_end_point.dart';
+import 'package:football_club/features/deployment/presentation/deployment_screen/controller/deployment_controller.dart';
 import 'package:get/get.dart';
 
 class DevelopmentTargetsView extends StatelessWidget {
   const DevelopmentTargetsView({super.key});
+
+  Widget _buildCoachAvatar(String path) {
+    final clean = path.trim();
+    if (clean.isEmpty) {
+      return Container(
+        width: 32.w,
+        height: 32.h,
+        color: const Color(0xFF111A2E),
+        alignment: Alignment.center,
+        child: Icon(Icons.person_rounded, color: const Color(0xFF8E9BAE), size: 18.sp),
+      );
+    }
+
+    if (File(clean).existsSync()) {
+      return Image.file(
+        File(clean),
+        fit: BoxFit.cover,
+        width: 32.w,
+        height: 32.h,
+        errorBuilder: (context, error, stackTrace) => Container(
+          width: 32.w,
+          height: 32.h,
+          color: const Color(0xFF111A2E),
+          alignment: Alignment.center,
+          child: Icon(Icons.person_rounded, color: const Color(0xFF8E9BAE), size: 18.sp),
+        ),
+      );
+    }
+
+    final fullUrl = ApiEndPoint.getFullImageUrl(clean);
+    debugPrint('📸 [Development Targets Coach Avatar URL]: "$fullUrl" (Raw: "$path")');
+
+    if (fullUrl.isNotEmpty && fullUrl.startsWith('http')) {
+      return Image.network(
+        fullUrl,
+        fit: BoxFit.cover,
+        width: 32.w,
+        height: 32.h,
+        loadingBuilder: (context, child, loadingProgress) {
+          if (loadingProgress == null) return child;
+          return Container(
+            width: 32.w,
+            height: 32.h,
+            color: const Color(0xFF111A2E),
+            alignment: Alignment.center,
+            child: Icon(Icons.person_rounded, color: const Color(0xFF8E9BAE), size: 18.sp),
+          );
+        },
+        errorBuilder: (context, error, stackTrace) {
+          debugPrint('❌ [Image.network Error - Development Target Coach]: $error | URL: $fullUrl');
+          return Container(
+            width: 32.w,
+            height: 32.h,
+            color: const Color(0xFF111A2E),
+            alignment: Alignment.center,
+            child: Icon(Icons.person_rounded, color: const Color(0xFF8E9BAE), size: 18.sp),
+          );
+        },
+      );
+    }
+
+    return Container(
+      width: 32.w,
+      height: 32.h,
+      color: const Color(0xFF111A2E),
+      alignment: Alignment.center,
+      child: Icon(Icons.person_rounded, color: const Color(0xFF8E9BAE), size: 18.sp),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +88,7 @@ class DevelopmentTargetsView extends StatelessWidget {
         return Padding(
           padding: EdgeInsets.symmetric(vertical: 40.h),
           child: const Center(
-            child: CircularProgressIndicator(color: Color(0xFF2563EB)),
+            child: CupertinoActivityIndicator(color: Colors.white, radius: 14),
           ),
         );
       }
@@ -179,11 +249,7 @@ class DevelopmentTargetsView extends StatelessWidget {
                   border: Border.all(color: Colors.white, width: 1.2),
                 ),
                 child: ClipOval(
-                  child: CommonImage(
-                    imageSrc: coachAvatar,
-                    fill: BoxFit.cover,
-                    defaultImage: AppImages.coach_image,
-                  ),
+                  child: _buildCoachAvatar(coachAvatar),
                 ),
               ),
               SizedBox(width: 8.w),

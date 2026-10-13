@@ -17,6 +17,84 @@ class RecentAchievementCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool hasAchievement = achievementTitle.trim().isNotEmpty;
+
+    if (!hasAchievement) {
+      return Container(
+        width: double.infinity,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12.r),
+          border: Border.all(
+            color: Colors.white.withOpacity(0.08),
+            width: 1,
+          ),
+          image: const DecorationImage(
+            image: AssetImage(AppImages.acheivement_image),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: Container(
+          padding: EdgeInsets.all(18.w),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12.r),
+            gradient: const LinearGradient(
+              colors: [
+                Color(0xE0081A4A),
+                Color(0x66F59E0B),
+              ],
+              begin: Alignment.centerLeft,
+              end: Alignment.centerRight,
+            ),
+          ),
+          child: Row(
+            children: [
+              Container(
+                padding: EdgeInsets.all(8.r),
+                child: Icon(
+                  Icons.emoji_events_outlined,
+                  color: const Color(0xFFF59E0B),
+                  size: 32.sp,
+                ),
+              ),
+              SizedBox(width: 14.w),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    CommonText(
+                      text: category.isNotEmpty ? category : "RECENT ACHIEVEMENT",
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                      color: const Color(0xFFF59E0B),
+                      letterSpacing: 1.0,
+                      textAlign: TextAlign.start,
+                    ),
+                    SizedBox(height: 4.h),
+                    const CommonText(
+                      text: "No achievements recorded yet",
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                      textAlign: TextAlign.start,
+                    ),
+                    SizedBox(height: 4.h),
+                    CommonText(
+                      text: "Match awards and milestones will be highlighted here.",
+                      fontSize: 12,
+                      fontWeight: FontWeight.w400,
+                      color: Colors.white.withOpacity(0.75),
+                      textAlign: TextAlign.start,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(

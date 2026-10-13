@@ -10,6 +10,8 @@ import '../../utils/log/error_log.dart';
 class CommonImage extends StatelessWidget {
   final String imageSrc;
   final String defaultImage;
+  final IconData? fallbackIcon;
+  final bool showIconFallback;
   final Color? imageColor;
   final double? height;
   final double? width;
@@ -20,13 +22,15 @@ class CommonImage extends StatelessWidget {
 
   const CommonImage({
     required this.imageSrc,
+    this.defaultImage = AppImages.profile_image,
+    this.fallbackIcon = Icons.person_rounded,
+    this.showIconFallback = true,
     this.imageColor,
     this.height,
     this.borderRadius = 0,
     this.width,
     this.size,
     this.fill = BoxFit.contain,
-    this.defaultImage = AppImages.profile_image,
     super.key,
   });
 
@@ -34,7 +38,10 @@ class CommonImage extends StatelessWidget {
   Widget build(BuildContext context) {
     final cleanSrc = imageSrc.trim();
 
-    if (cleanSrc.isEmpty) {
+    if (cleanSrc.isEmpty ||
+        cleanSrc == 'null' ||
+        cleanSrc == 'undefined' ||
+        cleanSrc == AppImages.profile_image) {
       return _buildErrorWidget();
     } else if (cleanSrc.contains('assets/icons') || cleanSrc.endsWith('.svg')) {
       return _buildSvgImage();
@@ -59,22 +66,48 @@ class CommonImage extends StatelessWidget {
   }
 
   Widget _buildErrorWidget() {
-    return Image.asset(
-      defaultImage,
-      fit: fill,
-      height: size?.sp ?? height?.h,
-      width: size?.sp ?? width?.w,
+    final double? w = size?.sp ?? width;
+    final double? h = size?.sp ?? height;
+    final double iconDimension = (w != null && h != null && w > 0 && h > 0)
+        ? (w < h ? w : h) * 0.52
+        : (size != null ? size! * 0.52 : 24.sp);
+
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(borderRadius.r),
+      child: Container(
+        width: w,
+        height: h,
+        decoration: BoxDecoration(
+          color: const Color(0xFF111A2E),
+          borderRadius: BorderRadius.circular(borderRadius.r),
+          border: Border.all(
+            color: Colors.white.withOpacity(0.08),
+            width: 1,
+          ),
+        ),
+        alignment: Alignment.center,
+        child: Icon(
+          fallbackIcon ?? Icons.person_rounded,
+          color: const Color(0xFF8E9BAE),
+          size: iconDimension,
+        ),
+      ),
     );
+  }
+
+  Widget _buildPlaceholderWidget(double? w, double? h) {
+    // Show clean profile icon placeholder immediately (no stuck spinning loader)
+    return _buildErrorWidget();
   }
 
   Widget _buildFileImage() {
     return ClipRRect(
-      borderRadius: BorderRadius.circular(borderRadius),
+      borderRadius: BorderRadius.circular(borderRadius.r),
       child: Image.file(
         File(imageSrc),
         fit: fill,
-        height: size?.sp ?? height?.h,
-        width: size?.sp ?? width?.w,
+        height: size?.sp ?? height,
+        width: size?.sp ?? width,
         errorBuilder: (context, error, stackTrace) {
           return _buildErrorWidget();
         },
@@ -83,35 +116,24 @@ class CommonImage extends StatelessWidget {
   }
 
   Widget _buildNetworkImage() {
-    final String cleanSrc = imageSrc.trim();
-    final String fullUrl = cleanSrc.startsWith('http')
-        ? cleanSrc
-        : (cleanSrc.startsWith('/')
-            ? '${ApiEndPoint.imageUrl}$cleanSrc'
-            : '${ApiEndPoint.imageUrl}/$cleanSrc');
+    final String fullUrl = ApiEndPoint.getFullImageUrl(imageSrc);
+
+    final double? w = size?.sp ?? width;
+    final double? h = size?.sp ?? height;
 
     return ClipRRect(
-      borderRadius: BorderRadius.circular(borderRadius),
+      borderRadius: BorderRadius.circular(borderRadius.r),
       child: CachedNetworkImage(
-        height: size?.sp ?? height?.h,
-        width: size?.sp ?? width?.w,
+        height: h,
+        width: w,
         imageUrl: fullUrl,
         fit: fill,
-        imageBuilder: (context, imageProvider) => Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(borderRadius),
-            image: DecorationImage(image: imageProvider, fit: fill),
-          ),
-        ),
-        progressIndicatorBuilder: (context, url, downloadProgress) =>
-            Center(
-          child: CircularProgressIndicator(
-            value: downloadProgress.progress,
-            strokeWidth: 2,
-          ),
-        ),
+        fadeInDuration: const Duration(milliseconds: 200),
+        fadeOutDuration: const Duration(milliseconds: 100),
+        placeholder: (context, url) => _buildPlaceholderWidget(w, h),
         errorWidget: (context, url, error) {
-          errorLog(error, source: 'Common Image');
+          debugPrint('❌ CommonImage error loading ($fullUrl): $error');
+          errorLog(error, source: 'Common Image ($fullUrl)');
           return _buildErrorWidget();
         },
       ),

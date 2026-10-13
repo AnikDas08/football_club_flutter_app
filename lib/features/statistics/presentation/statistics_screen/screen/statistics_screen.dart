@@ -1,12 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:football_club/component/text/common_text.dart';
-import 'package:football_club/config/route/app_routes.dart';
-import 'package:football_club/features/statistics/presentation/statistics_screen/container/statistics_controller.dart';
+import 'package:football_club/features/statistics/presentation/statistics_screen/controller/statistics_controller.dart';
 import 'package:football_club/features/statistics/presentation/statistics_screen/widgets/attendance_analytics_card.dart';
 import 'package:football_club/features/statistics/presentation/statistics_screen/widgets/goals_by_month_card.dart';
 import 'package:football_club/features/statistics/presentation/statistics_screen/widgets/match_involvement_card.dart';
+import 'package:football_club/component/button/notification_bell_button.dart';
 import 'package:football_club/utils/constants/app_images.dart';
 import 'package:get/get.dart';
 
@@ -22,7 +23,12 @@ class StatisticsScreen extends StatelessWidget {
       body: Obx(() {
         if (controller.isLoading.value &&
             controller.statisticsEntity.value == null) {
-          return const Center(child: CircularProgressIndicator());
+          return const Center(
+            child: CupertinoActivityIndicator(
+              color: Colors.white,
+              radius: 16,
+            ),
+          );
         }
 
         final statsData = controller.statisticsEntity.value;
@@ -117,48 +123,7 @@ class StatisticsScreen extends StatelessWidget {
                                   ),
                                 ],
                               ),
-                               GestureDetector(
-                                 onTap: () =>
-                                     Get.toNamed(AppRoutes.notifications),
-                                 child: Container(
-                                   width: 40.w,
-                                   height: 40.h,
-                                   decoration: BoxDecoration(
-                                     color: const Color(0xFF0C1322)
-                                         .withOpacity(0.6),
-                                     shape: BoxShape.circle,
-                                     border: Border.all(
-                                       color: Colors.white.withOpacity(0.08),
-                                       width: 1,
-                                     ),
-                                   ),
-                                   child: Center(
-                                     child: Stack(
-                                       alignment: Alignment.center,
-                                       clipBehavior: Clip.none,
-                                       children: [
-                                         Icon(
-                                           Icons.notifications_none_outlined,
-                                           color: Colors.white,
-                                           size: 22.sp,
-                                         ),
-                                         Positioned(
-                                           right: 0,
-                                           top: 0,
-                                           child: Container(
-                                             width: 8.w,
-                                             height: 8.h,
-                                             decoration: const BoxDecoration(
-                                               color: Color(0xFF2563EB),
-                                               shape: BoxShape.circle,
-                                             ),
-                                           ),
-                                         ),
-                                       ],
-                                     ),
-                                   ),
-                                 ),
-                               ),
+                               const NotificationBellButton(),
                             ],
                           ),
                           SizedBox(height: 12.h),

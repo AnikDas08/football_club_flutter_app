@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:football_club/component/text/common_text.dart';
 import 'package:football_club/features/deployment/presentation/deployment_screen/screen/deployment_screen.dart';
-import 'package:football_club/features/home/presentation/home_nav/container/home_nav_controller.dart';
-import 'package:football_club/features/home/presentation/home_screen/container/home_controller.dart';
+import 'package:football_club/features/home/presentation/home_nav/controller/home_nav_controller.dart';
+import 'package:football_club/features/home/presentation/home_screen/controller/home_controller.dart';
 import 'package:football_club/features/home/presentation/home_screen/screen/home_screen.dart';
 import 'package:football_club/features/profile/presentation/profile_screen/screen/profile_screen.dart';
 import 'package:football_club/features/statistics/presentation/statistics_screen/screen/statistics_screen.dart';
@@ -30,11 +30,17 @@ class HomeNavScreen extends StatelessWidget {
           backgroundColor: const Color(0xFF0A0E1A),
           body: IndexedStack(
             index: controller.selectedIndex,
-            children: const [
-              HomeScreen(),
-              DeploymentScreen(),
-              StatisticsScreen(),
-              ProfileScreen(),
+            children: [
+              const HomeScreen(),
+              controller.isActivated(1)
+                  ? const DeploymentScreen()
+                  : const SizedBox.shrink(),
+              controller.isActivated(2)
+                  ? const StatisticsScreen()
+                  : const SizedBox.shrink(),
+              controller.isActivated(3)
+                  ? const ProfileScreen()
+                  : const SizedBox.shrink(),
             ],
           ),
 

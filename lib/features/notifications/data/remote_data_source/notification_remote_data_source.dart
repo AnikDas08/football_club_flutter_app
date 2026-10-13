@@ -1,7 +1,10 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:football_club/config/api/api_end_point.dart';
 import 'package:football_club/services/api/api_service.dart';
+import 'package:get/get.dart';
+import '../model/notification_model.dart';
 import '../../domain/entity/notification_entity.dart';
+import '../../presentation/notifications_screen/controller/notifications_controller.dart';
 
 abstract class NotificationRemoteDataSource {
   Future<List<NotificationEntity>> getNotifications(int page);
@@ -13,63 +16,46 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
   Future<bool> markAsRead(String id) async {
     try {
       final response = await ApiService.patch(
-        '${ApiEndPoint.notifications}/$id',
-        body: {'isUnread': false},
+        ApiEndPoint.readNotification(id),
       );
       return response.isSuccess;
-    } catch (_) {
+    } catch (e) {
+      debugPrint("Error marking notification as read: $e");
       return false;
     }
   }
 
   @override
   Future<List<NotificationEntity>> getNotifications(int page) async {
-    return const [
-      NotificationEntity(
-        id: "1",
-        title: "New Coach Note",
-        message: "Coach Davies added feedback from your Tuesday session.",
-        time: "2h ago",
-        isUnread: true,
-        icon: Icons.chat_bubble_outline_rounded,
-        iconColor: Color(0xFF3B82F6),
-      ),
-      NotificationEntity(
-        id: "2",
-        title: "Achievement Unlocked! 🏆",
-        message: "You earned Player of the Match vs Riverside FC.",
-        time: "1d ago",
-        isUnread: true,
-        icon: Icons.emoji_events_outlined,
-        iconColor: Color(0xFFF59E0B),
-      ),
-      NotificationEntity(
-        id: "3",
-        title: "Upcoming Training",
-        message: "Training session tomorrow at 6:00 PM — TFP Academy.",
-        time: "2d ago",
-        isUnread: false,
-        icon: Icons.show_chart_rounded,
-        iconColor: Color(0xFF10B981),
-      ),
-      NotificationEntity(
-        id: "4",
-        title: "Target Updated",
-        message: "Coach updated your Pressing Intensity target to 50%.",
-        time: "3d ago",
-        isUnread: false,
-        icon: Icons.track_changes,
-        iconColor: Color(0xFFA855F7),
-      ),
-      NotificationEntity(
-        id: "5",
-        title: "Assessment Due",
-        message: "Your monthly assessment is due in 3 days.",
-        time: "4d ago",
-        isUnread: false,
-        icon: Icons.bar_chart_rounded,
-        iconColor: Color(0xFFF97316),
-      ),
-    ];
+    try {
+      final response = await ApiService.get(
+        '${ApiEndPoint.notifications}?page=$page&limit=20',
+      );
+      if (response.isSuccess) {
+        final data = response.data['data'];
+        List<dynamic> resultList = [];
+        if (data is Map<String, dynamic>) {
+          if (data['unreadCount'] is num) {
+            final count = (data['unreadCount'] as num).toInt();
+            if (Get.isRegistered<NotificationsController>()) {
+              Get.find<NotificationsController>().unreadCount.value = count;
+            }
+          }
+          if (data['result'] is List) {
+            resultList = data['result'] as List<dynamic>;
+          }
+        } else if (data is List) {
+          resultList = data;
+        }
+
+        return resultList
+            .map((item) => NotificationModel.fromJson(item as Map<String, dynamic>).toEntity())
+            .toList();
+      }
+      return [];
+    } catch (e) {
+      debugPrint("Error fetching notifications: $e");
+      return [];
+    }
   }
 }

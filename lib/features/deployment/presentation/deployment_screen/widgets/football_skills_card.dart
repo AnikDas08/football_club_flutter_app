@@ -34,8 +34,21 @@ class FootballSkillsCard extends StatelessWidget {
             color: Colors.white,
           ),
           SizedBox(height: 16.h),
-          Column(
-            children: skills.map((skill) {
+          if (skills.isEmpty)
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: 24.h),
+              child: const Center(
+                child: CommonText(
+                  text: "No football skills data available",
+                  fontSize: 13,
+                  fontWeight: FontWeight.w400,
+                  color: Color(0xFF8E9BAE),
+                ),
+              ),
+            )
+          else
+            Column(
+              children: skills.map((skill) {
               final int starCount = skill.stars;
               final String scoreText = skill.score;
 

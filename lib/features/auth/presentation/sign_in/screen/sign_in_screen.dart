@@ -4,7 +4,7 @@ import 'package:football_club/component/button/common_button.dart';
 import 'package:football_club/component/text/common_text.dart';
 import 'package:football_club/component/text_field/common_text_field.dart';
 import 'package:football_club/config/route/app_routes.dart';
-import 'package:football_club/features/auth/presentation/sign_in/container/sign_in_controller.dart';
+import 'package:football_club/features/auth/presentation/sign_in/controller/sign_in_controller.dart';
 import 'package:football_club/utils/constants/app_colors.dart';
 import 'package:football_club/utils/constants/app_images.dart';
 import 'package:football_club/utils/helpers/validation.dart';
@@ -20,6 +20,66 @@ class SignInScreen extends StatefulWidget {
 
 class _SignInScreenState extends State<SignInScreen> {
   final _formKey = GlobalKey<FormState>();
+  final _passwordFocusNode = FocusNode();
+  bool _hasAttemptedSubmit = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _passwordFocusNode.addListener(() {
+      setState(() {});
+    });
+  }
+
+  @override
+  void dispose() {
+    _passwordFocusNode.dispose();
+    super.dispose();
+  }
+
+  Widget _buildRuleRow(String ruleText, bool isSatisfied) {
+    return Padding(
+      padding: EdgeInsets.only(bottom: 8.h),
+      child: Row(
+        children: [
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            width: 18.w,
+            height: 18.h,
+            decoration: BoxDecoration(
+              color: isSatisfied
+                  ? const Color(0xFF10B981).withOpacity(0.15)
+                  : Colors.transparent,
+              shape: BoxShape.circle,
+              border: isSatisfied
+                  ? Border.all(color: const Color(0xFF10B981), width: 1.5)
+                  : Border.all(
+                      color: Colors.white.withOpacity(0.2),
+                      width: 1.5,
+                    ),
+            ),
+            alignment: Alignment.center,
+            child: isSatisfied
+                ? Icon(
+                    Icons.check,
+                    color: const Color(0xFF10B981),
+                    size: 12.sp,
+                  )
+                : null,
+          ),
+          SizedBox(width: 10.w),
+          CommonText(
+            text: ruleText,
+            fontSize: 13,
+            fontWeight: FontWeight.w400,
+            color: isSatisfied
+                ? Colors.white.withOpacity(0.85)
+                : Colors.white.withOpacity(0.35),
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,6 +87,19 @@ class _SignInScreenState extends State<SignInScreen> {
       backgroundColor: const Color(0xFF020914),
       body: GetBuilder<SignInController>(
         builder: (controller) {
+          final password = controller.passwordController.text;
+          final has8Characters = password.length >= 8;
+          final hasUppercase = password.contains(RegExp(r'[A-Z]'));
+          final hasNumber = password.contains(RegExp(r'[0-9]'));
+          final hasSpecialChar =
+              password.contains(RegExp(r'[!@#\$%^&*(),.?":{}|<>]'));
+          final isPasswordValid =
+              has8Characters && hasUppercase && hasNumber && hasSpecialChar;
+          final showPasswordRules = !isPasswordValid &&
+              (_passwordFocusNode.hasFocus ||
+                  password.isNotEmpty ||
+                  _hasAttemptedSubmit);
+
           return Container(
             width: double.infinity,
             height: double.infinity,
@@ -107,13 +180,53 @@ class _SignInScreenState extends State<SignInScreen> {
                       // Password Field
                       CommonTextField(
                         controller: controller.passwordController,
-                        validator: AppValidation.password,
+                        focusNode: _passwordFocusNode,
+                        validator: (value) {
+                          if (value == null || value.trim().isEmpty) {
+                            return 'Password is required';
+                          }
+                          if (!isPasswordValid) {
+                            return 'Password must meet all requirements';
+                          }
+                          return null;
+                        },
                         isPassword: true,
                         textInputAction: TextInputAction.done,
                         isDark: true,
                         prefixIcon: const Icon(Icons.lock_outline),
                         hintText: "••••••••",
+                        onChanged: (val) {
+                          setState(() {});
+                          if (_hasAttemptedSubmit) {
+                            _formKey.currentState?.validate();
+                          }
+                        },
                       ),
+
+                      // Real-time Password Rules Checklist
+                      AnimatedCrossFade(
+                        duration: const Duration(milliseconds: 250),
+                        crossFadeState: showPasswordRules
+                            ? CrossFadeState.showFirst
+                            : CrossFadeState.showSecond,
+                        firstChild: Padding(
+                          padding: EdgeInsets.only(top: 14.h, bottom: 2.h),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _buildRuleRow(
+                                  "At least 8 characters", has8Characters),
+                              _buildRuleRow(
+                                  "One uppercase letter", hasUppercase),
+                              _buildRuleRow("One number", hasNumber),
+                              _buildRuleRow(
+                                  "One special character", hasSpecialChar),
+                            ],
+                          ),
+                        ),
+                        secondChild: const SizedBox.shrink(),
+                      ),
+
                       SizedBox(height: 12.h),
 
                       // Forgot Password Link
@@ -145,6 +258,9 @@ class _SignInScreenState extends State<SignInScreen> {
                           size: 18.sp,
                         ),
                         onTap: () {
+                          setState(() {
+                            _hasAttemptedSubmit = true;
+                          });
                           if (_formKey.currentState!.validate()) {
                             controller.signInUser();
                           }

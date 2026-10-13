@@ -43,35 +43,35 @@ class StatisticsModel extends StatisticsEntity {
         .toList();
 
     final attendanceMap = json['attendanceAnalytics'] as Map<String, dynamic>?;
-    final String attended = attendanceMap?['attended'] ??
-        json['attendedPercentage'] ??
-        '87%';
+    final String attended = attendanceMap?['attended']?.toString() ??
+        json['attendedPercentage']?.toString() ??
+        '0%';
     final String missed =
-        attendanceMap?['missed'] ?? json['missedPercentage'] ?? '8%';
+        attendanceMap?['missed']?.toString() ?? json['missedPercentage']?.toString() ?? '0%';
     final String late =
-        attendanceMap?['late'] ?? json['latePercentage'] ?? '5%';
+        attendanceMap?['late']?.toString() ?? json['latePercentage']?.toString() ?? '0%';
 
-    double rate = 0.87;
+    double rate = 0.0;
     final rawRate =
         attendanceMap?['attendanceRate'] ?? json['attendanceRate'];
     if (rawRate is num) {
       rate = rawRate > 1 ? rawRate.toDouble() / 100.0 : rawRate.toDouble();
     } else if (rawRate is String) {
       final clean = rawRate.replaceAll('%', '').trim();
-      final parsed = double.tryParse(clean) ?? 87.0;
+      final parsed = double.tryParse(clean) ?? 0.0;
       rate = parsed > 1 ? parsed / 100.0 : parsed;
     }
 
     final matchMap = json['matchInvolvement'] as Map<String, dynamic>?;
     final int shots = (matchMap?['shots'] as num?)?.toInt() ??
         (json['shotsCount'] as num?)?.toInt() ??
-        72;
+        0;
     final int onTarget = (matchMap?['onTarget'] as num?)?.toInt() ??
         (json['onTargetCount'] as num?)?.toInt() ??
-        41;
+        0;
     final int chances = (matchMap?['chances'] as num?)?.toInt() ??
         (json['chancesCreatedCount'] as num?)?.toInt() ??
-        28;
+        0;
 
     return StatisticsModel(
       goalsByMonth: goals,

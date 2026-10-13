@@ -14,7 +14,12 @@ class DeploymentController extends GetxController {
 
   DeploymentController({DeploymentRepository? deploymentRepository})
       : deploymentRepository =
-            deploymentRepository ?? DeploymentRepositoryImpl();
+            deploymentRepository ?? DeploymentRepositoryImpl() {
+    final cached = BannerHelper.getCachedBanner('development');
+    if (cached != null && cached.isNotEmpty) {
+      bannerUrl.value = cached;
+    }
+  }
 
   var isLoading = false.obs;
   final deploymentEntity = Rxn<DeploymentEntity>();
@@ -35,12 +40,12 @@ class DeploymentController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    fetchDevelopmentBanner();
     fetchDeploymentData();
     fetchPlayerTargets();
     fetchSessionNotes();
     fetchDevelopmentTimeline();
     fetchPlayerAchievements();
-    fetchDevelopmentBanner();
   }
 
   Future<void> fetchDevelopmentBanner() async {

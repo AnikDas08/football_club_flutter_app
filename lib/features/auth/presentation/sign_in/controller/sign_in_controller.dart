@@ -6,6 +6,7 @@ import 'package:football_club/features/auth/domain/repository/auth_repository.da
 import 'package:football_club/services/storage/storage_keys.dart';
 import 'package:football_club/services/storage/storage_services.dart';
 import 'package:football_club/utils/app_snackbar.dart';
+import 'package:football_club/utils/helpers/banner_helper.dart';
 import 'package:get/get.dart';
 
 class SignInController extends GetxController {
@@ -53,6 +54,9 @@ class SignInController extends GetxController {
         LocalStorage.userId = userId;
         LocalStorage.playerId = playerId;
         LocalStorage.isLogIn = true;
+
+        /// Pre-fetch Home banner in advance
+        BannerHelper.fetchBanner('HOME');
 
         /// Clear form fields
         emailController.clear();

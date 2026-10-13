@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:football_club/component/text/common_text.dart';
 import 'package:football_club/component/text_field/common_text_field.dart';
-import 'package:football_club/features/auth/presentation/change_password/container/change_password_controller.dart';
+import 'package:football_club/features/auth/presentation/change_password/controller/change_password_controller.dart';
 import 'package:get/get.dart';
 
 class ChangePasswordScreen extends StatelessWidget {

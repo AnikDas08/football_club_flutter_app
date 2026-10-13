@@ -8,7 +8,13 @@ class HomeController extends GetxController {
   final HomeRepository homeRepository;
 
   HomeController({HomeRepository? homeRepository})
-      : homeRepository = homeRepository ?? HomeRepositoryImpl();
+      : homeRepository = homeRepository ?? HomeRepositoryImpl() {
+    // Instantly show cached banner if available
+    final cached = BannerHelper.getCachedBanner('HOME');
+    if (cached != null && cached.isNotEmpty) {
+      bannerUrl.value = cached;
+    }
+  }
 
   var isLoading = false.obs;
   final homeEntity = Rxn<HomeEntity>();
@@ -17,8 +23,10 @@ class HomeController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    fetchHomeData();
+    // 1. Hit banner first with top priority
     fetchHomeBanner();
+    // 2. Fetch dashboard data
+    fetchHomeData();
   }
 
   Future<void> fetchHomeData() async {
@@ -87,6 +95,8 @@ class HomeController extends GetxController {
         achievementTitle: current.achievementTitle,
         matchInfo: current.matchInfo,
       );
+      homeEntity.refresh();
+      update();
     }
   }
 

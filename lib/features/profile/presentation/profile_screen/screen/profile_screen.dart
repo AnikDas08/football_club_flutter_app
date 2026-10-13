@@ -1,13 +1,16 @@
+import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
-import 'package:football_club/component/image/common_image.dart';
 import 'package:football_club/component/text/common_text.dart';
+import 'package:football_club/config/api/api_end_point.dart';
 import 'package:football_club/config/route/app_routes.dart';
-import 'package:football_club/features/profile/presentation/profile_screen/container/profile_controller.dart';
+import 'package:football_club/features/profile/presentation/profile_screen/controller/profile_controller.dart';
 import 'package:football_club/services/storage/storage_services.dart';
+import 'package:football_club/component/button/notification_bell_button.dart';
 import 'package:football_club/utils/constants/app_images.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -23,14 +26,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFF0A0E1A),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // 1. Top Header with Background Image & Profile Summary
-            GetBuilder<ProfileController>(
-              init: Get.put(ProfileController()),
-              builder: (controller) {
+      body: GetBuilder<ProfileController>(
+        init: Get.put(ProfileController()),
+        builder: (controller) {
+          if (controller.isLoading && controller.profileEntity.value == null) {
+            return const Center(
+              child: CupertinoActivityIndicator(
+                color: Colors.white,
+                radius: 16,
+              ),
+            );
+          }
+
+          return SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // 1. Top Header with Background Image & Profile Summary
+                GetBuilder<ProfileController>(
+                  builder: (controller) {
                 final String? banner = controller.bannerUrl;
                 return SizedBox(
                   width: double.infinity,
@@ -45,18 +59,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 fadeInDuration:
                                     const Duration(milliseconds: 500),
                                 placeholder: (context, url) => Image.asset(
-                                  AppImages.home_bg,
-                                  fit: BoxFit.cover,
+                                  AppImages.profile_image,
+                                  fit: BoxFit.fill,
                                 ),
                                 errorWidget: (context, url, error) =>
                                     Image.asset(
-                                  AppImages.home_bg,
-                                  fit: BoxFit.cover,
+                                  AppImages.profile_image,
+                                  fit: BoxFit.fill,
                                 ),
                               )
                             : Image.asset(
-                                AppImages.home_bg,
-                                fit: BoxFit.cover,
+                                AppImages.profile_image,
+                                fit: BoxFit.fill,
                               ),
                       ),
 
@@ -119,49 +133,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     ),
                                   ],
                                 ),
-                                GestureDetector(
-                                  onTap: () =>
-                                      Get.toNamed(AppRoutes.notifications),
-                                  child: Container(
-                                    width: 40.w,
-                                    height: 40.h,
-                                    decoration: BoxDecoration(
-                                      color: const Color(
-                                        0xFF0C1322,
-                                      ).withOpacity(0.6),
-                                      shape: BoxShape.circle,
-                                      border: Border.all(
-                                        color: Colors.white.withOpacity(0.08),
-                                        width: 1,
-                                      ),
-                                    ),
-                                    child: Center(
-                                      child: Stack(
-                                        alignment: Alignment.center,
-                                        clipBehavior: Clip.none,
-                                        children: [
-                                          Icon(
-                                            Icons.notifications_none_outlined,
-                                            color: Colors.white,
-                                            size: 22.sp,
-                                          ),
-                                          Positioned(
-                                            right: 0,
-                                            top: 0,
-                                            child: Container(
-                                              width: 8.w,
-                                              height: 8.h,
-                                              decoration: const BoxDecoration(
-                                                color: Color(0xFF2563EB),
-                                                shape: BoxShape.circle,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
+                                const NotificationBellButton(),
                               ],
                             ),
                             SizedBox(height: 6.h),
@@ -203,17 +175,72 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     child: ClipOval(
                                       child: GetBuilder<ProfileController>(
                                         builder: (controller) {
-                                          return CommonImage(
-                                            imageSrc:
-                                                controller.profileImagePath ??
-                                                controller
-                                                    .profileEntity
-                                                    .value
-                                                    ?.profileImagePath ??
-                                                '',
-                                            defaultImage:
-                                                AppImages.profile_image,
-                                            fill: BoxFit.cover,
+                                          final rawPath = controller.profileImagePath ??
+                                              controller
+                                                  .profileEntity
+                                                  .value
+                                                  ?.profileImagePath ??
+                                              '';
+
+                                          if (rawPath.isNotEmpty && File(rawPath).existsSync()) {
+                                            return Image.file(
+                                              File(rawPath),
+                                              width: 86.w,
+                                              height: 86.h,
+                                              fit: BoxFit.cover,
+                                            );
+                                          }
+
+                                          final fullUrl = ApiEndPoint.getFullImageUrl(rawPath);
+                                          debugPrint('📸 [ProfileScreen Profile Image Full URL]: "$fullUrl" (Raw: "$rawPath")');
+
+                                          if (fullUrl.isNotEmpty && fullUrl.startsWith('http')) {
+                                            return Image.network(
+                                              fullUrl,
+                                              width: 86.w,
+                                              height: 86.h,
+                                              fit: BoxFit.cover,
+                                              loadingBuilder: (context, child, loadingProgress) {
+                                                if (loadingProgress == null) return child;
+                                                return Container(
+                                                  width: 86.w,
+                                                  height: 86.h,
+                                                  color: const Color(0xFF111A2E),
+                                                  alignment: Alignment.center,
+                                                  child: Icon(
+                                                    Icons.person_rounded,
+                                                    color: const Color(0xFF8E9BAE),
+                                                    size: 40.sp,
+                                                  ),
+                                                );
+                                              },
+                                              errorBuilder: (context, error, stackTrace) {
+                                                debugPrint('❌ [Image.network Error - ProfileScreen]: $error | URL: $fullUrl');
+                                                return Container(
+                                                  width: 86.w,
+                                                  height: 86.h,
+                                                  color: const Color(0xFF111A2E),
+                                                  alignment: Alignment.center,
+                                                  child: Icon(
+                                                    Icons.person_rounded,
+                                                    color: const Color(0xFF8E9BAE),
+                                                    size: 40.sp,
+                                                  ),
+                                                );
+                                              },
+                                            );
+                                          }
+
+                                          return Container(
+                                            width: 86.w,
+                                            height: 86.h,
+                                            color: const Color(0xFF111A2E),
+                                            alignment: Alignment.center,
+                                            child: Icon(
+                                              Icons.person_rounded,
+                                              color: const Color(0xFF8E9BAE),
+                                              size: 40.sp,
+                                            ),
                                           );
                                         },
                                       ),
@@ -616,8 +643,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           ],
         ),
-      ),
-    );
+      );
+    },
+  ),
+);
   }
 
   Widget _buildSectionCard({

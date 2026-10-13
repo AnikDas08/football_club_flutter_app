@@ -7,7 +7,7 @@ import 'package:get/get.dart';
 import 'package:football_club/component/image/common_image.dart';
 import 'package:football_club/component/text/common_text.dart';
 import 'package:football_club/component/text_field/common_text_field.dart';
-import 'package:football_club/features/profile/presentation/profile_screen/container/profile_controller.dart';
+import 'package:football_club/features/profile/presentation/profile_screen/controller/profile_controller.dart';
 import 'package:football_club/utils/constants/app_images.dart';
 
 class EditProfile extends StatelessWidget {
@@ -279,12 +279,64 @@ class EditProfile extends StatelessWidget {
   }
 
   Widget _buildProfileAvatar(String? path) {
-    return CommonImage(
-      imageSrc: path ?? '',
-      defaultImage: AppImages.profile_image,
-      fill: BoxFit.cover,
+    if (path == null || path.trim().isEmpty) {
+      return Container(
+        width: 80.w,
+        height: 80.h,
+        color: const Color(0xFF111A2E),
+        alignment: Alignment.center,
+        child: Icon(Icons.person_rounded, color: const Color(0xFF8E9BAE), size: 36.sp),
+      );
+    }
+
+    final clean = path.trim();
+    if (File(clean).existsSync()) {
+      return Image.file(
+        File(clean),
+        width: 80.w,
+        height: 80.h,
+        fit: BoxFit.cover,
+      );
+    }
+
+    final fullUrl = ApiEndPoint.getFullImageUrl(clean);
+    debugPrint('📸 [EditProfile Avatar Full URL]: "$fullUrl" (Raw: "$clean")');
+
+    if (fullUrl.isNotEmpty && fullUrl.startsWith('http')) {
+      return Image.network(
+        fullUrl,
+        width: 80.w,
+        height: 80.h,
+        fit: BoxFit.cover,
+        loadingBuilder: (context, child, loadingProgress) {
+          if (loadingProgress == null) return child;
+          return Container(
+            width: 80.w,
+            height: 80.h,
+            color: const Color(0xFF111A2E),
+            alignment: Alignment.center,
+            child: Icon(Icons.person_rounded, color: const Color(0xFF8E9BAE), size: 36.sp),
+          );
+        },
+        errorBuilder: (context, error, stackTrace) {
+          debugPrint('❌ [Image.network Error - EditProfile Avatar]: $error | URL: $fullUrl');
+          return Container(
+            width: 80.w,
+            height: 80.h,
+            color: const Color(0xFF111A2E),
+            alignment: Alignment.center,
+            child: Icon(Icons.person_rounded, color: const Color(0xFF8E9BAE), size: 36.sp),
+          );
+        },
+      );
+    }
+
+    return Container(
       width: 80.w,
       height: 80.h,
+      color: const Color(0xFF111A2E),
+      alignment: Alignment.center,
+      child: Icon(Icons.person_rounded, color: const Color(0xFF8E9BAE), size: 36.sp),
     );
   }
 

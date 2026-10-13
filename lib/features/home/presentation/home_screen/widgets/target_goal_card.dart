@@ -27,6 +27,81 @@ class TargetGoalCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool hasGoal = goalTitle.trim().isNotEmpty;
+
+    if (!hasGoal) {
+      return Container(
+        width: double.infinity,
+        padding: EdgeInsets.all(18.w),
+        decoration: BoxDecoration(
+          color: const Color(0xFF0C1427).withOpacity(0.85),
+          borderRadius: BorderRadius.circular(12.r),
+          border: Border.all(
+            color: Colors.white.withOpacity(0.08),
+            width: 1,
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  width: 32.w,
+                  height: 32.h,
+                  decoration: const BoxDecoration(
+                    color: Color(0xFFD1FAE5),
+                    shape: BoxShape.circle,
+                  ),
+                  alignment: Alignment.center,
+                  child: Icon(
+                    Icons.track_changes_outlined,
+                    color: const Color(0xFF15803D),
+                    size: 18.sp,
+                  ),
+                ),
+                SizedBox(width: 12.w),
+                CommonText(
+                  text: categoryTitle.isNotEmpty ? categoryTitle : "Current Target",
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.white,
+                ),
+              ],
+            ),
+            SizedBox(height: 16.h),
+            Row(
+              children: [
+                Icon(
+                  Icons.flag_outlined,
+                  color: const Color(0xFF8E9BAE),
+                  size: 20.sp,
+                ),
+                SizedBox(width: 10.w),
+                const Expanded(
+                  child: CommonText(
+                    text: "No active targets set",
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                    textAlign: TextAlign.start,
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 6.h),
+            const CommonText(
+              text: "Goals and targets from your coach will appear here.",
+              fontSize: 12,
+              fontWeight: FontWeight.w400,
+              color: Color(0xFF8E9BAE),
+              textAlign: TextAlign.start,
+            ),
+          ],
+        ),
+      );
+    }
+
     final percentageText = '${(progress * 100).toInt()}%';
     final accentBlue = progressGradientColors.last;
 

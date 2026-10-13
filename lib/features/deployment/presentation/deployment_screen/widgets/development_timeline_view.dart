@@ -1,7 +1,8 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:football_club/component/text/common_text.dart';
-import 'package:football_club/features/deployment/presentation/deployment_screen/container/deployment_controller.dart';
+import 'package:football_club/features/deployment/presentation/deployment_screen/controller/deployment_controller.dart';
 import 'package:get/get.dart';
 
 class DevelopmentTimelineView extends StatelessWidget {
@@ -33,7 +34,7 @@ class DevelopmentTimelineView extends StatelessWidget {
         return Padding(
           padding: EdgeInsets.symmetric(vertical: 40.h),
           child: const Center(
-            child: CircularProgressIndicator(color: Color(0xFF2563EB)),
+            child: CupertinoActivityIndicator(color: Colors.white, radius: 14),
           ),
         );
       }

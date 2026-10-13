@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:football_club/component/text/common_text.dart';
 import 'package:football_club/component/text_field/common_text_field.dart';
-import 'package:football_club/features/auth/presentation/sign_up/container/sign_up_controller.dart';
+import 'package:football_club/features/auth/presentation/sign_up/controller/sign_up_controller.dart';
 import 'package:football_club/utils/constants/app_string.dart';
 import 'package:football_club/utils/helpers/validation.dart';
 

@@ -5,8 +5,8 @@ import 'package:flutter/services.dart';
 
 import 'config/core/global_error_handler.dart';
 import 'config/dependency/dependency_injection.dart';
-import 'main.dart' as LocalStorage;
 import 'myapp.dart';
+import 'services/storage/storage_services.dart';
 
 Future<void> main() async {
   runZonedGuarded(() async {
@@ -32,7 +32,7 @@ Future<void> init() async {
     );
     await Future.wait([
       SystemChrome.setPreferredOrientations([.portraitUp, .portraitDown]),
-      LocalStorage.init(),
+      LocalStorage.getAllPrefData(),
     ]);
 
     /*Future.delayed(const Duration(milliseconds: 300), () {

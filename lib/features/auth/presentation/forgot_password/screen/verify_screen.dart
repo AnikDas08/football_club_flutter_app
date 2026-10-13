@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:football_club/component/button/common_button.dart';
 import 'package:football_club/component/text/common_text.dart';
-import 'package:football_club/features/auth/presentation/forgot_password/container/forget_password_controller.dart';
+import 'package:football_club/features/auth/presentation/forgot_password/controller/forget_password_controller.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';

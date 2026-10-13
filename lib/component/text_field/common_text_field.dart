@@ -41,6 +41,7 @@ class CommonTextField extends StatefulWidget {
     this.errorBorder,
     this.focusedErrorBorder,
     this.prefixIconConstraints,
+    this.focusNode,
     this.isDark = false,
   });
 
@@ -75,6 +76,7 @@ class CommonTextField extends StatefulWidget {
   final InputBorder? errorBorder;
   final InputBorder? focusedErrorBorder;
   final BoxConstraints? prefixIconConstraints;
+  final FocusNode? focusNode;
   final bool isDark;
 
   @override
@@ -133,6 +135,7 @@ class _CommonTextFieldState extends State<CommonTextField> {
     return Obx(
       () => TextFormField(
         autovalidateMode: AutovalidateMode.onUnfocus,
+        focusNode: widget.focusNode,
         keyboardType: widget.keyboardType,
         controller: widget.controller,
         obscureText: widget.isPassword ? !obscureText.value : obscureText.value,

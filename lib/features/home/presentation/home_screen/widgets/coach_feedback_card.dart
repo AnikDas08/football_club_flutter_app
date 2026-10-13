@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:football_club/component/image/common_image.dart';
 import 'package:football_club/component/text/common_text.dart';
+import 'package:football_club/config/api/api_end_point.dart';
 import 'package:football_club/utils/constants/app_images.dart';
 
 class CoachFeedbackCard extends StatelessWidget {
@@ -26,6 +26,90 @@ class CoachFeedbackCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final fullCoachUrl = ApiEndPoint.getFullImageUrl(avatarPath);
+    debugPrint('📸 [HomeScreen Feedback Coach Avatar Full URL]: "$fullCoachUrl" (Raw: "$avatarPath")');
+    final bool hasFeedback = feedback.trim().isNotEmpty;
+
+    if (!hasFeedback) {
+      return Container(
+        width: double.infinity,
+        padding: EdgeInsets.all(18.w),
+        decoration: BoxDecoration(
+          color: const Color(0xFF0C1427).withOpacity(0.85),
+          borderRadius: BorderRadius.circular(12.r),
+          border: Border.all(
+            color: Colors.white.withOpacity(0.08),
+            width: 1,
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                CommonText(
+                  text: title.isNotEmpty ? title : "Latest Coach Feedback",
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.white,
+                ),
+                if (onViewAllTap != null)
+                  GestureDetector(
+                    onTap: onViewAllTap,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const CommonText(
+                          text: 'View All',
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFF2563EB),
+                        ),
+                        SizedBox(width: 4.w),
+                        Icon(
+                          Icons.arrow_forward,
+                          color: const Color(0xFF2563EB),
+                          size: 16.sp,
+                        ),
+                      ],
+                    ),
+                  ),
+              ],
+            ),
+            SizedBox(height: 16.h),
+            Row(
+              children: [
+                Icon(
+                  Icons.chat_bubble_outline_rounded,
+                  color: const Color(0xFF8E9BAE),
+                  size: 20.sp,
+                ),
+                SizedBox(width: 10.w),
+                const Expanded(
+                  child: CommonText(
+                    text: "No coach feedback available yet",
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                    textAlign: TextAlign.start,
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 6.h),
+            const CommonText(
+              text: "Feedback and evaluation notes from coaches will appear here.",
+              fontSize: 12,
+              fontWeight: FontWeight.w400,
+              color: Color(0xFF8E9BAE),
+              textAlign: TextAlign.start,
+            ),
+          ],
+        ),
+      );
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -106,11 +190,52 @@ class CoachFeedbackCard extends StatelessWidget {
                     ),
                     padding: EdgeInsets.all(2.r),
                     child: ClipOval(
-                      child: CommonImage(
-                        imageSrc: avatarPath,
-                        fill: BoxFit.cover,
-                        defaultImage: AppImages.coach_image,
-                      ),
+                      child: fullCoachUrl.isNotEmpty && fullCoachUrl.startsWith('http')
+                          ? Image.network(
+                              fullCoachUrl,
+                              width: 44.w,
+                              height: 44.h,
+                              fit: BoxFit.cover,
+                              loadingBuilder: (context, child, loadingProgress) {
+                                if (loadingProgress == null) return child;
+                                return Container(
+                                  width: 44.w,
+                                  height: 44.h,
+                                  color: const Color(0xFF111A2E),
+                                  alignment: Alignment.center,
+                                  child: Icon(
+                                    Icons.person_rounded,
+                                    color: const Color(0xFF8E9BAE),
+                                    size: 22.sp,
+                                  ),
+                                );
+                              },
+                              errorBuilder: (context, error, stackTrace) {
+                                debugPrint('❌ [Image.network Error - Feedback Coach Avatar]: $error | URL: $fullCoachUrl');
+                                return Container(
+                                  width: 44.w,
+                                  height: 44.h,
+                                  color: const Color(0xFF111A2E),
+                                  alignment: Alignment.center,
+                                  child: Icon(
+                                    Icons.person_rounded,
+                                    color: const Color(0xFF8E9BAE),
+                                    size: 22.sp,
+                                  ),
+                                );
+                              },
+                            )
+                          : Container(
+                              width: 44.w,
+                              height: 44.h,
+                              color: const Color(0xFF111A2E),
+                              alignment: Alignment.center,
+                              child: Icon(
+                                Icons.person_rounded,
+                                color: const Color(0xFF8E9BAE),
+                                size: 22.sp,
+                              ),
+                            ),
                     ),
                   ),
                   SizedBox(width: 12.w),
@@ -197,6 +322,8 @@ class CoachFeedbackCard extends StatelessWidget {
     required String avatarPath,
     required String feedback,
   }) {
+    final dialogCoachUrl = ApiEndPoint.getFullImageUrl(avatarPath);
+
     showDialog(
       context: context,
       builder: (context) => Dialog(
@@ -235,11 +362,52 @@ class CoachFeedbackCard extends StatelessWidget {
                     ),
                     padding: EdgeInsets.all(2.r),
                     child: ClipOval(
-                      child: CommonImage(
-                        imageSrc: avatarPath,
-                        fill: BoxFit.cover,
-                        defaultImage: AppImages.coach_image,
-                      ),
+                      child: dialogCoachUrl.isNotEmpty && dialogCoachUrl.startsWith('http')
+                          ? Image.network(
+                              dialogCoachUrl,
+                              width: 50.w,
+                              height: 50.h,
+                              fit: BoxFit.cover,
+                              loadingBuilder: (context, child, loadingProgress) {
+                                if (loadingProgress == null) return child;
+                                return Container(
+                                  width: 50.w,
+                                  height: 50.h,
+                                  color: const Color(0xFF111A2E),
+                                  alignment: Alignment.center,
+                                  child: Icon(
+                                    Icons.person_rounded,
+                                    color: const Color(0xFF8E9BAE),
+                                    size: 24.sp,
+                                  ),
+                                );
+                              },
+                              errorBuilder: (context, error, stackTrace) {
+                                debugPrint('❌ [Image.network Error - Feedback Dialog Avatar]: $error | URL: $dialogCoachUrl');
+                                return Container(
+                                  width: 50.w,
+                                  height: 50.h,
+                                  color: const Color(0xFF111A2E),
+                                  alignment: Alignment.center,
+                                  child: Icon(
+                                    Icons.person_rounded,
+                                    color: const Color(0xFF8E9BAE),
+                                    size: 24.sp,
+                                  ),
+                                );
+                              },
+                            )
+                          : Container(
+                              width: 50.w,
+                              height: 50.h,
+                              color: const Color(0xFF111A2E),
+                              alignment: Alignment.center,
+                              child: Icon(
+                                Icons.person_rounded,
+                                color: const Color(0xFF8E9BAE),
+                                size: 24.sp,
+                              ),
+                            ),
                     ),
                   ),
                   SizedBox(width: 12.w),

@@ -9,7 +9,12 @@ class StatisticsController extends GetxController {
 
   StatisticsController({StatisticsRepository? statisticsRepository})
       : statisticsRepository =
-            statisticsRepository ?? StatisticsRepositoryImpl();
+            statisticsRepository ?? StatisticsRepositoryImpl() {
+    final cached = BannerHelper.getCachedBanner('statistics');
+    if (cached != null && cached.isNotEmpty) {
+      bannerUrl.value = cached;
+    }
+  }
 
   var isLoading = false.obs;
   final statisticsEntity = Rxn<StatisticsEntity>();
@@ -18,8 +23,8 @@ class StatisticsController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    fetchStatisticsData();
     fetchStatisticsBanner();
+    fetchStatisticsData();
   }
 
   Future<void> fetchStatisticsBanner() async {

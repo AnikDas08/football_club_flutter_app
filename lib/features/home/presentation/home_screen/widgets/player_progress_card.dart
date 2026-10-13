@@ -1,8 +1,9 @@
+import 'dart:io';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:football_club/component/image/common_image.dart';
 import 'package:football_club/component/text/common_text.dart';
+import 'package:football_club/config/api/api_end_point.dart';
 
 class PlayerProgressCard extends StatelessWidget {
   final String imagePath;
@@ -23,6 +24,59 @@ class PlayerProgressCard extends StatelessWidget {
     this.progressText,
     this.progressGradientColors = const [Color(0xFF081A4A), Color(0xFF1239D4)],
   });
+
+  Widget _buildFallbackIcon() {
+    return Container(
+      width: 60.w,
+      height: 60.h,
+      color: const Color(0xFF111A2E),
+      alignment: Alignment.center,
+      child: Icon(
+        Icons.person_rounded,
+        color: const Color(0xFF8E9BAE),
+        size: 28.sp,
+      ),
+    );
+  }
+
+  Widget _buildAvatar(String path) {
+    final clean = path.trim();
+    if (clean.isEmpty) {
+      return _buildFallbackIcon();
+    }
+
+    if (File(clean).existsSync()) {
+      return Image.file(
+        File(clean),
+        fit: BoxFit.cover,
+        width: 60.w,
+        height: 60.h,
+        errorBuilder: (context, error, stackTrace) => _buildFallbackIcon(),
+      );
+    }
+
+    final fullUrl = ApiEndPoint.getFullImageUrl(clean);
+    debugPrint('📸 [HomeScreen Player Image Full URL]: "$fullUrl" (Raw: "$path")');
+
+    if (fullUrl.isNotEmpty && fullUrl.startsWith('http')) {
+      return Image.network(
+        fullUrl,
+        fit: BoxFit.cover,
+        width: 60.w,
+        height: 60.h,
+        loadingBuilder: (context, child, loadingProgress) {
+          if (loadingProgress == null) return child;
+          return _buildFallbackIcon();
+        },
+        errorBuilder: (context, error, stackTrace) {
+          debugPrint('❌ [Image.network Error - Player Image]: $error | URL: $fullUrl');
+          return _buildFallbackIcon();
+        },
+      );
+    }
+
+    return _buildFallbackIcon();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,12 +105,7 @@ class PlayerProgressCard extends StatelessWidget {
             ),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(15.r),
-              child: CommonImage(
-                imageSrc: imagePath,
-                fill: BoxFit.cover,
-                width: 60.w,
-                height: 60.h,
-              ),
+              child: _buildAvatar(imagePath),
             ),
           ),
           SizedBox(width: 14.w),
@@ -69,7 +118,7 @@ class PlayerProgressCard extends StatelessWidget {
               children: [
                 // Name
                 CommonText(
-                  text: name,
+                  text: name.trim().isNotEmpty ? name : 'Player',
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                   color: Colors.white,
@@ -77,27 +126,29 @@ class PlayerProgressCard extends StatelessWidget {
                 SizedBox(height: 5.h),
 
                 // Level Badge Pill
-                Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 10.w,
-                    vertical: 3.h,
+                if (level.trim().isNotEmpty) ...[
+                  Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 10.w,
+                      vertical: 3.h,
+                    ),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFFFAE00),
+                      borderRadius: BorderRadius.circular(12.r),
+                    ),
+                    child: CommonText(
+                      text: level,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.black,
+                    ),
                   ),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFFFAE00),
-                    borderRadius: BorderRadius.circular(12.r),
-                  ),
-                  child: CommonText(
-                    text: level,
-                    fontSize: 11,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.black,
-                  ),
-                ),
-                SizedBox(height: 6.h),
+                  SizedBox(height: 6.h),
+                ],
 
                 // Subtitle
                 CommonText(
-                  text: subtitle,
+                  text: subtitle.trim().isNotEmpty ? subtitle : 'No team or squad assigned yet',
                   fontSize: 12,
                   fontWeight: FontWeight.w400,
                   color: const Color(0xFF8E9BAE),

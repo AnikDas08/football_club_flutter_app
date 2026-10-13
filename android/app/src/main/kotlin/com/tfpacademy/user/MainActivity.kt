@@ -1,4 +1,4 @@
-package com.example.flutter_code_structure
+package com.tfpacademy.user
 
 import io.flutter.embedding.android.FlutterActivity
 

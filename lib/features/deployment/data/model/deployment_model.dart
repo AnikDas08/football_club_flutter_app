@@ -81,10 +81,10 @@ class DeploymentModel extends DeploymentEntity {
     final values = rawValues.map((e) => (e as num).toDouble()).toList();
 
     return DeploymentModel(
-      overallScore: (json['overallScore'] as num?)?.toDouble() ?? 8.2,
+      overallScore: (json['overallScore'] as num?)?.toDouble() ?? 0.0,
       maxScore: (json['maxScore'] as num?)?.toDouble() ?? 10.0,
-      improvement: json['improvement'] ?? '+6.1%',
-      status: json['status'] ?? 'Excellent',
+      improvement: json['improvement']?.toString() ?? '0%',
+      status: json['status']?.toString() ?? 'No Assessment',
       developmentAreas: areas,
       footballSkills: skills,
       growthMonths: months,

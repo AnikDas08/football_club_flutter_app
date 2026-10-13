@@ -1,15 +1,85 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:football_club/component/image/common_image.dart';
 import 'package:football_club/component/other_widgets/common_shimmer.dart';
 import 'package:football_club/component/text/common_text.dart';
-import 'package:football_club/features/home/presentation/coach_feedback_screen/container/all_coach_feedback_controller.dart';
+import 'package:football_club/config/api/api_end_point.dart';
+import 'package:football_club/features/home/presentation/coach_feedback_screen/controller/all_coach_feedback_controller.dart';
 import 'package:football_club/utils/constants/app_images.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 class AllCoachFeedbackScreen extends StatelessWidget {
   const AllCoachFeedbackScreen({super.key});
+
+  Widget _buildCoachAvatar(String path, {double size = 44}) {
+    final clean = path.trim();
+    if (clean.isEmpty) {
+      return Container(
+        width: size.w,
+        height: size.h,
+        color: const Color(0xFF111A2E),
+        alignment: Alignment.center,
+        child: Icon(Icons.person_rounded, color: const Color(0xFF8E9BAE), size: (size * 0.5).sp),
+      );
+    }
+
+    if (File(clean).existsSync()) {
+      return Image.file(
+        File(clean),
+        fit: BoxFit.cover,
+        width: size.w,
+        height: size.h,
+        errorBuilder: (context, error, stackTrace) => Container(
+          width: size.w,
+          height: size.h,
+          color: const Color(0xFF111A2E),
+          alignment: Alignment.center,
+          child: Icon(Icons.person_rounded, color: const Color(0xFF8E9BAE), size: (size * 0.5).sp),
+        ),
+      );
+    }
+
+    final fullUrl = ApiEndPoint.getFullImageUrl(clean);
+    debugPrint('📸 [AllCoachFeedback Coach Avatar URL]: "$fullUrl" (Raw: "$path")');
+
+    if (fullUrl.isNotEmpty && fullUrl.startsWith('http')) {
+      return Image.network(
+        fullUrl,
+        fit: BoxFit.cover,
+        width: size.w,
+        height: size.h,
+        loadingBuilder: (context, child, loadingProgress) {
+          if (loadingProgress == null) return child;
+          return Container(
+            width: size.w,
+            height: size.h,
+            color: const Color(0xFF111A2E),
+            alignment: Alignment.center,
+            child: Icon(Icons.person_rounded, color: const Color(0xFF8E9BAE), size: (size * 0.5).sp),
+          );
+        },
+        errorBuilder: (context, error, stackTrace) {
+          debugPrint('❌ [Image.network Error - AllCoachFeedback]: $error | URL: $fullUrl');
+          return Container(
+            width: size.w,
+            height: size.h,
+            color: const Color(0xFF111A2E),
+            alignment: Alignment.center,
+            child: Icon(Icons.person_rounded, color: const Color(0xFF8E9BAE), size: (size * 0.5).sp),
+          );
+        },
+      );
+    }
+
+    return Container(
+      width: size.w,
+      height: size.h,
+      color: const Color(0xFF111A2E),
+      alignment: Alignment.center,
+      child: Icon(Icons.person_rounded, color: const Color(0xFF8E9BAE), size: (size * 0.5).sp),
+    );
+  }
 
   String _formatDate(String rawDate) {
     if (rawDate.isEmpty) return '';
@@ -158,11 +228,7 @@ class AllCoachFeedbackScreen extends StatelessWidget {
                                   ),
                                   padding: EdgeInsets.all(2.r),
                                   child: ClipOval(
-                                    child: CommonImage(
-                                      imageSrc: item.coachImage,
-                                      fill: BoxFit.cover,
-                                      defaultImage: AppImages.coach_image,
-                                    ),
+                                    child: _buildCoachAvatar(item.coachImage, size: 44),
                                   ),
                                 ),
                                 SizedBox(width: 12.w),
@@ -375,11 +441,7 @@ class AllCoachFeedbackScreen extends StatelessWidget {
                     ),
                     padding: EdgeInsets.all(2.r),
                     child: ClipOval(
-                      child: CommonImage(
-                        imageSrc: avatarPath,
-                        fill: BoxFit.cover,
-                        defaultImage: AppImages.coach_image,
-                      ),
+                      child: _buildCoachAvatar(avatarPath, size: 50),
                     ),
                   ),
                   SizedBox(width: 12.w),

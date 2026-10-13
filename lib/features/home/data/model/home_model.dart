@@ -76,7 +76,7 @@ class HomeModel extends HomeEntity {
       playerLevel: json['playerLevel'] ?? '',
       playerSubtitle: json['playerSubtitle'] ?? '',
       playerProgress: (json['playerProgress'] as num?)?.toDouble() ?? 0.0,
-      playerImagePath: json['playerImagePath'] ?? 'assets/images/profile_image.png',
+      playerImagePath: json['playerImagePath'] ?? '',
       trainingTitle: json['trainingTitle'] ?? '',
       daysLeftText: json['daysLeftText'] ?? '',
       trainingDateText: json['trainingDateText'] ?? '',

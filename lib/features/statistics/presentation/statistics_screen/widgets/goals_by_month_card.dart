@@ -48,11 +48,24 @@ class GoalsByMonthCard extends StatelessWidget {
             color: Colors.white,
           ),
           SizedBox(height: 16.h),
-          SizedBox(
-            height: 140.h,
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+          if (goalsByMonth.isEmpty)
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: 24.h),
+              child: const Center(
+                child: CommonText(
+                  text: "No goal statistics recorded yet",
+                  fontSize: 13,
+                  fontWeight: FontWeight.w400,
+                  color: Color(0xFF8E9BAE),
+                ),
+              ),
+            )
+          else
+            SizedBox(
+              height: 140.h,
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
                 // Y-Axis Labels
                 Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,

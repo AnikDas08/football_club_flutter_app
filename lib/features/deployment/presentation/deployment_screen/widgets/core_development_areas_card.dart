@@ -34,8 +34,21 @@ class CoreDevelopmentAreasCard extends StatelessWidget {
             color: Colors.white,
           ),
           SizedBox(height: 16.h),
-          Column(
-            children: areas.map((item) {
+          if (areas.isEmpty)
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: 24.h),
+              child: const Center(
+                child: CommonText(
+                  text: "No development areas data available",
+                  fontSize: 13,
+                  fontWeight: FontWeight.w400,
+                  color: Color(0xFF8E9BAE),
+                ),
+              ),
+            )
+          else
+            Column(
+              children: areas.map((item) {
               final double progress = item.progress;
               final double score = item.score;
               final String scoreText =

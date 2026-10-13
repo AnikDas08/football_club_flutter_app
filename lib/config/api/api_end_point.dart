@@ -1,7 +1,11 @@
 class ApiEndPoint {
-  static const baseUrl = 'http://10.10.26.180:5001/api/v1/';
+  /*static const baseUrl = 'http://10.10.26.180:5001/api/v1/';
   static const imageUrl = 'http://10.10.26.180:5001';
-  static const socketUrl = 'http://10.10.26.180:5001';
+  static const socketUrl = 'http://10.10.26.180:5001';*/
+
+  static const baseUrl = 'https://rakibur5001.binarybards.online/api/v1/';
+  static const imageUrl = 'https://rakibur5001.binarybards.online';
+  static const socketUrl = 'https://rakibur5001.binarybards.online';
 
   static const signUp = 'users/sign-up';
   static const verifyEmail = 'users/verify-email';
@@ -48,5 +52,24 @@ class ApiEndPoint {
       'dashboard/get-development-stats/$playerId';
   static const userProfile = 'users/profile';
   static const notificationPreferences = 'notification/preferences';
+  static String readNotification(String id) => 'notifications/read/$id';
   static String banners(String section) => 'banners?section=$section';
+
+  static String getFullImageUrl(String? path) {
+    if (path == null || path.trim().isEmpty) return '';
+    final clean = path.trim();
+    if (clean.startsWith('http://') ||
+        clean.startsWith('https://') ||
+        clean.startsWith('assets/') ||
+        clean.startsWith('/var/') ||
+        clean.startsWith('/Users/') ||
+        clean.startsWith('/storage/')) {
+      return clean;
+    }
+    final base = imageUrl.endsWith('/')
+        ? imageUrl.substring(0, imageUrl.length - 1)
+        : imageUrl;
+    final formatted = clean.startsWith('/') ? clean : '/$clean';
+    return '$base$formatted';
+  }
 }

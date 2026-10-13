@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:football_club/component/image/common_image.dart';
 import 'package:football_club/component/text/common_text.dart';
+import 'package:football_club/config/api/api_end_point.dart';
 import 'package:football_club/utils/constants/app_images.dart';
 
 class UpcomingTrainingCard extends StatelessWidget {
@@ -24,6 +24,100 @@ class UpcomingTrainingCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final fullCoachUrl = ApiEndPoint.getFullImageUrl(coachAvatar);
+    debugPrint('📸 [HomeScreen Coach Avatar Full URL]: "$fullCoachUrl" (Raw: "$coachAvatar")');
+
+    final bool hasTraining = dateText.trim().isNotEmpty;
+
+    if (!hasTraining) {
+      return Container(
+        width: double.infinity,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12.r),
+          border: Border.all(
+            color: Colors.white.withOpacity(0.08),
+            width: 1,
+          ),
+          image: const DecorationImage(
+            image: AssetImage(AppImages.upcomming_image),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: Container(
+          padding: EdgeInsets.all(18.w),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              colors: [
+                Color(0xDE000000),
+                Color(0x8C1239D4),
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.circular(12.r),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    width: 28.w,
+                    height: 28.h,
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.12),
+                      shape: BoxShape.circle,
+                    ),
+                    alignment: Alignment.center,
+                    child: Icon(
+                      Icons.calendar_today_outlined,
+                      color: Colors.white,
+                      size: 14.sp,
+                    ),
+                  ),
+                  SizedBox(width: 10.w),
+                  CommonText(
+                    text: title.isNotEmpty ? title : "Upcoming Training",
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                  ),
+                ],
+              ),
+              SizedBox(height: 16.h),
+              Row(
+                children: [
+                  Icon(
+                    Icons.event_busy_outlined,
+                    color: Colors.white.withOpacity(0.7),
+                    size: 20.sp,
+                  ),
+                  SizedBox(width: 10.w),
+                  Expanded(
+                    child: CommonText(
+                      text: "No upcoming training scheduled",
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                      textAlign: TextAlign.start,
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 6.h),
+              CommonText(
+                text: "Your coach will post upcoming sessions here.",
+                fontSize: 12,
+                fontWeight: FontWeight.w400,
+                color: Colors.white.withOpacity(0.65),
+                textAlign: TextAlign.start,
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
@@ -161,11 +255,52 @@ class UpcomingTrainingCard extends StatelessWidget {
                     ],
                   ),
                   child: ClipOval(
-                    child: CommonImage(
-                      imageSrc: coachAvatar,
-                      fill: BoxFit.cover,
-                      defaultImage: AppImages.coach_image,
-                    ),
+                    child: fullCoachUrl.isNotEmpty && fullCoachUrl.startsWith('http')
+                        ? Image.network(
+                            fullCoachUrl,
+                            width: 36.w,
+                            height: 36.h,
+                            fit: BoxFit.cover,
+                            loadingBuilder: (context, child, loadingProgress) {
+                              if (loadingProgress == null) return child;
+                              return Container(
+                                width: 36.w,
+                                height: 36.h,
+                                color: const Color(0xFF111A2E),
+                                alignment: Alignment.center,
+                                child: Icon(
+                                  Icons.person_rounded,
+                                  color: const Color(0xFF8E9BAE),
+                                  size: 18.sp,
+                                ),
+                              );
+                            },
+                            errorBuilder: (context, error, stackTrace) {
+                              debugPrint('❌ [Image.network Error - Coach Avatar]: $error | URL: $fullCoachUrl');
+                              return Container(
+                                width: 36.w,
+                                height: 36.h,
+                                color: const Color(0xFF111A2E),
+                                alignment: Alignment.center,
+                                child: Icon(
+                                  Icons.person_rounded,
+                                  color: const Color(0xFF8E9BAE),
+                                  size: 18.sp,
+                                ),
+                              );
+                            },
+                          )
+                        : Container(
+                            width: 36.w,
+                            height: 36.h,
+                            color: const Color(0xFF111A2E),
+                            alignment: Alignment.center,
+                            child: Icon(
+                              Icons.person_rounded,
+                              color: const Color(0xFF8E9BAE),
+                              size: 18.sp,
+                            ),
+                          ),
                   ),
                 ),
                 SizedBox(width: 10.w),

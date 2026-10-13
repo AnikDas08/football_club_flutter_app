@@ -1,3 +1,4 @@
+import 'package:football_club/config/api/api_end_point.dart';
 import 'package:football_club/features/home/domain/entity/session_note_entity.dart';
 
 class SessionNoteModel extends SessionNoteEntity {
@@ -11,12 +12,14 @@ class SessionNoteModel extends SessionNoteEntity {
   });
 
   factory SessionNoteModel.fromJson(Map<String, dynamic> json) {
+    final rawImg = (json['coachImage'] ?? json['coachAvatar'] ?? '').toString();
+
     return SessionNoteModel(
       id: json['_id'] ?? json['id'] ?? '',
       category: json['category'] ?? '',
       note: json['note'] ?? '',
       coachName: json['coachName'] ?? '',
-      coachImage: json['coachImage'] ?? '',
+      coachImage: ApiEndPoint.getFullImageUrl(rawImg),
       createdAt: json['createdAt'] ?? '',
     );
   }

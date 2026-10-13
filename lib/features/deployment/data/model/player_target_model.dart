@@ -1,3 +1,4 @@
+import 'package:football_club/config/api/api_end_point.dart';
 import 'package:football_club/features/deployment/domain/entity/player_target_entity.dart';
 
 class PlayerTargetModel extends PlayerTargetEntity {
@@ -17,13 +18,15 @@ class PlayerTargetModel extends PlayerTargetEntity {
   });
 
   factory PlayerTargetModel.fromJson(Map<String, dynamic> json) {
+    final rawImg = (json['coachImage'] ?? json['coachAvatar'] ?? '').toString();
+
     return PlayerTargetModel(
       id: json['_id'] ?? json['id'] ?? '',
       title: json['title'] ?? '',
       description: json['description'] ?? '',
       successCriteria: json['successCriteria'] ?? '',
       coachName: json['coachName'] ?? '',
-      coachImage: json['coachImage'] ?? '',
+      coachImage: ApiEndPoint.getFullImageUrl(rawImg),
       priority: json['priority'] ?? '',
       category: json['category'] ?? '',
       dueDate: json['dueDate'] ?? '',

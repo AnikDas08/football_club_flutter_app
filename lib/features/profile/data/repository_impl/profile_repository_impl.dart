@@ -21,9 +21,15 @@ class ProfileRepositoryImpl implements ProfileRepository {
   }
 
   @override
-  Future<bool> updateProfile(Map<String, dynamic> body) async {
+  Future<ProfileEntity?> updateProfile(Map<String, dynamic> body) async {
     final response = await remoteDataSource.updateProfile(body);
-    return response.isSuccess;
+    if (response.isSuccess) {
+      if (response.data is Map && response.data['data'] != null) {
+        return ProfileModel.fromJson(response.data['data']);
+      }
+      return await getProfileData();
+    }
+    return null;
   }
 
   @override

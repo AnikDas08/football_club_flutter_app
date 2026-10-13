@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:football_club/component/button/common_button.dart';
 import 'package:football_club/component/text/common_text.dart';
-import 'package:football_club/features/auth/presentation/sign_up/container/sign_up_controller.dart';
+import 'package:football_club/features/auth/presentation/sign_up/controller/sign_up_controller.dart';
 import 'package:football_club/utils/constants/app_colors.dart';
 import 'package:football_club/utils/constants/app_string.dart';
 import 'package:get/get.dart';

@@ -60,13 +60,13 @@ class AttendanceAnalyticsCard extends StatelessWidget {
                       DonutSection(
                         percentage: double.tryParse(missedPercentage.replaceAll('%', '').trim()) != null
                             ? (double.parse(missedPercentage.replaceAll('%', '').trim()) / 100.0)
-                            : 0.08,
+                            : 0.0,
                         color: const Color(0xFFEF4444),
                       ),
                       DonutSection(
                         percentage: double.tryParse(latePercentage.replaceAll('%', '').trim()) != null
                             ? (double.parse(latePercentage.replaceAll('%', '').trim()) / 100.0)
-                            : 0.05,
+                            : 0.0,
                         color: const Color(0xFFF59E0B),
                       ),
                     ],

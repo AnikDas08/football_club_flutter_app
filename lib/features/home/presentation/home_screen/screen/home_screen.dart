@@ -1,16 +1,17 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:football_club/component/text/common_text.dart';
 import 'package:football_club/config/route/app_routes.dart';
-import 'package:football_club/features/home/presentation/home_screen/container/home_controller.dart';
+import 'package:football_club/features/home/presentation/home_screen/controller/home_controller.dart';
 import 'package:football_club/features/home/presentation/home_screen/widgets/coach_feedback_card.dart';
 import 'package:football_club/features/home/presentation/home_screen/widgets/player_progress_card.dart';
 import 'package:football_club/features/home/presentation/home_screen/widgets/recent_achievement_card.dart';
 import 'package:football_club/features/home/presentation/home_screen/widgets/stat_card.dart';
 import 'package:football_club/features/home/presentation/home_screen/widgets/target_goal_card.dart';
 import 'package:football_club/features/home/presentation/home_screen/widgets/upcoming_training_card.dart';
-import 'package:football_club/features/home/presentation/home_screen/widgets/home_screen_shimmer.dart';
+import 'package:football_club/component/button/notification_bell_button.dart';
 import 'package:football_club/utils/constants/app_images.dart';
 import 'package:get/get.dart';
 
@@ -25,12 +26,22 @@ class HomeScreen extends StatelessWidget {
       backgroundColor: const Color(0xFF0A0E1A),
       body: Obx(() {
         if (controller.isLoading.value && controller.homeEntity.value == null) {
-          return const HomeScreenShimmer();
+          return const Center(
+            child: CupertinoActivityIndicator(
+              color: Colors.white,
+              radius: 16,
+            ),
+          );
         }
 
         final homeData = controller.homeEntity.value;
         if (homeData == null) {
-          return const HomeScreenShimmer();
+          return const Center(
+            child: CupertinoActivityIndicator(
+              color: Colors.white,
+              radius: 16,
+            ),
+          );
         }
 
         return SingleChildScrollView(
@@ -40,7 +51,7 @@ class HomeScreen extends StatelessWidget {
               // Top Header with background image decoration & smooth fade transition
               SizedBox(
                 width: double.infinity,
-                height: 290.h,
+                height: 315.h,
                 child: Stack(
                   children: [
                     // Background Image Layer with Smooth Transition
@@ -101,49 +112,7 @@ class HomeScreen extends StatelessWidget {
                                 fontWeight: FontWeight.w600,
                                 color: Colors.white.withOpacity(0.5),
                               ),
-                              GestureDetector(
-                                onTap: () =>
-                                    Get.toNamed(AppRoutes.notifications),
-                                child: Container(
-                                  width: 40.w,
-                                  height: 40.h,
-                                  decoration: BoxDecoration(
-                                    color: const Color(
-                                      0xFF0C1322,
-                                    ).withOpacity(0.6),
-                                    shape: BoxShape.circle,
-                                    border: Border.all(
-                                      color: Colors.white.withOpacity(0.08),
-                                      width: 1,
-                                    ),
-                                  ),
-                                  child: Center(
-                                    child: Stack(
-                                      alignment: Alignment.center,
-                                      clipBehavior: Clip.none,
-                                      children: [
-                                        Icon(
-                                          Icons.notifications_none_outlined,
-                                          color: Colors.white,
-                                          size: 22.sp,
-                                        ),
-                                        Positioned(
-                                          right: 0,
-                                          top: 0,
-                                          child: Container(
-                                            width: 8.w,
-                                            height: 8.h,
-                                            decoration: const BoxDecoration(
-                                              color: Color(0xFF2563EB),
-                                              shape: BoxShape.circle,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
+                              const NotificationBellButton(),
                             ],
                           ),
                           SizedBox(height: 12.h),

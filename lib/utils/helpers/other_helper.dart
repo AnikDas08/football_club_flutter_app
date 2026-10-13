@@ -33,12 +33,16 @@ class OtherHelper {
 
   static Future<String?> pickImage({
     ImageSource source = .gallery,
-    int quality = 50,
+    int quality = 70,
+    double maxWidth = 800,
+    double maxHeight = 800,
   }) async {
     final picker = ImagePicker();
     final XFile? image = await picker.pickImage(
       source: source,
       imageQuality: quality,
+      maxWidth: maxWidth,
+      maxHeight: maxHeight,
     );
     return image?.path;
   }

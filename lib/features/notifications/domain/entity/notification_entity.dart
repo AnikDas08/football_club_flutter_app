@@ -8,6 +8,8 @@ class NotificationEntity {
   final bool isUnread;
   final IconData icon;
   final Color? iconColor;
+  final String? screen;
+  final String? type;
 
   const NotificationEntity({
     required this.id,
@@ -17,5 +19,7 @@ class NotificationEntity {
     required this.isUnread,
     this.icon = Icons.notifications_none_outlined,
     this.iconColor,
+    this.screen,
+    this.type,
   });
 }

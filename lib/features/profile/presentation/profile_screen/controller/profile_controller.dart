@@ -7,14 +7,16 @@ import 'package:football_club/features/profile/domain/repository/profile_reposit
 import 'package:football_club/utils/app_snackbar.dart';
 import 'package:football_club/utils/helpers/banner_helper.dart';
 import 'package:football_club/utils/helpers/other_helper.dart';
-import 'package:football_club/features/home/presentation/home_screen/container/home_controller.dart';
+import 'package:football_club/features/home/presentation/home_screen/controller/home_controller.dart';
 import 'package:get/get.dart';
 
 class ProfileController extends GetxController {
   final ProfileRepository profileRepository;
 
   ProfileController({ProfileRepository? profileRepository})
-      : profileRepository = profileRepository ?? ProfileRepositoryImpl();
+      : profileRepository = profileRepository ?? ProfileRepositoryImpl() {
+    bannerUrl = BannerHelper.getCachedBanner('profile');
+  }
 
   /// Language list
   final List<String> languages = ['English', 'French', 'Arabic'];
@@ -98,7 +100,13 @@ class ProfileController extends GetxController {
     }
     selectedPosition = normalizePosition(data.position);
     selectedFoot = normalizeFoot(data.preferredFoot);
-    if (profileImagePath == null || profileImagePath!.isEmpty) {
+    final bool isLocalPickedFile = profileImagePath != null &&
+        profileImagePath!.isNotEmpty &&
+        !profileImagePath!.startsWith('http') &&
+        !profileImagePath!.startsWith('assets/') &&
+        File(profileImagePath!).existsSync();
+
+    if (!isLocalPickedFile && data.profileImagePath.isNotEmpty) {
       profileImagePath = data.profileImagePath;
     }
   }
@@ -108,11 +116,11 @@ class ProfileController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    fetchProfileBanner();
     if (profileEntity.value != null) {
       populateControllers(profileEntity.value!);
     }
     fetchProfileData();
-    fetchProfileBanner();
     fetchNotificationPreferences();
   }
 
@@ -297,42 +305,25 @@ class ProfileController extends GetxController {
     isLoading = true;
     update();
 
-    final success = await profileRepository.updateProfile(updatePayload);
+    final updatedData = await profileRepository.updateProfile(updatePayload);
 
     isLoading = false;
     update();
 
-    if (success) {
-      final updatedProfile = ProfileEntity(
-        playerName: currentFullName,
-        email: emailController.text,
-        dob: dobController.text,
-        parentName: parentNameController.text,
-        mobile: mobileController.text,
-        position: selectedPosition,
-        preferredFoot: selectedFoot,
-        profileImagePath: isImageChanged ? profileImagePath! : (initial?.profileImagePath ?? ''),
-        bloodGroup: initial?.bloodGroup ?? '',
-        allergies: initial?.allergies ?? '',
-        medicalConditions: initial?.medicalConditions ?? '',
-        medications: initial?.medications ?? '',
-        emergencyContactName: initial?.emergencyContactName ?? '',
-        emergencyPhone: initial?.emergencyPhone ?? '',
-        medicalNotes: initial?.medicalNotes ?? '',
-        homeAddress: initial?.homeAddress ?? '',
-        city: initial?.city ?? '',
-        postcode: initial?.postcode ?? '',
-      );
-
-      profileEntity.value = updatedProfile;
+    if (updatedData != null) {
+      profileEntity.value = updatedData;
+      profileImagePath = updatedData.profileImagePath;
+      populateControllers(updatedData);
       update();
 
       if (Get.isRegistered<HomeController>()) {
-        Get.find<HomeController>().updatePlayerProfileLocally(
-          name: updatedProfile.playerName,
-          imagePath: updatedProfile.profileImagePath,
-          position: updatedProfile.position,
+        final homeCtrl = Get.find<HomeController>();
+        homeCtrl.updatePlayerProfileLocally(
+          name: updatedData.playerName,
+          imagePath: updatedData.profileImagePath,
+          position: updatedData.position,
         );
+        homeCtrl.fetchHomeData();
       }
       Get.back();
       AppSnackbar.success(
