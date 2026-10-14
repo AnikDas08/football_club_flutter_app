@@ -12,42 +12,22 @@ class ProfileRepositoryImpl implements ProfileRepository {
 
   @override
   Future<ProfileEntity?> getProfileData() async {
-    final response = await remoteDataSource.fetchProfileData();
-    if (response.statusCode == 200) {
-      final data = response.data['data'] ?? {};
-      return ProfileModel.fromJson(data);
-    }
-    return null;
+    return await remoteDataSource.fetchProfileData();
   }
 
   @override
   Future<ProfileEntity?> updateProfile(Map<String, dynamic> body) async {
-    final response = await remoteDataSource.updateProfile(body);
-    if (response.isSuccess) {
-      if (response.data is Map && response.data['data'] != null) {
-        return ProfileModel.fromJson(response.data['data']);
-      }
-      return await getProfileData();
-    }
-    return null;
+    return await remoteDataSource.updateProfile(body);
   }
 
   @override
   Future<bool?> getNotificationPreferences() async {
-    final response = await remoteDataSource.fetchNotificationPreferences();
-    if (response.statusCode == 200) {
-      final data = response.data['data'];
-      if (data != null && data['push'] != null) {
-        return data['push'] as bool;
-      }
-    }
-    return null;
+    return await remoteDataSource.fetchNotificationPreferences();
   }
 
   @override
   Future<bool> updateNotificationPreferences(bool push) async {
-    final response =
-        await remoteDataSource.updateNotificationPreferences(push);
-    return response.isSuccess;
+    return await remoteDataSource.updateNotificationPreferences(push);
   }
 }
+

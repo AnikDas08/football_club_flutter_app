@@ -3,34 +3,55 @@ import 'package:football_club/config/api/api_end_point.dart';
 import 'package:football_club/services/api/api_response_model.dart';
 import 'package:football_club/services/api/api_service.dart';
 
+import 'package:football_club/features/profile/data/model/profile_model.dart';
+
 abstract class ProfileRemoteDataSource {
-  Future<ApiResponseModel> fetchProfileData();
-  Future<ApiResponseModel> updateProfile(Map<String, dynamic> body);
-  Future<ApiResponseModel> fetchNotificationPreferences();
-  Future<ApiResponseModel> updateNotificationPreferences(bool push);
+  Future<ProfileModel?> fetchProfileData();
+  Future<ProfileModel?> updateProfile(Map<String, dynamic> body);
+  Future<bool?> fetchNotificationPreferences();
+  Future<bool> updateNotificationPreferences(bool push);
 }
 
 class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
   @override
-  Future<ApiResponseModel> fetchNotificationPreferences() async {
-    return await ApiService.get(ApiEndPoint.notificationPreferences);
+  Future<bool?> fetchNotificationPreferences() async {
+    try {
+      final response = await ApiService.get(ApiEndPoint.notificationPreferences);
+      if (response.statusCode == 200 && response.data != null) {
+        final data = response.data['data'];
+        if (data != null && data['push'] != null) {
+          return data['push'] as bool;
+        }
+      }
+    } catch (_) {}
+    return null;
   }
 
   @override
-  Future<ApiResponseModel> updateNotificationPreferences(bool push) async {
-    return await ApiService.patch(
-      ApiEndPoint.notificationPreferences,
-      body: {'push': push},
-    );
+  Future<bool> updateNotificationPreferences(bool push) async {
+    try {
+      final response = await ApiService.patch(
+        ApiEndPoint.notificationPreferences,
+        body: {'push': push},
+      );
+      return response.isSuccess;
+    } catch (_) {}
+    return false;
   }
 
   @override
-  Future<ApiResponseModel> fetchProfileData() async {
-    return await ApiService.get(ApiEndPoint.userProfile);
+  Future<ProfileModel?> fetchProfileData() async {
+    try {
+      final response = await ApiService.get(ApiEndPoint.userProfile);
+      if (response.statusCode == 200 && response.data['data'] != null) {
+        return ProfileModel.fromJson(response.data['data']);
+      }
+    } catch (_) {}
+    return null;
   }
 
   @override
-  Future<ApiResponseModel> updateProfile(Map<String, dynamic> body) async {
+  Future<ProfileModel?> updateProfile(Map<String, dynamic> body) async {
     final String imagePath =
         (body['profileImagePath'] ?? body['image'] ?? '').toString();
     final bool hasImageFile = imagePath.isNotEmpty &&
@@ -99,13 +120,14 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
       patchBody['mobile'] = body['mobile'];
     }
 
+    ApiResponseModel response;
     if (hasImageFile) {
       final Map<String, dynamic> multipartBody = {};
       if (patchBody.isNotEmpty) {
         multipartBody['data'] = patchBody;
       }
 
-      return await ApiService.multipartImage(
+      response = await ApiService.multipartImage(
         ApiEndPoint.userProfile,
         method: 'PATCH',
         body: multipartBody,
@@ -117,10 +139,18 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
         ],
       );
     } else {
-      return await ApiService.patch(
+      response = await ApiService.patch(
         ApiEndPoint.userProfile,
         body: patchBody,
       );
     }
+
+    if (response.isSuccess) {
+      if (response.data is Map && response.data['data'] != null) {
+        return ProfileModel.fromJson(response.data['data']);
+      }
+      return await fetchProfileData();
+    }
+    return null;
   }
 }
