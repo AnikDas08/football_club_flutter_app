@@ -410,6 +410,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           controller.parentNameController.text;
                       final mobile =
                           profile?.mobile ?? controller.mobileController.text;
+                      final coachName = profile?.coachName ?? '';
 
                       return Column(
                         children: [
@@ -431,7 +432,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               },
                               {
                                 "label": "Assigned Coach",
-                                "value": "Coach John Doe",
+                                "value": coachName.isNotEmpty
+                                    ? coachName
+                                    : "Not assigned",
                               },
                             ],
                           ),

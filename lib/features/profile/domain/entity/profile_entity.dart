@@ -17,6 +17,7 @@ class ProfileEntity {
   final String homeAddress;
   final String city;
   final String postcode;
+  final String coachName;
 
   const ProfileEntity({
     required this.playerName,
@@ -37,5 +38,6 @@ class ProfileEntity {
     this.homeAddress = '',
     this.city = '',
     this.postcode = '',
+    this.coachName = '',
   });
 }

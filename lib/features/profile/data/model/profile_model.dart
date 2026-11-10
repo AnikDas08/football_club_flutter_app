@@ -23,6 +23,7 @@ class ProfileModel extends ProfileEntity {
     super.homeAddress,
     super.city,
     super.postcode,
+    super.coachName,
   });
 
   factory ProfileModel.fromJson(Map<String, dynamic> json) {
@@ -48,6 +49,7 @@ class ProfileModel extends ProfileEntity {
     String hAddr = '';
     String cCity = '';
     String pCode = '';
+    String coachName = _readCoachName(json['coachName'], json['coach']);
 
     final playersList = json['players'] as List<dynamic>? ?? [];
     if (playersList.isNotEmpty) {
@@ -115,6 +117,16 @@ class ProfileModel extends ProfileEntity {
       if (pId.isNotEmpty) {
         LocalStorage.playerId = pId;
       }
+
+      final squad = player['squadId'];
+      final squadCoach = squad is Map ? squad['coachId'] : null;
+      final playerCoachName = _readCoachName(
+        player['coachName'],
+        player['coach'] ?? squadCoach,
+      );
+      if (playerCoachName.isNotEmpty) {
+        coachName = playerCoachName;
+      }
     }
 
     if (playerName.isEmpty) {
@@ -146,6 +158,7 @@ class ProfileModel extends ProfileEntity {
       homeAddress: hAddr,
       city: cCity,
       postcode: pCode,
+      coachName: coachName,
     );
   }
 
@@ -169,6 +182,23 @@ class ProfileModel extends ProfileEntity {
       'homeAddress': homeAddress,
       'city': city,
       'postcode': postcode,
+      'coachName': coachName,
     };
   }
+}
+
+String _readCoachName(dynamic coachName, dynamic coach) {
+  final direct = coachName?.toString().trim() ?? '';
+  if (direct.isNotEmpty) return direct;
+  if (coach is! Map) return '';
+
+  final name = coach['name']?.toString().trim() ?? '';
+  if (name.isNotEmpty) return name;
+
+  final fullName = coach['fullName']?.toString().trim() ?? '';
+  if (fullName.isNotEmpty) return fullName;
+
+  final first = coach['firstName']?.toString().trim() ?? '';
+  final last = coach['lastName']?.toString().trim() ?? '';
+  return '$first $last'.trim();
 }

@@ -6,7 +6,7 @@ import 'package:football_club/component/text/common_text.dart';
 import 'package:football_club/features/statistics/presentation/statistics_screen/controller/statistics_controller.dart';
 import 'package:football_club/features/statistics/presentation/statistics_screen/widgets/attendance_analytics_card.dart';
 import 'package:football_club/features/statistics/presentation/statistics_screen/widgets/goals_by_month_card.dart';
-import 'package:football_club/features/statistics/presentation/statistics_screen/widgets/match_involvement_card.dart';
+// import 'package:football_club/features/statistics/presentation/statistics_screen/widgets/match_involvement_card.dart';
 import 'package:football_club/component/button/notification_bell_button.dart';
 import 'package:football_club/utils/constants/app_images.dart';
 import 'package:get/get.dart';
@@ -167,18 +167,17 @@ class StatisticsScreen extends StatelessWidget {
                         attendedPercentage: statsData.attendedPercentage,
                         missedPercentage: statsData.missedPercentage,
                         latePercentage: statsData.latePercentage,
-                        playerImagePath: statsData.playerImagePath,
-                      ),
-                    SizedBox(height: 16.h),
-
-                    // Match Involvement Card
-                    if (statsData != null)
-                      MatchInvolvementCard(
-                        shotsCount: "${statsData.shotsCount}",
-                        onTargetCount: "${statsData.onTargetCount}",
-                        chancesCreatedCount: "${statsData.chancesCreatedCount}",
                       ),
                     SizedBox(height: 24.h),
+
+                    // Match Involvement Card
+                    // if (statsData != null)
+                    //   MatchInvolvementCard(
+                    //     shotsCount: "${statsData.shotsCount}",
+                    //     onTargetCount: "${statsData.onTargetCount}",
+                    //     chancesCreatedCount: "${statsData.chancesCreatedCount}",
+                    //   ),
+                    // SizedBox(height: 24.h),
                   ],
                 ),
               ),

@@ -1,16 +1,13 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:football_club/component/image/common_image.dart';
 import 'package:football_club/component/text/common_text.dart';
-import 'package:football_club/utils/constants/app_images.dart';
 
 class AttendanceAnalyticsCard extends StatelessWidget {
   final double attendanceRate;
   final String attendedPercentage;
   final String missedPercentage;
   final String latePercentage;
-  final String playerImagePath;
 
   const AttendanceAnalyticsCard({
     super.key,
@@ -18,7 +15,6 @@ class AttendanceAnalyticsCard extends StatelessWidget {
     required this.attendedPercentage,
     required this.missedPercentage,
     required this.latePercentage,
-    required this.playerImagePath,
   });
 
   @override
@@ -120,23 +116,6 @@ class AttendanceAnalyticsCard extends StatelessWidget {
                       value: latePercentage,
                     ),
                   ],
-                ),
-              ),
-
-              // 3. Player Image Right Side
-              Container(
-                width: 60.w,
-                height: 85.h,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10.r),
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(10.r),
-                  child: CommonImage(
-                    imageSrc: playerImagePath,
-                    fill: BoxFit.cover,
-                    defaultImage: AppImages.profile_image,
-                  ),
                 ),
               ),
             ],

@@ -1,11 +1,11 @@
 class ApiEndPoint {
-  /*static const baseUrl = 'http://10.10.26.180:5001/api/v1/';
-  static const imageUrl = 'http://10.10.26.180:5001';
-  static const socketUrl = 'http://10.10.26.180:5001';*/
+  static const baseUrl = 'https://api.tfpacademyuae.network/api/v1/';
+  static const imageUrl = 'https://api.tfpacademyuae.network';
+  static const socketUrl = 'https://api.tfpacademyuae.network';
 
-  static const baseUrl = 'https://rakibur5001.binarybards.online/api/v1/';
+  /*static const baseUrl = 'https://rakibur5001.binarybards.online/api/v1/';
   static const imageUrl = 'https://rakibur5001.binarybards.online';
-  static const socketUrl = 'https://rakibur5001.binarybards.online';
+  static const socketUrl = 'https://rakibur5001.binarybards.online';*/
 
   static const signUp = 'users/sign-up';
   static const verifyEmail = 'users/verify-email';
